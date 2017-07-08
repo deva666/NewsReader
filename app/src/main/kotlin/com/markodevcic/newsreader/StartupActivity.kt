@@ -1,6 +1,5 @@
 package com.markodevcic.newsreader
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,24 +8,26 @@ import android.view.LayoutInflater
 import android.widget.CheckBox
 import com.markodevcic.newsreader.api.ApiFactory
 import com.markodevcic.newsreader.data.KEY_CATEGORIES
-import com.markodevcic.newsreader.data.SHARED_PREFS
 import com.markodevcic.newsreader.data.availableCategories
 import com.markodevcic.newsreader.extensions.editorApply
 import com.markodevcic.newsreader.extensions.editorCommit
 import com.markodevcic.newsreader.extensions.startActivity
+import com.markodevcic.newsreader.injection.Injector
 import com.markodevcic.newsreader.sync.SyncService
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import javax.inject.Inject
 
 class StartupActivity : AppCompatActivity() {
 
-	private lateinit var prefs: SharedPreferences
+	@Inject
+	lateinit var prefs: SharedPreferences
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
-		prefs = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+		Injector.appComponent.inject(this)
+		
 		prefs.editorCommit {
 			remove(KEY_CATEGORIES)
 		}
