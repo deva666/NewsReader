@@ -5,19 +5,19 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:name=".NewsReaderApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".NewsReaderApplication">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".StartupActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:noHistory="true"
             android:screenOrientation="portrait"
-            android:noHistory="true">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -25,8 +25,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:name=".articles.MainActivity"
+            android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

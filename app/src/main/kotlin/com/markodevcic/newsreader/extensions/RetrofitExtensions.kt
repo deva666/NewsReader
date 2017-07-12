@@ -16,12 +16,29 @@ suspend fun <T> Call<T>.executeAsync(): T {
 			}
 
 			override fun onResponse(call: Call<T>?, response: Response<T>) {
-				continuation.resume(response.body()!!)
+				if (response.isSuccessful) {
+					continuation.resume(response.body()!!)
+				} else {
+					continuation.resumeWithException(retrofit2.HttpException(response))
+				}
 			}
 		})
+		continuation.invokeOnCompletion {
+			if (continuation.isCancelled) {
+				try {
+					cancel()
+				} catch (e: Throwable) {
+					//ignored
+				}
+			}
+		}
 	}
 }
 
 fun <T> Call<T>.launchAsync(): Deferred<T> {
 	return async(CommonPool) { this@launchAsync.execute().body()!! }
+}
+
+suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
+	return this.map { job -> job.await() }
 }

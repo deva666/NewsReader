@@ -2,25 +2,22 @@ package com.markodevcic.newsreader.sync
 
 import com.markodevcic.newsreader.api.NewsApi
 import com.markodevcic.newsreader.data.Source
+import com.markodevcic.newsreader.extensions.awaitAll
 import com.markodevcic.newsreader.extensions.executeAsync
 import com.markodevcic.newsreader.extensions.launchAsync
 import com.markodevcic.newsreader.storage.ArticlesRepository
 import com.markodevcic.newsreader.storage.SourcesRepository
+import javax.inject.Inject
 
-class SyncService constructor(private val newsApi: NewsApi) {
+class SyncService @Inject constructor(private val newsApi: NewsApi) {
 
-	suspend fun downloadSources(categories: Set<String>) {
+	suspend fun downloadSources(categories: Collection<String>) {
 		val sourcesRepository = SourcesRepository()
 		sourcesRepository.deleteAll()
-		val deferreds = categories.map { c -> newsApi.getSources(c).launchAsync() }
-		deferreds.forEach { def ->
-			val response = def.await()
-			sourcesRepository.addAll(response.sources)
+		val downloadJobs = categories.map { c -> newsApi.getSources(c).launchAsync() }
+		downloadJobs.awaitAll().forEach { j ->
+			sourcesRepository.addAll(j.sources)
 		}
-//		categories.forEach { cat ->
-//			val response = newsApi.getSources(cat).executeAsync()
-//			sourcesRepository.addAll(response.sources)
-//		}
 		sourcesRepository.close()
 	}
 

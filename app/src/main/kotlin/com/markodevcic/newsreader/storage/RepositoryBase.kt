@@ -31,7 +31,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 	override suspend fun update(id:String, modifier: T.() -> Unit) {
 		return realm.inTransactionAsync {
 			val dbItem = where(clazz)
-					.equalTo("id", id)
+					.equalTo(primaryKey, id)
 					.findFirst()
 			modifier(dbItem)
 		}
