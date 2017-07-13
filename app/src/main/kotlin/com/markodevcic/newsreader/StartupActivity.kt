@@ -3,11 +3,12 @@ package com.markodevcic.newsreader
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.CheckBox
-import android.widget.Toast
-import com.markodevcic.newsreader.articles.MainActivity
+import com.markodevcic.newsreader.articles.ArticlesActivity
 import com.markodevcic.newsreader.data.availableCategories
+import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
 import kotlinx.android.synthetic.main.activity_startup.*
@@ -27,8 +28,8 @@ class StartupActivity : AppCompatActivity(), StartupView {
 		super.onCreate(savedInstanceState)
 		Injector.appComponent.inject(this)
 		presenter.bind(this)
-		
-		if (presenter.hasCategoriesSelected()) {
+
+		if (presenter.canOpenMainView) {
 			startMainView()
 		} else {
 			setContentView(R.layout.activity_startup)
@@ -45,9 +46,10 @@ class StartupActivity : AppCompatActivity(), StartupView {
 				launch(UI + job) {
 					val dialog = showProgressDialog()
 					try {
-						presenter.syncCategories()
+						presenter.downloadInitial()
 					} catch (fail: Throwable) {
-						Toast.makeText(this@StartupActivity, "An error occurred while downloading news sources", Toast.LENGTH_SHORT).show()
+						Log.e("Sync", fail.message, fail)
+						showToast("An error occurred while downloading news")
 					} finally {
 						dialog.dismiss()
 					}
@@ -59,11 +61,11 @@ class StartupActivity : AppCompatActivity(), StartupView {
 	private fun showProgressDialog() = ProgressDialog.show(this, "Downloading sources", "", true, false)
 
 	override fun showNoCategorySelected() {
-		Toast.makeText(this, "Please choose at least one category", Toast.LENGTH_SHORT).show()
+		showToast("Please choose at least one category")
 	}
 
 	override fun startMainView() {
-		startActivity<MainActivity>()
+		startActivity<ArticlesActivity>()
 	}
 
 	override fun onDestroy() {

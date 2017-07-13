@@ -28,16 +28,19 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 		}
 	}
 
-	suspend fun syncCategories() {
+	suspend fun downloadInitial() {
 		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		if (categorySet.isEmpty()) {
 			view.showNoCategorySelected()
 			return
 		} else {
-			syncService.downloadSources(categorySet)
+			val sources = syncService.downloadSources(categorySet)
+			sources.forEach { src ->
+				syncService.downloadArticles(src)
+			}
 			view.startMainView()
 		}
 	}
 
-	fun hasCategoriesSelected() = sharedPreferences.contains(KEY_CATEGORIES)
+	val canOpenMainView = sharedPreferences.contains(KEY_CATEGORIES)
 }

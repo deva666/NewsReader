@@ -11,7 +11,7 @@ open class Article : RealmObject() {
 	@PrimaryKey
 	lateinit var url: String
 	lateinit var title: String
-	lateinit var author: String
+	var author: String? = null
 	lateinit var description: String
 	lateinit var urlToImage: String
 	lateinit var category: String
