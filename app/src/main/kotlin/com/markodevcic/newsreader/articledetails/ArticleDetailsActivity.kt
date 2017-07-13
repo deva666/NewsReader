@@ -26,6 +26,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
 
 			override fun onReceivedTitle(view: WebView?, title: String?) {
 				super.onReceivedTitle(view, title)
+				supportActionBar?.title = title
 			}
 		})
 		webView.loadUrl(intent.getStringExtra(KEY_ARTICLE_URL) ?: throw IllegalStateException("article url expected in bundle"))

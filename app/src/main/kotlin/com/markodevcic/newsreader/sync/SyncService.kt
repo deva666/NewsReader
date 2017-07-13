@@ -14,7 +14,7 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 									  private val sourcesRepository: Provider<Repository<Source>>,
 									  private val articlesRepository: Provider<Repository<Article>>) {
 
-	suspend fun downloadSources(categories: Collection<String>) : Collection<Source> {
+	suspend fun downloadSourcesAsync(categories: Collection<String>) : Collection<Source> {
 		sourcesRepository.get().use { repo ->
 			repo.deleteAll()
 			val downloadJobs = categories.map { cat -> newsApi.getSources(cat).launchAsync() }
@@ -24,7 +24,7 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 		}
 	}
 
-	suspend fun downloadArticles(source: Source) {
+	suspend fun downloadArticlesAsync(source: Source) {
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
 		articlesRepository.get().use { repo ->

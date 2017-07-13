@@ -1,5 +1,6 @@
 package com.markodevcic.newsreader.articles
 
+import android.app.Activity
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
@@ -8,7 +9,7 @@ import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.extensions.find
-import com.markodevcic.newsreader.extensions.startActivity
+import com.markodevcic.newsreader.extensions.startActivityForResult
 import com.squareup.picasso.Picasso
 
 class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -24,7 +25,9 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 				.load(article.urlToImage)
 				.into(image)
 		view.setOnClickListener {
-			view.context.startActivity<ArticleDetailsActivity>(ArticleDetailsActivity.KEY_ARTICLE_URL to article.url)
+			val activity = view.context as Activity
+			activity.startActivityForResult<ArticleDetailsActivity>(ArticlesActivity.REQUEST_ARTICLE_READ,
+					ArticleDetailsActivity.KEY_ARTICLE_URL to article.url)
 		}
 	}
 

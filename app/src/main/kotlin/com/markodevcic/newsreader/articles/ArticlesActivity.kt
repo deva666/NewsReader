@@ -1,5 +1,7 @@
 package com.markodevcic.newsreader.articles
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
@@ -15,6 +17,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.markodevcic.newsreader.R
+import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.extensions.find
 import com.markodevcic.newsreader.injection.Injector
@@ -29,11 +32,13 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	@Inject
 	lateinit var articleRepository: Repository<Article>
 
+	@Inject
+	lateinit var articlesPresenter: ArticlesPresenter
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		Injector.appComponent.inject(this)
-
 
 		setContentView(R.layout.activity_main)
 		val toolbar = findViewById(R.id.toolbar) as Toolbar
@@ -109,5 +114,18 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
 		drawer.closeDrawer(GravityCompat.START)
 		return true
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
+		if (requestCode == REQUEST_ARTICLE_READ && resultCode == Activity.RESULT_OK) {
+			launch(UI) {
+				articlesPresenter.onArticleRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+			}
+		}
+	}
+
+	companion object {
+		const val REQUEST_ARTICLE_READ = 1231
 	}
 }

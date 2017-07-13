@@ -1,4 +1,6 @@
 package com.markodevcic.newsreader.articles
 
-interface ArticlesView {
+import com.markodevcic.newsreader.BaseView
+
+interface ArticlesView : BaseView {
 }

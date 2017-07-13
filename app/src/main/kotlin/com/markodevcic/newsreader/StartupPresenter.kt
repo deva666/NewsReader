@@ -28,15 +28,15 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 		}
 	}
 
-	suspend fun downloadInitial() {
+	suspend fun downloadInitialAsync() {
 		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		if (categorySet.isEmpty()) {
 			view.showNoCategorySelected()
 			return
 		} else {
-			val sources = syncService.downloadSources(categorySet)
+			val sources = syncService.downloadSourcesAsync(categorySet)
 			sources.forEach { src ->
-				syncService.downloadArticles(src)
+				syncService.downloadArticlesAsync(src)
 			}
 			view.startMainView()
 		}

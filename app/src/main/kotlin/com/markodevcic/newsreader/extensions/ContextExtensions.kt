@@ -36,6 +36,9 @@ inline fun <reified T : Activity> Context.startActivity() =
 inline fun <reified T : Activity> Context.startActivity(vararg data: Pair<String, String>) =
 		this.startActivity(newIntent<T>(data))
 
+inline fun <reified T : Activity> Activity.startActivityForResult(requestCode:Int, vararg data: Pair<String, String>) =
+		this.startActivityForResult(newIntent<T>(data), requestCode)
+
 inline fun <reified T : Activity> Context.newIntent(): Intent =
 		Intent(this, T::class.java)
 
