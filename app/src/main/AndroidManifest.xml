@@ -29,6 +29,10 @@
             android:label="@string/title_activity_articles"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".articledetails.ArticleDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".articles.ArticlesActivity">
+        </activity>
     </application>
 
 </manifest>

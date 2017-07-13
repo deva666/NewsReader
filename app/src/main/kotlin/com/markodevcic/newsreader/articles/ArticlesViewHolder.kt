@@ -5,8 +5,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.markodevcic.newsreader.R
+import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.extensions.find
+import com.markodevcic.newsreader.extensions.startActivity
 import com.squareup.picasso.Picasso
 
 class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -21,6 +23,9 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 		Picasso.with(view.context)
 				.load(article.urlToImage)
 				.into(image)
+		view.setOnClickListener {
+			view.context.startActivity<ArticleDetailsActivity>(ArticleDetailsActivity.KEY_ARTICLE_URL to article.url)
+		}
 	}
 
 }

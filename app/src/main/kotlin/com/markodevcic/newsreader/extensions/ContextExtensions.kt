@@ -33,5 +33,15 @@ fun Context.showToast(charSequence: CharSequence, length: Int = Toast.LENGTH_LON
 inline fun <reified T : Activity> Context.startActivity() =
 		this.startActivity(newIntent<T>())
 
-inline fun <reified T : Context> Context.newIntent(): Intent =
+inline fun <reified T : Activity> Context.startActivity(vararg data: Pair<String, String>) =
+		this.startActivity(newIntent<T>(data))
+
+inline fun <reified T : Activity> Context.newIntent(): Intent =
 		Intent(this, T::class.java)
+
+inline fun <reified T : Activity> Context.newIntent(data: Array<out Pair<String, String>>): Intent =
+		Intent(this, T::class.java).apply {
+			data.forEach {
+				putExtra(it.first, it.second)
+			}
+		}
