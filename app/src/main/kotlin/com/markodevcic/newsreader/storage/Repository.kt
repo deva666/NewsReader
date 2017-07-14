@@ -16,5 +16,7 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	suspend fun addAll(items: List<T>)
 
+	suspend fun count(): Int
+
 	val clazz: Class<T>
 }

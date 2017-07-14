@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.CheckBox
 import com.markodevcic.newsreader.articles.ArticlesActivity
-import com.markodevcic.newsreader.data.availableCategories
+import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
@@ -33,7 +33,7 @@ class StartupActivity : AppCompatActivity(), StartupView {
 			startMainView()
 		} else {
 			setContentView(R.layout.activity_startup)
-			for ((key, resId) in availableCategories()) {
+			for ((key, resId) in CATEGORIES_TO_RES_MAP) {
 				val checkBox = LayoutInflater.from(this).inflate(R.layout.item_category, categoriesHost, false) as CheckBox
 				checkBox.tag = key
 				checkBox.setText(resId)

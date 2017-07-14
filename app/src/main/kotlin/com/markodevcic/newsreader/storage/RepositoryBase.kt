@@ -7,7 +7,7 @@ import io.realm.RealmModel
 
 abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
-	private val realm = Realm.getDefaultInstance()
+	protected val realm = Realm.getDefaultInstance()
 
 	abstract protected val primaryKey: String
 
@@ -45,6 +45,13 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
 	override suspend fun addAll(items: List<T>) {
 		return realm.inTransactionAsync { copyToRealmOrUpdate(items) }
+	}
+
+	override suspend fun count(): Int {
+		return realm.where(clazz)
+				.findAllAsync()
+				.loadAsync()
+				.size
 	}
 
 	override fun close() {
