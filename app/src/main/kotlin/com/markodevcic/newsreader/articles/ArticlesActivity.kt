@@ -24,6 +24,7 @@ import io.realm.OrderedRealmCollection
 import kotlinx.android.synthetic.main.activity_article_details.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
@@ -35,6 +36,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	@Inject
 	lateinit var sharedPrefs: SharedPreferences
+
+	private val job = Job()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -59,29 +62,42 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		toggle.syncState()
 
 		val menu = navigationView.menu
+		menu.findItem(R.id.nav_unread).isChecked = true
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
 		selectedCategories?.forEach { cat ->
 			menu.add(R.id.groupCategories, cat.hashCode(), Menu.NONE,
-					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException(""))).apply {
+					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException("unkown category"))).apply {
 				icon = getDrawable(R.drawable.ic_category)
 				setActionView(R.layout.menu_counter)
 				isCheckable = true
+				actionView.tag = cat
 			}
 		}
 
 		navigationView.setNavigationItemSelectedListener(this)
+		loadArticles(null)
+		syncUnreadCount()
+	}
 
-		launch(UI) {
-			val articles = presenter.getAllArticles()
+	private fun loadArticles(category: String?) {
+		launch(UI + job) {
+			val articles = if (category == null) presenter.getAllArticles()
+			else presenter.getArticlesInCategory(category)
 			val adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
 			articlesView.adapter = adapter
 			articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
-			val unreadCount = presenter.syncUnreadCount()
-			for ((k, v) in unreadCount) {
-				val textCount = menu.findItem(k.hashCode()).actionView as TextView
-				textCount.text = "$v"
-			}
 		}
+	}
+
+	private fun syncUnreadCount() {
+
+		val menu = navigationView.menu
+		val unreadCount = presenter.syncUnreadCount()
+		for ((k, v) in unreadCount) {
+			val textCount = menu.findItem(k.hashCode()).actionView as TextView
+			textCount.text = "$v"
+		}
+
 	}
 
 	override fun onBackPressed() {
@@ -109,16 +125,26 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
-		val id = item.itemId
 		drawerLayout.closeDrawer(GravityCompat.START)
+		drawerLayout.postDelayed({
+			val id = item.itemId
+			if (id == R.id.nav_unread) {
+				loadArticles(null)
+			} else {
+				val category = item.actionView.tag.toString()
+				supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: 0)
+				loadArticles(category)
+			}
+		}, 300)
 		return true
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == Activity.RESULT_OK) {
-			launch(UI) {
+			launch(UI + job) {
 				presenter.onArticleRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+				syncUnreadCount()
 			}
 		}
 	}
@@ -126,6 +152,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onDestroy() {
 		super.onDestroy()
 		presenter.close()
+		job.cancel()
 	}
 
 	companion object {

@@ -17,7 +17,7 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	suspend fun addAll(items: List<T>)
 
-	suspend fun count(): Int
+	fun count(query: RealmQuery<T>.() -> Unit): Long
 
 	suspend fun query(init: RealmQuery<T>.() -> Unit): List<T>
 

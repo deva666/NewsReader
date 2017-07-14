@@ -48,11 +48,10 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		return realm.inTransactionAsync { copyToRealmOrUpdate(items) }
 	}
 
-	override suspend fun count(): Int {
-		return realm.where(clazz)
-				.findAllAsync()
-				.loadAsync()
-				.size
+	override fun count(query: RealmQuery<T>.() -> Unit): Long {
+		val results = realm.where(clazz)
+		query(results)
+		return results.count()
 	}
 
 	suspend override fun query(init: RealmQuery<T>.() -> Unit): List<T> {

@@ -27,18 +27,22 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		return articlesRepository.getAll()
 	}
 
-	suspend fun getArticlesInCategory(category: String) {
-
+	suspend fun getArticlesInCategory(category: String) : List<Article> {
+		return articlesRepository.query {
+			equalTo("category", category)
+			equalTo("isUnread", true)
+		}
 	}
 
-	suspend fun syncUnreadCount(): Map<String, Int> {
-		val result = ArrayMap<String, Int>()
+	fun syncUnreadCount(): Map<String, Long> {
+		val result = ArrayMap<String, Long>()
 		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
 		categories?.forEach { cat ->
-			val categoryArticles = articlesRepository.query {
+			val count = articlesRepository.count {
 				equalTo("category", cat)
+				equalTo("isUnread", true)
 			}
-			result.put(cat, categoryArticles.size)
+			result.put(cat, count)
 		}
 		return result
 	}

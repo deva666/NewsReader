@@ -1,4 +1,5 @@
 package com.markodevcic.newsreader.util
 
-val SHARED_PREFS = "SHARED_PREFS"
-val KEY_CATEGORIES get() = "CATEGORIES_KEY"
+const val SHARED_PREFS = "SHARED_PREFS"
+const val KEY_CATEGORIES = "CATEGORIES_KEY"
+const val KEY_LAST_DELETE_DATE = "LAST_DELETE_DATE_KEY"
