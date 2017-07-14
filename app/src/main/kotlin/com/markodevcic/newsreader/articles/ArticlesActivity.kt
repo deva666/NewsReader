@@ -2,26 +2,27 @@ package com.markodevcic.newsreader.articles
 
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.extensions.find
+import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.injection.Injector
-import com.markodevcic.newsreader.storage.Repository
+import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import io.realm.OrderedRealmCollection
+import kotlinx.android.synthetic.main.activity_article_details.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
@@ -29,10 +30,10 @@ import javax.inject.Inject
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
 
 	@Inject
-	lateinit var articleRepository: Repository<Article>
+	lateinit var presenter: ArticlesPresenter
 
 	@Inject
-	lateinit var presenter: ArticlesPresenter
+	lateinit var sharedPrefs: SharedPreferences
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -41,17 +42,15 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		presenter.bind(this)
 
 		setContentView(R.layout.activity_main)
-		val toolbar = findViewById(R.id.toolbar) as Toolbar
 		setSupportActionBar(toolbar)
 
-		val recyclerView = find<RecyclerView>(R.id.articlesView)
-		recyclerView.isNestedScrollingEnabled = false
-		recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+		articlesView.isNestedScrollingEnabled = false
+		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		launch(UI) {
-			val articles = articleRepository.getAll()
+			val articles = presenter.getAllArticles()
 			val adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
-			recyclerView.adapter = adapter
-			recyclerView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
+			articlesView.adapter = adapter
+			articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
 		}
 
 		val fab = findViewById(R.id.fab) as FloatingActionButton
@@ -59,20 +58,25 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 		}
 
-		val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
 		val toggle = ActionBarDrawerToggle(
-				this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-		drawer.addDrawerListener(toggle)
+				this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+		drawerLayout.addDrawerListener(toggle)
 		toggle.syncState()
 
-		val navigationView = findViewById(R.id.nav_view) as NavigationView
+
+		val menu = navigationView.menu
+		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
+		selectedCategories?.forEach { cat ->
+			menu.add(R.id.groupCategories, cat.hashCode(), Menu.NONE,
+					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException(""))).icon = getDrawable(R.drawable.ic_category)
+		}
+
 		navigationView.setNavigationItemSelectedListener(this)
 	}
 
 	override fun onBackPressed() {
-		val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-		if (drawer.isDrawerOpen(GravityCompat.START)) {
-			drawer.closeDrawer(GravityCompat.START)
+		if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+			drawerLayout.closeDrawer(GravityCompat.START)
 		} else {
 			super.onBackPressed()
 		}
@@ -96,22 +100,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
 		val id = item.itemId
-
-		if (id == R.id.nav_camera) {
-		} else if (id == R.id.nav_gallery) {
-
-		} else if (id == R.id.nav_slideshow) {
-
-		} else if (id == R.id.nav_manage) {
-
-		} else if (id == R.id.nav_share) {
-
-		} else if (id == R.id.nav_send) {
-
-		}
-
-		val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-		drawer.closeDrawer(GravityCompat.START)
+		drawerLayout.closeDrawer(GravityCompat.START)
 		return true
 	}
 
@@ -122,6 +111,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				presenter.onArticleRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 			}
 		}
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		presenter.close()
 	}
 
 	companion object {

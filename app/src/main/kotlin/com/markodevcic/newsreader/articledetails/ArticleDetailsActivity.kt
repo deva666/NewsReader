@@ -33,6 +33,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
 					progressBar.visibility = View.GONE
 					setResult(Activity.RESULT_OK, Intent().apply { putExtra(KEY_ARTICLE_URL, articleUrl) })
 				}
+				progressBar.progress = newProgress
 			}
 
 			override fun onReceivedTitle(view: WebView?, title: String?) {
