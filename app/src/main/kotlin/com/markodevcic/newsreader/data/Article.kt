@@ -12,11 +12,11 @@ open class Article : RealmObject() {
 	lateinit var url: String
 	lateinit var title: String
 	var author: String? = null
-	lateinit var description: String
-	lateinit var urlToImage: String
+	var description: String? = null
+	var urlToImage: String? = null
 	lateinit var category: String
 	@JsonDeserialize(using = DateToLongSerializer::class)
-	var publishedAt: Long = 0
+	var publishedAt: Long? = null
 
 	@JsonIgnore
 	var isUnread = true

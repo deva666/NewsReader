@@ -38,10 +38,15 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 //		}
 
 		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category] ?: throw IllegalStateException("unknown category"))
-		date.text = formatDate(article.publishedAt)
-		Picasso.with(view.context)
-				.load(article.urlToImage)
-				.into(image)
+		date.text = formatDate(article.publishedAt?:0L)
+		val imageUrl = article.urlToImage
+		if (imageUrl != null && imageUrl.isNotBlank()) {
+			Picasso.with(view.context)
+					.load(article.urlToImage)
+					.centerCrop()
+					.fit()
+					.into(image)
+		}
 		view.setOnClickListener {
 			val activity = view.context as Activity
 			val intent = Intent(activity, ArticleDetailsActivity::class.java)

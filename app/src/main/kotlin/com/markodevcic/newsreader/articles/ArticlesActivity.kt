@@ -13,6 +13,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
@@ -49,6 +50,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setSupportActionBar(toolbar)
 
 		articlesView.isNestedScrollingEnabled = false
+		articlesView.setHasFixedSize(true);
+		articlesView.setItemViewCacheSize(20);
+		articlesView.setDrawingCacheEnabled(true);
+		articlesView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
 		val fab = findViewById(R.id.fab) as FloatingActionButton
@@ -90,14 +95,16 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun syncUnreadCount() {
-
 		val menu = navigationView.menu
 		val unreadCount = presenter.syncUnreadCount()
+		var totalUnread = 0L
 		for ((k, v) in unreadCount) {
 			val textCount = menu.findItem(k.hashCode()).actionView as TextView
 			textCount.text = "$v"
+			totalUnread += v
 		}
-
+		val actionView = menu.findItem(R.id.nav_unread).actionView as TextView
+		actionView.text = "$totalUnread"
 	}
 
 	override fun onBackPressed() {
