@@ -33,8 +33,6 @@ class ArticleDetailsActivity : AppCompatActivity() {
 					progressBar.visibility = View.GONE
 					setResult(Activity.RESULT_OK, Intent().apply { putExtra(KEY_ARTICLE_URL, articleUrl) })
 				}
-				setProgress(newProgress *100)
-				progressBar.progress = newProgress * 100
 			}
 
 			override fun onReceivedTitle(view: WebView?, title: String?) {
@@ -54,17 +52,6 @@ class ArticleDetailsActivity : AppCompatActivity() {
 		}
 		return super.onOptionsItemSelected(item)
 	}
-
-//	override fun finishActivity(requestCode: Int) {
-//		super.finishActivity(requestCode)
-//		if (requestCode == ArticlesActivity.REQUEST_ARTICLE_READ) {
-//			if (pageLoaded) {
-//				setResult(Activity.RESULT_OK, Intent().apply { putExtra(KEY_ARTICLE_URL, articleUrl) })
-//			} else {
-//				setResult(Activity.RESULT_CANCELED)
-//			}
-//		}
-//	}
 
 	companion object {
 		const val KEY_ARTICLE_URL = "KEY_ARTICLE_URL"

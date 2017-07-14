@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     >
 
     <android.support.design.widget.AppBarLayout
@@ -21,25 +22,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:indeterminate="false"
-        android:progress="22"
-        android:progressDrawable="@color/colorPrimary"
-        android:visibility="visible"
-        tools:visibility="visible"/>
-
     <WebView
         android:id="@+id/webView"
-        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </WebView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:indeterminate="true"/>
 
 
 </LinearLayout>
