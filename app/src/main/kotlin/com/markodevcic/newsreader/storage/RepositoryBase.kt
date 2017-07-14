@@ -4,6 +4,7 @@ import com.markodevcic.newsreader.extensions.inTransactionAsync
 import com.markodevcic.newsreader.extensions.loadAsync
 import io.realm.Realm
 import io.realm.RealmModel
+import io.realm.RealmQuery
 
 abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
@@ -28,7 +29,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		return realm.inTransactionAsync { delete(clazz) }
 	}
 
-	override suspend fun update(id:String, modifier: T.() -> Unit) {
+	override suspend fun update(id: String, modifier: T.() -> Unit) {
 		return realm.inTransactionAsync {
 			val dbItem = where(clazz)
 					.equalTo(primaryKey, id)
@@ -52,6 +53,13 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 				.findAllAsync()
 				.loadAsync()
 				.size
+	}
+
+	suspend override fun query(init: RealmQuery<T>.() -> Unit): List<T> {
+		val results = realm.where(clazz)
+		init(results)
+		return results.findAllAsync()
+				.loadAsync()
 	}
 
 	override fun close() {

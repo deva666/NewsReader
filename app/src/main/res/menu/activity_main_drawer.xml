@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group android:checkableBehavior="single"
         android:id="@+id/groupCategories">
         <item
             android:id="@+id/nav_unread"
             android:icon="@drawable/ic_unread"
-            android:title="Unread"/>
+            android:title="Unread"
+            app:actionLayout="@layout/menu_counter"/>
         <!--<item-->
             <!--android:id="@+id/nav_gallery"-->
             <!--android:icon="@drawable/ic_menu_gallery"-->

@@ -13,6 +13,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
@@ -46,12 +47,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 		articlesView.isNestedScrollingEnabled = false
 		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-		launch(UI) {
-			val articles = presenter.getAllArticles()
-			val adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
-			articlesView.adapter = adapter
-			articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
-		}
 
 		val fab = findViewById(R.id.fab) as FloatingActionButton
 		fab.setOnClickListener { view ->
@@ -63,15 +58,30 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		drawerLayout.addDrawerListener(toggle)
 		toggle.syncState()
 
-
 		val menu = navigationView.menu
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
 		selectedCategories?.forEach { cat ->
 			menu.add(R.id.groupCategories, cat.hashCode(), Menu.NONE,
-					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException(""))).icon = getDrawable(R.drawable.ic_category)
+					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException(""))).apply {
+				icon = getDrawable(R.drawable.ic_category)
+				setActionView(R.layout.menu_counter)
+				isCheckable = true
+			}
 		}
 
 		navigationView.setNavigationItemSelectedListener(this)
+
+		launch(UI) {
+			val articles = presenter.getAllArticles()
+			val adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
+			articlesView.adapter = adapter
+			articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
+			val unreadCount = presenter.syncUnreadCount()
+			for ((k, v) in unreadCount) {
+				val textCount = menu.findItem(k.hashCode()).actionView as TextView
+				textCount.text = "$v"
+			}
+		}
 	}
 
 	override fun onBackPressed() {
