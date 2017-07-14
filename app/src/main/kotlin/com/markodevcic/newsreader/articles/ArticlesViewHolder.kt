@@ -2,6 +2,7 @@ package com.markodevcic.newsreader.articles
 
 import android.app.Activity
 import android.content.Intent
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.Spanned
@@ -27,11 +28,14 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 
 	fun bind(article: Article) {
 		description.text = article.description
+		title.text = article.title
 		if (!article.isUnread) {
-			setSpan(title, article.title)
-		} else {
-			title.text = article.title
+			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
+			description.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
 		}
+//		else {
+//			title.text = article.title
+//		}
 
 		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category] ?: throw IllegalStateException("unknown category"))
 		date.text = formatDate(article.publishedAt)

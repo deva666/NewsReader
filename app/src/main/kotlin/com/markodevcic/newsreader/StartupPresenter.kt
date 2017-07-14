@@ -28,7 +28,7 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 		}
 	}
 
-	suspend fun downloadInitialAsync() {
+	suspend fun downloadAllArticlesAsync() {
 		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		if (categorySet.isEmpty()) {
 			view.showNoCategorySelected()

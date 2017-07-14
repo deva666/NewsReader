@@ -46,7 +46,7 @@ class StartupActivity : AppCompatActivity(), StartupView {
 				launch(UI + job) {
 					val dialog = showProgressDialog()
 					try {
-						presenter.downloadInitialAsync()
+						presenter.downloadAllArticlesAsync()
 					} catch (fail: Throwable) {
 						Log.e("Sync", fail.message, fail)
 						showToast("An error occurred while downloading news")
