@@ -153,9 +153,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 					val animator = startRotatingAnimation(refreshMenu)
 					presenter.syncCategory(selectedCategory)
-					syncUnreadCount()
 					refreshMenu.clearAnimation()
 					animator.cancel()
+					refreshMenu.rotation = 0f
+					syncUnreadCount()
 				}
 				true
 			}
@@ -163,11 +164,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		}
 	}
 
-	private fun startRotatingAnimation(refreshMenu: View): ObjectAnimator? {
+	private fun startRotatingAnimation(refreshMenu: View): ObjectAnimator {
 		val animator = ObjectAnimator
 				.ofFloat(refreshMenu, "rotation", refreshMenu.rotation + 360)
 		animator.duration = 1000L
-		animator.repeatMode = Animation.RESTART
+		animator.repeatCount = Animation.INFINITE
 		animator.start()
 		return animator
 	}

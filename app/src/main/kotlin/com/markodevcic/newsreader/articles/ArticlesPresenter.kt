@@ -57,7 +57,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 				equalTo("category", category)
 			}
 		}
-		sources.forEach { src ->
+		for (src in sources.toTypedArray()) {
 			syncService.downloadArticlesAsync(src)
 		}
 	}

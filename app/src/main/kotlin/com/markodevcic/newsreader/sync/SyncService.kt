@@ -1,6 +1,7 @@
 package com.markodevcic.newsreader.sync
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.markodevcic.newsreader.api.NewsApi
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.Source
@@ -34,9 +35,9 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 	suspend fun downloadArticlesAsync(source: Source) {
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
-		articlesRepository.get().use { repo ->
-			repo.addAll(response.articles)
-		}
+		val repo = articlesRepository.get()
+		repo.addAll(response.articles)
+		repo.close()
 	}
 
 	fun deleteOldItemsAsync() {

@@ -24,7 +24,7 @@ suspend fun <T> RealmResults<T>.loadAsync(): List<T> where T : RealmModel {
 	}
 }
 
-suspend fun Realm.inTransactionAsync(receiver: Realm.() -> Unit) {
+inline suspend fun Realm.inTransactionAsync(crossinline receiver: Realm.() -> Unit) {
 	return suspendCancellableCoroutine { continuation ->
 		this.executeTransactionAsync({ realm ->
 			receiver(realm)
