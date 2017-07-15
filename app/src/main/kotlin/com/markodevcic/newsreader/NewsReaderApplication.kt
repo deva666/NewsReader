@@ -13,8 +13,6 @@ class NewsReaderApplication : Application() {
 		Realm.init(this)
 		Injector.init(this)
 		val picasso = Picasso.Builder(this)
-//				.indicatorsEnabled(true)
-//				.loggingEnabled(true)
 				.executor(Executors.newSingleThreadExecutor())
 				.memoryCache(Cache.NONE)
 				.build()

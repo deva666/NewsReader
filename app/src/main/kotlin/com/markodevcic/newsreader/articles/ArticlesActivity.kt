@@ -44,6 +44,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	private var adapter: ArticlesAdapter? = null
 
+	private var selectedCategory: String? = null
+
 	private val job = Job()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,27 +143,30 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		val id = item.itemId
-
-
-		if (id == R.id.action_settings) {
-			return true
+		return when (id) {
+			R.id.action_refresh -> {
+				launch(UI + job) {
+					presenter.syncCategory(selectedCategory)
+					syncUnreadCount()
+				}
+				true
+			}
+			else -> super.onOptionsItemSelected(item)
 		}
-
-		return super.onOptionsItemSelected(item)
 	}
 
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
-
 		val id = item.itemId
 		if (id == R.id.nav_unread) {
 			loadArticles(null)
+			selectedCategory = null
 		} else {
 			val category = item.actionView.tag.toString()
-			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: 0)
+			selectedCategory = category
+			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: throw IllegalStateException("unknow category"))
 			loadArticles(category)
 		}
 		drawerLayout.closeDrawer(GravityCompat.START)
-
 		return true
 	}
 

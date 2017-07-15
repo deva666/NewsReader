@@ -4,13 +4,17 @@ import android.content.SharedPreferences
 import android.util.ArrayMap
 import com.markodevcic.newsreader.Presenter
 import com.markodevcic.newsreader.data.Article
+import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
+import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import java.io.Closeable
 import javax.inject.Inject
 
 class ArticlesPresenter @Inject constructor(private val articlesRepository: Repository<Article>,
-											private val sharedPreferences: SharedPreferences) : Presenter<ArticlesView>, Closeable {
+											private val sourcesRespository: Repository<Source>,
+											private val sharedPreferences: SharedPreferences,
+											private val syncService: SyncService) : Presenter<ArticlesView>, Closeable {
 	private lateinit var view: ArticlesView
 
 	override fun bind(view: ArticlesView) {
@@ -45,6 +49,17 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 			result.put(cat, count)
 		}
 		return result
+	}
+
+	suspend fun syncCategory(category: String?) {
+		val sources = sourcesRespository.query {
+			if (category != null) {
+				equalTo("category", category)
+			}
+		}
+		sources.forEach { src ->
+			syncService.downloadArticlesAsync(src)
+		}
 	}
 
 	override fun close() {
