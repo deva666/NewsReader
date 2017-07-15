@@ -1,5 +1,6 @@
 package com.markodevcic.newsreader.articles
 
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
@@ -15,6 +16,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.Animation
 import android.widget.TextView
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
@@ -25,13 +27,15 @@ import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.squareup.picasso.Picasso
 import io.realm.OrderedRealmCollection
 import io.realm.RealmResults
-import kotlinx.android.synthetic.main.activity_article_details.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main2.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
+
+
 
 
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
@@ -146,13 +150,26 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		return when (id) {
 			R.id.action_refresh -> {
 				launch(UI + job) {
+					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
+					val animator = startRotatingAnimation(refreshMenu)
 					presenter.syncCategory(selectedCategory)
 					syncUnreadCount()
+					refreshMenu.clearAnimation()
+					animator.cancel()
 				}
 				true
 			}
 			else -> super.onOptionsItemSelected(item)
 		}
+	}
+
+	private fun startRotatingAnimation(refreshMenu: View): ObjectAnimator? {
+		val animator = ObjectAnimator
+				.ofFloat(refreshMenu, "rotation", refreshMenu.rotation + 360)
+		animator.duration = 1000L
+		animator.repeatMode = Animation.RESTART
+		animator.start()
+		return animator
 	}
 
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
