@@ -23,11 +23,11 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		}
 	}
 
-	fun getAllArticles(): List<Article> {
+	suspend fun getAllArticles(): List<Article> {
 		return articlesRepository.getAll()
 	}
 
-	fun getArticlesInCategory(category: String) : List<Article> {
+	suspend fun getArticlesInCategory(category: String) : List<Article> {
 		return articlesRepository.query {
 			equalTo("category", category)
 			equalTo("isUnread", true)

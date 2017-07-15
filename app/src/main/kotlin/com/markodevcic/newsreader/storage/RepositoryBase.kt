@@ -19,10 +19,10 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 				.loadAsync()
 	}
 
-	override fun getAll(): List<T> {
+	override suspend fun getAll(): List<T> {
 		return realm.where(clazz)
-				.findAll()
-//				.loadAsync()
+				.findAllAsync()
+				.loadAsync()
 	}
 
 	override suspend fun deleteAll() {
@@ -54,11 +54,11 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		return results.count()
 	}
 
-	override fun query(init: RealmQuery<T>.() -> Unit): List<T> {
+	override suspend fun query(init: RealmQuery<T>.() -> Unit): List<T> {
 		val results = realm.where(clazz)
 		init(results)
-		return results.findAll()
-//				.loadAsync()
+		return results.findAllAsync()
+				.loadAsync()
 	}
 
 	override fun close() {

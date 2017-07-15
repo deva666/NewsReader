@@ -10,9 +10,7 @@ suspend fun <T> T.loadAsync(): T  where T : RealmModel {
 	return suspendCancellableCoroutine { continuation ->
 		(this as RealmObject).addChangeListener<T> { item, _ ->
 			this.removeAllChangeListeners()
-			if (!continuation.isCancelled) {
-				continuation.resume(item)
-			}
+			continuation.resume(item)
 		}
 	}
 }
@@ -21,9 +19,7 @@ suspend fun <T> RealmResults<T>.loadAsync(): List<T> where T : RealmModel {
 	return suspendCancellableCoroutine { continuation ->
 		this.addChangeListener { items, _ ->
 			this.removeAllChangeListeners()
-			if (!continuation.isCancelled) {
-				continuation.resume(items)
-			}
+			continuation.resume(items)
 		}
 	}
 }

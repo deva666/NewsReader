@@ -34,7 +34,6 @@ import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
 
-
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
 
 	@Inject
@@ -56,14 +55,13 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setContentView(R.layout.activity_main)
 		setSupportActionBar(toolbar)
 
-//		articlesView.isNestedScrollingEnabled = false
 		articlesView.setHasFixedSize(true)
 		articlesView.setItemViewCacheSize(20)
 		articlesView.isDrawingCacheEnabled = true
 		articlesView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
 		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
-		articlesView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+		articlesView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 			override fun onScrollStateChanged(recyclerView: RecyclerView?, scrollState: Int) {
 				super.onScrollStateChanged(recyclerView, scrollState)
 				val picasso = Picasso.with(this@ArticlesActivity.applicationContext)
@@ -153,17 +151,17 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+		val id = item.itemId
+		if (id == R.id.nav_unread) {
+			loadArticles(null)
+		} else {
+			val category = item.actionView.tag.toString()
+			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: 0)
+			loadArticles(category)
+		}
 		drawerLayout.closeDrawer(GravityCompat.START)
-		drawerLayout.postDelayed({
-			val id = item.itemId
-			if (id == R.id.nav_unread) {
-				loadArticles(null)
-			} else {
-				val category = item.actionView.tag.toString()
-				supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: 0)
-				loadArticles(category)
-			}
-		}, 300)
+
 		return true
 	}
 
