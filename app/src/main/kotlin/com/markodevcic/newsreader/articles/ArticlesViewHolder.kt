@@ -4,9 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
-import android.text.Spannable
-import android.text.Spanned
-import android.text.style.StrikethroughSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -33,18 +30,18 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
 			description.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
 		}
-//		else {
-//			title.text = article.title
-//		}
 
 		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category] ?: throw IllegalStateException("unknown category"))
-		date.text = formatDate(article.publishedAt?:0L)
+		date.text = formatDate(article.publishedAt ?: 0L)
 		val imageUrl = article.urlToImage
 		if (imageUrl != null && imageUrl.isNotBlank()) {
 			Picasso.with(view.context)
 					.load(article.urlToImage)
 					.centerCrop()
-					.fit()
+					.tag(TAG)
+					.resize(150,150)
+					.onlyScaleDown()
+					.placeholder(R.drawable.ic_image)
 					.into(image)
 		}
 		view.setOnClickListener {
@@ -61,9 +58,7 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 		return dateFormat.format(date)
 	}
 
-	private fun setSpan(textView: TextView, text: String) {
-		textView.setText(text, TextView.BufferType.SPANNABLE)
-		val spannable = textView.text as Spannable
-		spannable.setSpan(StrikethroughSpan(), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+	companion object TAG {
+
 	}
 }

@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,7 +22,9 @@ import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.injection.Injector
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
+import com.squareup.picasso.Picasso
 import io.realm.OrderedRealmCollection
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_article_details.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -30,6 +33,8 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
+
+
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
 
 	@Inject
@@ -37,6 +42,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	@Inject
 	lateinit var sharedPrefs: SharedPreferences
+
+	private var adapter: ArticlesAdapter? = null
 
 	private val job = Job()
 
@@ -49,13 +56,24 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setContentView(R.layout.activity_main)
 		setSupportActionBar(toolbar)
 
-		articlesView.isNestedScrollingEnabled = false
-		articlesView.setHasFixedSize(true);
-		articlesView.setItemViewCacheSize(20);
-		articlesView.setDrawingCacheEnabled(true);
-		articlesView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+//		articlesView.isNestedScrollingEnabled = false
+		articlesView.setHasFixedSize(true)
+		articlesView.setItemViewCacheSize(20)
+		articlesView.isDrawingCacheEnabled = true
+		articlesView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
 		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-
+		articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
+		articlesView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+			override fun onScrollStateChanged(recyclerView: RecyclerView?, scrollState: Int) {
+				super.onScrollStateChanged(recyclerView, scrollState)
+				val picasso = Picasso.with(this@ArticlesActivity.applicationContext)
+				if (scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+					picasso.resumeTag(ArticlesViewHolder.TAG)
+				} else {
+					picasso.pauseTag(ArticlesViewHolder.TAG)
+				}
+			}
+		})
 		val fab = findViewById(R.id.fab) as FloatingActionButton
 		fab.setOnClickListener { view ->
 
@@ -88,9 +106,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		launch(UI + job) {
 			val articles = if (category == null) presenter.getAllArticles()
 			else presenter.getArticlesInCategory(category)
-			val adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
-			articlesView.adapter = adapter
-			articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
+			if (adapter == null) {
+				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
+				articlesView.adapter = adapter
+			} else {
+				adapter?.onDataChanged(articles as RealmResults<Article>)
+			}
 		}
 	}
 
@@ -160,6 +181,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		super.onDestroy()
 		presenter.close()
 		job.cancel()
+		articlesView.clearOnScrollListeners()
 	}
 
 	companion object {

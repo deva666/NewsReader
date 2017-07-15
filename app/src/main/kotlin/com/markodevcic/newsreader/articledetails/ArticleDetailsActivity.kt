@@ -22,7 +22,6 @@ class ArticleDetailsActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_article_details)
 		setSupportActionBar(toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
-		window.setFeatureInt( Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
 		webView.settings.javaScriptEnabled = true
 		webView.setWebChromeClient(object : WebChromeClient() {
 			override fun onProgressChanged(view: WebView?, newProgress: Int) {
