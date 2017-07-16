@@ -89,7 +89,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		toggle.syncState()
 
 		val menu = navigationView.menu
-		menu.findItem(R.id.nav_unread).isChecked = true
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
 		selectedCategories?.forEach { cat ->
 			menu.add(R.id.groupCategories, cat.hashCode(), Menu.NONE,
@@ -102,7 +101,19 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		}
 
 		navigationView.setNavigationItemSelectedListener(this)
-		loadArticles(null)
+		val selectedId: Int
+		if (savedInstanceState?.containsKey("") ?: false) {
+			val cat = savedInstanceState?.getString("")
+			if (cat != null) {
+				selectedId = cat.hashCode()
+			} else {
+				selectedId = R.id.nav_unread
+			}
+		} else {
+			selectedId = R.id.nav_unread
+		}
+		val menuItem = menu.findItem(selectedId)
+		onNavigationItemSelected(menuItem)
 		syncUnreadCount()
 	}
 
@@ -177,7 +188,9 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val id = item.itemId
 		if (id == R.id.nav_unread) {
 			loadArticles(null)
+			item.isChecked = true
 			selectedCategory = null
+			supportActionBar?.title = getString(R.string.app_name)
 		} else {
 			val category = item.actionView.tag.toString()
 			selectedCategory = category
@@ -196,6 +209,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				syncUnreadCount()
 			}
 		}
+	}
+
+	override fun onSaveInstanceState(outState: Bundle?) {
+		super.onSaveInstanceState(outState)
+		outState?.putString("", selectedCategory)
 	}
 
 	override fun onDestroy() {
