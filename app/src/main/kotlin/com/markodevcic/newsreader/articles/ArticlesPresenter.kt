@@ -21,17 +21,17 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		this.view = view
 	}
 
-	suspend fun onArticleRead(articleUrl: String) {
+	suspend fun onArticleReadAsync(articleUrl: String) {
 		articlesRepository.update(articleUrl) {
 			isUnread = false
 		}
 	}
 
-	suspend fun getAllArticles(): List<Article> {
+	suspend fun getAllArticlesAsync(): List<Article> {
 		return articlesRepository.getAll()
 	}
 
-	suspend fun getArticlesInCategory(category: String) : List<Article> {
+	suspend fun getArticlesInCategoryAsync(category: String) : List<Article> {
 		return articlesRepository.query {
 			equalTo("category", category)
 			equalTo("isUnread", true)
@@ -51,13 +51,13 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		return result
 	}
 
-	suspend fun syncCategory(category: String?) {
+	suspend fun syncCategoryAsync(category: String?) {
 		val sources = sourcesRespository.query {
 			if (category != null) {
 				equalTo("category", category)
 			}
 		}
-		for (src in sources.toTypedArray()) {
+		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends
 			syncService.downloadArticlesAsync(src)
 		}
 	}

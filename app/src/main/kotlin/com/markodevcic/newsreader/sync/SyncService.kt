@@ -1,7 +1,6 @@
 package com.markodevcic.newsreader.sync
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.markodevcic.newsreader.api.NewsApi
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.Source
@@ -22,7 +21,7 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 									  private val articlesRepository: Provider<Repository<Article>>,
 									  private val sharedPreferences: SharedPreferences) {
 
-	suspend fun downloadSourcesAsync(categories: Collection<String>) : Collection<Source> {
+	suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source> {
 		sourcesRepository.get().use { repo ->
 			repo.deleteAll()
 			val downloadJobs = categories.map { cat -> newsApi.getSources(cat).launchAsync() }
@@ -35,17 +34,21 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 	suspend fun downloadArticlesAsync(source: Source) {
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
-		val repo = articlesRepository.get()
-		repo.addAll(response.articles)
-		repo.close()
+		articlesRepository.get().use { repo ->
+			repo.addAll(response.articles)
+		}
 	}
 
 	fun deleteOldItemsAsync() {
 		val lastDeleteDate = sharedPreferences.getLong(KEY_LAST_DELETE_DATE, 0)
-		if (Date().time - THREE_DAYS_AGO >= lastDeleteDate) {
+		val threeDaysAgo = Date().time - THREE_DAYS_IN_MILISECONDS
+		if (threeDaysAgo >= lastDeleteDate) {
 			async(CommonPool) {
 				articlesRepository.get().use { repo ->
-
+					val items = repo.query {
+						lessThan("publishedAt", threeDaysAgo)
+					}
+					repo.delete(items)
 				}
 				sharedPreferences.editorCommit {
 					putLong(KEY_LAST_DELETE_DATE, Date().time)
@@ -55,6 +58,6 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 	}
 
 	companion object {
-		private const val THREE_DAYS_AGO = 3 * 24 * 60 * 60 * 1000
+		private const val THREE_DAYS_IN_MILISECONDS = 3 * 24 * 60 * 60 * 1000
 	}
 }

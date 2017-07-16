@@ -108,8 +108,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	private fun loadArticles(category: String?) {
 		launch(UI + job) {
-			val articles = if (category == null) presenter.getAllArticles()
-			else presenter.getArticlesInCategory(category)
+			val articles = if (category == null) presenter.getAllArticlesAsync()
+			else presenter.getArticlesInCategoryAsync(category)
 			if (adapter == null) {
 				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
 				articlesView.adapter = adapter
@@ -152,7 +152,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				launch(UI + job) {
 					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 					val animator = startRotatingAnimation(refreshMenu)
-					presenter.syncCategory(selectedCategory)
+					presenter.syncCategoryAsync(selectedCategory)
 					refreshMenu.clearAnimation()
 					animator.cancel()
 					refreshMenu.rotation = 0f
@@ -192,7 +192,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == Activity.RESULT_OK) {
 			launch(UI + job) {
-				presenter.onArticleRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+				presenter.onArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 				syncUnreadCount()
 			}
 		}
