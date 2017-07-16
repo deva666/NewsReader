@@ -26,9 +26,13 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 	fun bind(article: Article) {
 		description.text = article.description
 		title.text = article.title
-		if (!article.isUnread) {
+		val isUnread = article.isUnread
+		if (!isUnread) {
 			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
 			description.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
+		} else {
+			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.primary_text_light))
+			description.setTextColor(ContextCompat.getColor(view.context, android.R.color.primary_text_light))
 		}
 
 		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category] ?: throw IllegalStateException("unknown category"))

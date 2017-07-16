@@ -6,6 +6,8 @@ import java.io.Closeable
 
 interface Repository<T> : Closeable  where T : RealmModel {
 
+	fun refresh()
+
 	fun getById(id: String): T?
 
 	suspend fun getAll(): List<T>

@@ -25,7 +25,6 @@ import com.markodevcic.newsreader.injection.Injector
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.squareup.picasso.Picasso
 import io.realm.OrderedRealmCollection
-import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -159,6 +158,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 					val animator = startRotatingAnimation(refreshMenu)
 					presenter.syncCategoryAsync(selectedCategory)
+					loadArticles()
 					refreshMenu.clearAnimation()
 					animator.cancel()
 					refreshMenu.rotation = 0f
@@ -203,7 +203,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
 				articlesView.adapter = adapter
 			} else {
-				adapter?.onDataChanged(articles as RealmResults<Article>)
+				adapter?.onDataChanged(articles as OrderedRealmCollection<Article>)
 			}
 			if (articles.isEmpty()) {
 				noItemsText.visibility = View.VISIBLE

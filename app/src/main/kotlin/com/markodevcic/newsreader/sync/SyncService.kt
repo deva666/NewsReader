@@ -8,6 +8,8 @@ import com.markodevcic.newsreader.extensions.awaitAll
 import com.markodevcic.newsreader.extensions.executeAsync
 import com.markodevcic.newsreader.extensions.launchAsync
 import com.markodevcic.newsreader.storage.Repository
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -29,14 +31,16 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 	suspend fun downloadArticlesAsync(source: Source) {
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
-		val repo = articlesRepository.get()
-		repo.use { repo ->
-			for (article in response.articles) {
-				if (repo.getById(article.url) == null) {
-					repo.add(article)
+		async(CommonPool) {
+			val repo = articlesRepository.get()
+			repo.use { repo ->
+				for (article in response.articles) {
+					if (repo.getById(article.url) == null) {
+						repo.add(article)
+					}
 				}
 			}
-		}
+		}.await()
 	}
 
 	companion object {

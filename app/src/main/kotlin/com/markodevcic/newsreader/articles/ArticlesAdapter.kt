@@ -6,7 +6,6 @@ import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.data.Article
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
-import io.realm.RealmResults
 
 class ArticlesAdapter(var articles: OrderedRealmCollection<Article>) : RealmRecyclerViewAdapter<Article, ArticlesViewHolder>(articles, true) {
 
@@ -18,17 +17,13 @@ class ArticlesAdapter(var articles: OrderedRealmCollection<Article>) : RealmRecy
 		holder.bind(articles[position])
 	}
 
-	override fun getItemCount(): Int {
-		return articles.size
-	}
-
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticlesViewHolder {
 		val inflater = LayoutInflater.from(parent.context)
 		val view = inflater.inflate(R.layout.item_article, parent, false)
 		return ArticlesViewHolder(view)
 	}
 
-	fun onDataChanged(results:RealmResults<Article>) {
+	fun onDataChanged(results:OrderedRealmCollection<Article>) {
 		articles = results
 		updateData(results)
 	}

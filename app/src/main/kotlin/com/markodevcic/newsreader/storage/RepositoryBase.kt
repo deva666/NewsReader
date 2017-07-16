@@ -10,6 +10,10 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
 	abstract protected val primaryKey: String
 
+	override fun refresh() {
+		realm.refresh()
+	}
+
 	override fun getById(id: String): T? {
 		return realm.where(clazz)
 				.equalTo(primaryKey, id)
