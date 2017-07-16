@@ -69,13 +69,13 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
 		drawerLayout.addDrawerListener(toggle)
 		toggle.syncState()
+		navigationView.setNavigationItemSelectedListener(this)
 
 		val menu = setupMenuItems()
-
-		navigationView.setNavigationItemSelectedListener(this)
 		val selectedId: Int = checkSelectedMenuItem(savedInstanceState)
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
+
 		syncUnreadCount()
 	}
 

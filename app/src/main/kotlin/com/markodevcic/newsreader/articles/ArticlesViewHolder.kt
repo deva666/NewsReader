@@ -30,21 +30,24 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 		if (!isUnread) {
 			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
 			description.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
+			category.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
+			date.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
 		} else {
 			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.primary_text_light))
 			description.setTextColor(ContextCompat.getColor(view.context, android.R.color.primary_text_light))
+			category.setTextColor(ContextCompat.getColor(view.context, android.R.color.tertiary_text_light))
+			date.setTextColor(ContextCompat.getColor(view.context, android.R.color.tertiary_text_light))
 		}
 
-		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category] ?: throw IllegalStateException("unknown category"))
-		date.text = formatDate(article.publishedAt ?: 0L)
+		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category]!!)
+		date.text = formatDate(article.publishedAt ?: Date().time)
 		val imageUrl = article.urlToImage
 		if (imageUrl != null && imageUrl.isNotBlank()) {
 			Picasso.with(view.context)
 					.load(article.urlToImage)
 					.centerCrop()
 					.tag(TAG)
-					.resize(150,150)
-					.onlyScaleDown()
+					.fit()
 					.placeholder(R.drawable.ic_image)
 					.into(image)
 		}
@@ -58,11 +61,9 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 
 	private fun formatDate(time: Long): String {
 		val date = Date(time)
-		val dateFormat = android.text.format.DateFormat.getDateFormat(view.context)
+		val dateFormat = android.text.format.DateFormat.getMediumDateFormat(view.context)
 		return dateFormat.format(date)
 	}
 
-	companion object TAG {
-
-	}
+	companion object TAG
 }
