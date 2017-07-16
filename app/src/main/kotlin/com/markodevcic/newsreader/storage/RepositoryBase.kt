@@ -5,6 +5,7 @@ import com.markodevcic.newsreader.extensions.loadAsync
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmQuery
+import io.realm.RealmResults
 
 abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
@@ -23,6 +24,14 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		return realm.where(clazz)
 				.findAllAsync()
 				.loadAsync()
+	}
+
+	override suspend fun delete(items: List<T>) {
+		realm.inTransactionAsync {
+			if (items is RealmResults<T>) {
+				items.deleteAllFromRealm()
+			}
+		}
 	}
 
 	override suspend fun deleteAll() {
