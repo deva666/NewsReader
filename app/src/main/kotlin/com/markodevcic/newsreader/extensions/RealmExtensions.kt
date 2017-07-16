@@ -24,14 +24,11 @@ suspend fun <T> RealmResults<T>.loadAsync(): List<T> where T : RealmModel {
 	}
 }
 
-inline suspend fun Realm.inTransactionAsync(crossinline receiver: Realm.() -> Unit) {
+suspend fun Realm.inTransactionAsync(receiver: Realm.() -> Unit) {
 	return suspendCancellableCoroutine { continuation ->
-		this.executeTransactionAsync({ realm ->
+		this.executeTransactionAsync { realm ->
 			receiver(realm)
-		}, {
 			continuation.resume(Unit)
-		}, { fail ->
-			continuation.resumeWithException(fail)
-		})
+		}
 	}
 }

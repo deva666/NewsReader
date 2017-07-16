@@ -8,7 +8,7 @@ import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import io.realm.RealmResults
 
-class ArticlesAdapter(private var articles: OrderedRealmCollection<Article>) : RealmRecyclerViewAdapter<Article, ArticlesViewHolder>(articles, true) {
+class ArticlesAdapter(var articles: OrderedRealmCollection<Article>) : RealmRecyclerViewAdapter<Article, ArticlesViewHolder>(articles, true) {
 
 	init {
 		setHasStableIds(false)

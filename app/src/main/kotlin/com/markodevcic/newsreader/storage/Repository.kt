@@ -5,7 +5,8 @@ import io.realm.RealmQuery
 import java.io.Closeable
 
 interface Repository<T> : Closeable  where T : RealmModel {
-	suspend fun getById(id: String): T
+
+	suspend fun getById(id: String): T?
 
 	suspend fun getAll(): List<T>
 
@@ -13,7 +14,9 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	suspend fun delete(items: List<T>)
 
-	suspend fun update(id:String, modifier: T.() -> Unit)
+	fun update(id:String, modifier: T.() -> Unit)
+
+	fun update(items: Array<T>, modifier: T.() -> Unit)
 
 	suspend fun add(item: T)
 
@@ -21,7 +24,7 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun count(query: RealmQuery<T>.() -> Unit): Long
 
-	suspend fun query(init: RealmQuery<T>.() -> Unit): List<T>
+	suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: String?, descending: Boolean): List<T>
 
 	val clazz: Class<T>
 }

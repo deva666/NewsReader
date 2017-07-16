@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -36,8 +35,6 @@ import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
 
-
-
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
 
 	@Inject
@@ -61,26 +58,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setContentView(R.layout.activity_main)
 		setSupportActionBar(toolbar)
 
-		articlesView.setHasFixedSize(true)
-		articlesView.setItemViewCacheSize(20)
-		articlesView.isDrawingCacheEnabled = true
-		articlesView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
-		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-		articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
-		articlesView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-			override fun onScrollStateChanged(recyclerView: RecyclerView?, scrollState: Int) {
-				super.onScrollStateChanged(recyclerView, scrollState)
-				val picasso = Picasso.with(this@ArticlesActivity.applicationContext)
-				if (scrollState == RecyclerView.SCROLL_STATE_IDLE) {
-					picasso.resumeTag(ArticlesViewHolder.TAG)
-				} else {
-					picasso.pauseTag(ArticlesViewHolder.TAG)
-				}
-			}
-		})
-		val fab = findViewById(R.id.fab) as FloatingActionButton
-		fab.setOnClickListener { view ->
+		setupArticlesView()
 
+		btnMarkAllRead.setOnClickListener {
+			val adapterCopy = adapter ?: return@setOnClickListener
+			presenter.markItemsReadAsync(adapterCopy.articles.toTypedArray())
+			syncUnreadCount()
 		}
 
 		val toggle = ActionBarDrawerToggle(
@@ -88,17 +71,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		drawerLayout.addDrawerListener(toggle)
 		toggle.syncState()
 
-		val menu = navigationView.menu
-		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
-		selectedCategories?.forEach { cat ->
-			menu.add(R.id.groupCategories, cat.hashCode(), Menu.NONE,
-					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException("unkown category"))).apply {
-				icon = getDrawable(R.drawable.ic_category)
-				setActionView(R.layout.menu_counter)
-				isCheckable = true
-				actionView.tag = cat
-			}
-		}
+		val menu = setupMenuItems()
 
 		navigationView.setNavigationItemSelectedListener(this)
 		val selectedId: Int
@@ -117,17 +90,39 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		syncUnreadCount()
 	}
 
-	private fun loadArticles(category: String?) {
-		launch(UI + job) {
-			val articles = if (category == null) presenter.getAllArticlesAsync()
-			else presenter.getArticlesInCategoryAsync(category)
-			if (adapter == null) {
-				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
-				articlesView.adapter = adapter
-			} else {
-				adapter?.onDataChanged(articles as RealmResults<Article>)
+	private fun setupArticlesView() {
+		articlesView.setHasFixedSize(true)
+		articlesView.setItemViewCacheSize(20)
+		articlesView.isDrawingCacheEnabled = true
+		articlesView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
+		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+		articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
+		articlesView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrollStateChanged(recyclerView: RecyclerView?, scrollState: Int) {
+				super.onScrollStateChanged(recyclerView, scrollState)
+				val picasso = Picasso.with(this@ArticlesActivity.applicationContext)
+				if (scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+					picasso.resumeTag(ArticlesViewHolder)
+				} else {
+					picasso.pauseTag(ArticlesViewHolder)
+				}
+			}
+		})
+	}
+
+	private fun setupMenuItems(): Menu {
+		val menu = navigationView.menu
+		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
+		selectedCategories?.forEach { cat ->
+			menu.add(R.id.groupCategories, cat.hashCode(), Menu.NONE,
+					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException("unknown category"))).apply {
+				icon = getDrawable(R.drawable.ic_category)
+				setActionView(R.layout.menu_counter)
+				isCheckable = true
+				actionView.tag = cat
 			}
 		}
+		return menu
 	}
 
 	private fun syncUnreadCount() {
@@ -136,11 +131,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		var totalUnread = 0L
 		for ((k, v) in unreadCount) {
 			val textCount = menu.findItem(k.hashCode()).actionView as TextView
-			textCount.text = "$v"
+			textCount.text = if (v > 0) v.toString() else ""
 			totalUnread += v
 		}
 		val actionView = menu.findItem(R.id.nav_unread).actionView as TextView
-		actionView.text = "$totalUnread"
+		actionView.text = if (totalUnread > 0) totalUnread.toString() else ""
 	}
 
 	override fun onBackPressed() {
@@ -187,7 +182,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
 		val id = item.itemId
 		if (id == R.id.nav_unread) {
-			loadArticles(null)
 			item.isChecked = true
 			selectedCategory = null
 			supportActionBar?.title = getString(R.string.app_name)
@@ -195,10 +189,27 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			val category = item.actionView.tag.toString()
 			selectedCategory = category
 			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: throw IllegalStateException("unknow category"))
-			loadArticles(category)
 		}
+		loadArticles()
 		drawerLayout.closeDrawer(GravityCompat.START)
 		return true
+	}
+
+	private fun loadArticles() {
+		launch(UI + job) {
+			val articles = presenter.getArticlesInCategoryAsync(selectedCategory)
+			if (adapter == null) {
+				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
+				articlesView.adapter = adapter
+			} else {
+				adapter?.onDataChanged(articles as RealmResults<Article>)
+			}
+			if (articles.isEmpty()) {
+				noItemsText.visibility = View.VISIBLE
+			} else {
+				noItemsText.visibility = View.GONE
+			}
+		}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

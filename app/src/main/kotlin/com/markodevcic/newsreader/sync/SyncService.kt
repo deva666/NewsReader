@@ -5,7 +5,6 @@ import com.markodevcic.newsreader.api.NewsApi
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.extensions.awaitAll
-import com.markodevcic.newsreader.extensions.editorCommit
 import com.markodevcic.newsreader.extensions.executeAsync
 import com.markodevcic.newsreader.extensions.launchAsync
 import com.markodevcic.newsreader.storage.Repository
@@ -34,8 +33,13 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 	suspend fun downloadArticlesAsync(source: Source) {
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
-		articlesRepository.get().use { repo ->
-			repo.addAll(response.articles)
+		val repo = articlesRepository.get()
+		repo.use { repo ->
+			for (article in response.articles) {
+				if (repo.getById(article.url) == null) {
+					repo.add(article)
+				}
+			}
 		}
 	}
 
@@ -44,15 +48,15 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 		val threeDaysAgo = Date().time - THREE_DAYS_IN_MILISECONDS
 		if (threeDaysAgo >= lastDeleteDate) {
 			async(CommonPool) {
-				articlesRepository.get().use { repo ->
-					val items = repo.query {
-						lessThan("publishedAt", threeDaysAgo)
-					}
-					repo.delete(items)
-				}
-				sharedPreferences.editorCommit {
-					putLong(KEY_LAST_DELETE_DATE, Date().time)
-				}
+				//				articlesRepository.get().use { repo ->
+//					val items = repo.query {
+//						lessThan("publishedAt", threeDaysAgo)
+//					}
+//					repo.delete(items)
+//				}
+//				sharedPreferences.editorCommit {
+//					putLong(KEY_LAST_DELETE_DATE, Date().time)
+//				}
 			}
 		}
 	}
