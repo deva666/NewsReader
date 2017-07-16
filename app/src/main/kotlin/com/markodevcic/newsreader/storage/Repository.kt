@@ -6,7 +6,7 @@ import java.io.Closeable
 
 interface Repository<T> : Closeable  where T : RealmModel {
 
-	suspend fun getById(id: String): T?
+	fun getById(id: String): T?
 
 	suspend fun getAll(): List<T>
 
@@ -18,7 +18,7 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun update(items: Array<T>, modifier: T.() -> Unit)
 
-	suspend fun add(item: T)
+	fun add(item: T)
 
 	suspend fun addAll(items: List<T>)
 

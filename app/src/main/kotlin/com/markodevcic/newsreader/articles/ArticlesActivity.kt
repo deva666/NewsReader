@@ -162,6 +162,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					refreshMenu.clearAnimation()
 					animator.cancel()
 					refreshMenu.rotation = 0f
+					noItemsText.visibility = View.GONE
 					syncUnreadCount()
 				}
 				true

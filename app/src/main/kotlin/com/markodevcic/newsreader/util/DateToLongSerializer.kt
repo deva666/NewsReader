@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class DateToLongSerializer : JsonDeserializer<Long>() {
@@ -12,7 +13,7 @@ class DateToLongSerializer : JsonDeserializer<Long>() {
 							 deserializationcontext: DeserializationContext): Long {
 
 		val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-		val date = jsonparser.text ?: return 0L
+		val date = jsonparser.text ?: return Date().time
 		return format.parse(date).time
 	}
 

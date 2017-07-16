@@ -8,10 +8,6 @@ import com.markodevcic.newsreader.extensions.awaitAll
 import com.markodevcic.newsreader.extensions.executeAsync
 import com.markodevcic.newsreader.extensions.launchAsync
 import com.markodevcic.newsreader.storage.Repository
-import com.markodevcic.newsreader.util.KEY_LAST_DELETE_DATE
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -39,24 +35,6 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 				if (repo.getById(article.url) == null) {
 					repo.add(article)
 				}
-			}
-		}
-	}
-
-	fun deleteOldItemsAsync() {
-		val lastDeleteDate = sharedPreferences.getLong(KEY_LAST_DELETE_DATE, 0)
-		val threeDaysAgo = Date().time - THREE_DAYS_IN_MILISECONDS
-		if (threeDaysAgo >= lastDeleteDate) {
-			async(CommonPool) {
-				//				articlesRepository.get().use { repo ->
-//					val items = repo.query {
-//						lessThan("publishedAt", threeDaysAgo)
-//					}
-//					repo.delete(items)
-//				}
-//				sharedPreferences.editorCommit {
-//					putLong(KEY_LAST_DELETE_DATE, Date().time)
-//				}
 			}
 		}
 	}

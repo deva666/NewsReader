@@ -10,11 +10,10 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
 	abstract protected val primaryKey: String
 
-	override suspend fun getById(id: String): T? {
+	override fun getById(id: String): T? {
 		return realm.where(clazz)
 				.equalTo(primaryKey, id)
-				.findFirstAsync()
-				.loadAsync()
+				.findFirst()
 	}
 
 	override suspend fun getAll(): List<T> {
@@ -52,14 +51,14 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		}
 	}
 
-	override suspend fun add(item: T) {
-		return realm.inTransactionAsync {
-			copyToRealm(item)
+	override fun add(item: T) {
+		return realm.executeTransaction { r ->
+			r.copyToRealm(item)
 		}
 	}
 
 	override suspend fun addAll(items: List<T>) {
-		return realm.inTransactionAsync { copyToRealm(items) }
+		return realm.inTransactionAsync { copyToRealmOrUpdate(items) }
 	}
 
 	override fun count(query: RealmQuery<T>.() -> Unit): Long {
