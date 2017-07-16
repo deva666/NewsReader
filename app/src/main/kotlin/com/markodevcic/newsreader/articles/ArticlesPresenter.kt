@@ -21,7 +21,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		this.view = view
 	}
 
-	suspend fun onArticleReadAsync(articleUrl: String) {
+	suspend fun markArticleReadAsync(articleUrl: String) {
 		articlesRepository.update(articleUrl) {
 			isUnread = false
 		}

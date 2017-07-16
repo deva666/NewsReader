@@ -73,17 +73,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val menu = setupMenuItems()
 
 		navigationView.setNavigationItemSelectedListener(this)
-		val selectedId: Int
-		if (savedInstanceState?.containsKey("") ?: false) {
-			val cat = savedInstanceState?.getString("")
-			if (cat != null) {
-				selectedId = cat.hashCode()
-			} else {
-				selectedId = R.id.nav_unread
-			}
-		} else {
-			selectedId = R.id.nav_unread
-		}
+		val selectedId: Int = checkSelectedMenuItem(savedInstanceState)
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
 		syncUnreadCount()
@@ -122,6 +112,17 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			}
 		}
 		return menu
+	}
+
+	private fun checkSelectedMenuItem(savedInstanceState: Bundle?): Int {
+		var selectedId: Int = R.id.nav_unread
+		if (savedInstanceState?.containsKey(KEY_CATEGORY) ?: false) {
+			val cat = savedInstanceState?.getString(KEY_CATEGORY)
+			if (cat != null) {
+				selectedId = cat.hashCode()
+			}
+		}
+		return selectedId
 	}
 
 	private fun syncUnreadCount() {
@@ -217,7 +218,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == Activity.RESULT_OK) {
 			launch(UI + job) {
-				presenter.onArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+				presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 				syncUnreadCount()
 			}
 		}
@@ -225,7 +226,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onSaveInstanceState(outState: Bundle?) {
 		super.onSaveInstanceState(outState)
-		outState?.putString("", selectedCategory)
+		outState?.putString(KEY_CATEGORY, selectedCategory)
 	}
 
 	override fun onDestroy() {
@@ -236,6 +237,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	companion object {
+		private const val KEY_CATEGORY = "KEY_CATEGORY"
 		const val REQUEST_ARTICLE_READ = 1231
 	}
 }
