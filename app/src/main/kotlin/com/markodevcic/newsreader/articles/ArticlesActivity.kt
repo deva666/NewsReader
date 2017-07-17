@@ -26,7 +26,7 @@ import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.squareup.picasso.Picasso
 import io.realm.OrderedRealmCollection
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main2.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
