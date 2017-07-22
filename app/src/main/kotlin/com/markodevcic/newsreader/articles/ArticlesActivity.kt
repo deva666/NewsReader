@@ -21,7 +21,9 @@ import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
+import com.markodevcic.newsreader.settings.SettingsActivity
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.squareup.picasso.Picasso
 import io.realm.OrderedRealmCollection
@@ -61,7 +63,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 		btnMarkAllRead.setOnClickListener {
 			val adapterCopy = adapter ?: return@setOnClickListener
-			presenter.markItemsReadAsync(adapterCopy.articles.toTypedArray())
+			presenter.markItemsRead(adapterCopy.articles.toTypedArray())
 			syncUnreadCount()
 		}
 
@@ -166,6 +168,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					noItemsText.visibility = View.GONE
 					syncUnreadCount()
 				}
+				true
+			}
+			R.id.action_settings -> {
+				startActivity<SettingsActivity>()
 				true
 			}
 			else -> super.onOptionsItemSelected(item)

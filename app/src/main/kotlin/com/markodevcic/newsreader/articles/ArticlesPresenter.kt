@@ -41,7 +41,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		}, "isUnread", true)
 	}
 
-	fun markItemsReadAsync(items: Array<Article>) {
+	fun markItemsRead(items: Array<Article>) {
 		articlesRepository.update(items) {
 			isUnread = false
 		}

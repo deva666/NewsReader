@@ -9,10 +9,10 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".StartupActivity"
             android:label="@string/app_name"
@@ -30,9 +30,15 @@
             android:label="@string/title_activity_articles"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".articledetails.ArticleDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".articles.ArticlesActivity">
+        <activity
+            android:name=".articledetails.ArticleDetailsActivity"
+            android:parentActivityName=".articles.ArticlesActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:parentActivityName=".articles.ArticlesActivity"
+            android:label="@string/title_activity_settings">
         </activity>
     </application>
 
