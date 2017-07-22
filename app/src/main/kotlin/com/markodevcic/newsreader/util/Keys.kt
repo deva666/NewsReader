@@ -1,3 +1,5 @@
+@file:JvmName(name = "Keys")
+
 package com.markodevcic.newsreader.util
 
 const val SHARED_PREFS = "SHARED_PREFS"

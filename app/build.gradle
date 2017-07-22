@@ -68,9 +68,15 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.1'
     compile 'com.android.support:support-v4:25.3.1'
+
     testCompile 'junit:junit:4.12'
+
+    testCompile "org.mockito:mockito-core:2.7.19"
+    androidTestCompile "org.mockito:mockito-android:2.7.19"
+
     kapt 'com.google.dagger:dagger-compiler:2.11'
     kapt 'com.google.dagger:dagger-android-processor:2.11'
+
     provided 'com.google.dagger:dagger:2.11'
     provided 'javax.annotation:jsr250-api:1.0'
 }

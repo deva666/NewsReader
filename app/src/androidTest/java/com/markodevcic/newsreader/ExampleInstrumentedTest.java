@@ -23,4 +23,6 @@ public class ExampleInstrumentedTest {
 		
 		assertEquals("com.markodevcic.newsreader", appContext.getPackageName());
 	}
+	
+	
 }
