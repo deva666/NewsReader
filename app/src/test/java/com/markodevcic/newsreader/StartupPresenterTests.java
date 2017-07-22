@@ -23,11 +23,11 @@ public class StartupPresenterTests {
 	@Mock
 	private SharedPreferences.Editor editor;
 	
+	@Mock
 	private StartupView startupView;
 	
 	@InjectMocks
 	private StartupPresenter sut;
-	
 	
 	@Before
 	public void setup() {
@@ -38,6 +38,6 @@ public class StartupPresenterTests {
 	@Test
 	public void testCategorySaving() {
 		sut.onCategoryChanging("entertainment", true);
-		Mockito.verify(editor.putStringSet(Mockito.eq(Keys.KEY_CATEGORIES), Mockito.<String>anySet()));
+		Mockito.verify(editor).putStringSet(Mockito.eq(Keys.KEY_CATEGORIES), Mockito.<String>anySet());
 	}
 }
