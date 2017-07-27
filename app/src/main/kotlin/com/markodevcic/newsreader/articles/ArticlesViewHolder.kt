@@ -49,7 +49,10 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 					.tag(TAG)
 					.fit()
 					.placeholder(R.drawable.ic_image)
+					.error(R.drawable.ic_image)
 					.into(image)
+		} else {
+			image.setImageDrawable(view.context.getDrawable(R.drawable.ic_image))
 		}
 		view.setOnClickListener {
 			val activity = view.context as Activity
