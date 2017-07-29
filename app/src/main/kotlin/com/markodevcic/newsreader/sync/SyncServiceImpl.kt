@@ -10,15 +10,16 @@ import com.markodevcic.newsreader.extensions.launchAsync
 import com.markodevcic.newsreader.storage.Repository
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
-import javax.inject.Inject
+import kotlinx.coroutines.experimental.runBlocking
+import java.util.*
 import javax.inject.Provider
 
-class SyncService @Inject constructor(private val newsApi: NewsApi,
-									  private val sourcesRepository: Provider<Repository<Source>>,
-									  private val articlesRepository: Provider<Repository<Article>>,
-									  private val sharedPreferences: SharedPreferences) {
+class SyncServiceImpl(private val newsApi: NewsApi,
+					  private val sourcesRepository: Provider<Repository<Source>>,
+					  private val articlesRepository: Provider<Repository<Article>>,
+					  private val sharedPreferences: SharedPreferences) : SyncService {
 
-	suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source> {
+	override suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source> {
 		sourcesRepository.get().use { repo ->
 			repo.deleteAll()
 			val downloadJobs = categories.map { cat -> newsApi.getSources(cat).launchAsync() }
@@ -28,7 +29,7 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 		}
 	}
 
-	suspend fun downloadArticlesAsync(source: Source) {
+	override suspend fun downloadArticlesAsync(source: Source) {
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
 		async(CommonPool) {
@@ -36,6 +37,9 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 			repo.use { repo ->
 				for (article in response.articles) {
 					if (repo.getById(article.url) == null) {
+						if (article.publishedAt == null) {
+							article.publishedAt = Date().time
+						}
 						repo.add(article)
 					}
 				}
@@ -46,4 +50,13 @@ class SyncService @Inject constructor(private val newsApi: NewsApi,
 	companion object {
 		private const val THREE_DAYS_IN_MILISECONDS = 3 * 24 * 60 * 60 * 1000
 	}
+}
+
+interface SyncService {
+	suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source>
+	suspend fun downloadArticlesAsync(source: Source)
+}
+
+class CallSyncService(private val syncService: SyncServiceImpl) {
+	fun callDownloadArticlesAsync(source: Source) = runBlocking { syncService.downloadArticlesAsync(source) }
 }
