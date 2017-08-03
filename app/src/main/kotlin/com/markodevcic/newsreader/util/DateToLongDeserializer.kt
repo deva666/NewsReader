@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class DateToLongSerializer : JsonDeserializer<Long>() {
+class DateToLongDeserializer : JsonDeserializer<Long>() {
 
 	override fun deserialize(jsonparser: JsonParser,
 							 deserializationcontext: DeserializationContext): Long {
