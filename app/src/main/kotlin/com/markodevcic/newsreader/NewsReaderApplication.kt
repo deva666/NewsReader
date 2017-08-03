@@ -19,6 +19,8 @@ class NewsReaderApplication : Application() {
 		Realm.getDefaultInstance().executeTransaction { realm ->
 			realm.where(Article::class.java)
 					.lessThan("publishedAt", threeDaysAgo)
+					.or()
+					.equalTo("publishedAt", 0)
 					.findAll()
 					.deleteAllFromRealm()
 		}
