@@ -28,7 +28,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		}
 	}
 
-	suspend fun syncArticlesFromAllCategoriesAsync() {
+	suspend fun syncAllArticles() {
 		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
 		categories?.forEach { cat ->
 			syncCategoryAsync(cat)

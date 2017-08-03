@@ -242,15 +242,15 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	override fun onNoArticlesSaved() {
-		articlesParent.postDelayed(this::a, 200)
+		articlesParent.postDelayed(this::syncAllArticles, 200)
 	}
 
-	private fun a() {
-		Snackbar.make(articlesParent, "No articles, trying to sync", Snackbar.LENGTH_LONG).show()
+	private fun syncAllArticles() {
+		Snackbar.make(articlesParent, R.string.no_articles_try_sync, Snackbar.LENGTH_LONG).show()
 		launch(UI + job) {
 			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 			val animator = startRotatingAnimation(refreshMenu)
-			presenter.syncArticlesFromAllCategoriesAsync()
+			presenter.syncAllArticles()
 			loadArticles()
 			endAnimation(refreshMenu, animator)
 		}
