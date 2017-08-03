@@ -8,7 +8,8 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.markodevcic.newsreader.articles.ArticlesActivity"
     tools:showIn="@layout/app_bar_main"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/articlesParent">
 
     <TextView
         android:id="@+id/noItemsText"
