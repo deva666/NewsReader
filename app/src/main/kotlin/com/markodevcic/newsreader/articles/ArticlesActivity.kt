@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -64,7 +65,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		btnMarkAllRead.setOnClickListener {
 			val adapterCopy = adapter ?: return@setOnClickListener
 			presenter.markItemsRead(adapterCopy.articles.toTypedArray())
-			syncUnreadCount()
 		}
 
 		val toggle = ActionBarDrawerToggle(
@@ -78,14 +78,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
 
-		syncUnreadCount()
+		presenter.onStart()
 	}
 
 	private fun setupArticlesView() {
 		articlesView.setHasFixedSize(true)
-		articlesView.setItemViewCacheSize(20)
 		articlesView.isDrawingCacheEnabled = true
-		articlesView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
 		articlesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		articlesView.layoutManager = LinearLayoutManager(this@ArticlesActivity)
 		articlesView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -127,11 +125,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		return selectedId
 	}
 
-	private fun syncUnreadCount() {
+	override fun onUnreadCountChanged(counts: Map<String, Long>) {
 		val menu = navigationView.menu
-		val unreadCount = presenter.syncUnreadCount()
 		var totalUnread = 0L
-		for ((k, v) in unreadCount) {
+		for ((k, v) in counts) {
 			val textCount = menu.findItem(k.hashCode()).actionView as TextView
 			textCount.text = if (v > 0) v.toString() else ""
 			totalUnread += v
@@ -162,11 +159,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					val animator = startRotatingAnimation(refreshMenu)
 					presenter.syncCategoryAsync(selectedCategory)
 					loadArticles()
-					refreshMenu.clearAnimation()
-					animator.cancel()
-					refreshMenu.rotation = 0f
 					noItemsText.visibility = View.GONE
-					syncUnreadCount()
+					endAnimation(refreshMenu, animator)
 				}
 				true
 			}
@@ -185,6 +179,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		animator.repeatCount = Animation.INFINITE
 		animator.start()
 		return animator
+	}
+
+	private fun endAnimation(refreshMenu: View, animator: ObjectAnimator) {
+		refreshMenu.clearAnimation()
+		animator.cancel()
+		refreshMenu.rotation = 0f
 	}
 
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -225,7 +225,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == Activity.RESULT_OK) {
 			launch(UI + job) {
 				presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
-				syncUnreadCount()
 			}
 		}
 	}
@@ -240,6 +239,21 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		presenter.close()
 		job.cancel()
 		articlesView.clearOnScrollListeners()
+	}
+
+	override fun onNoArticlesSaved() {
+		articlesParent.postDelayed(this::a, 200)
+	}
+
+	private fun a() {
+		Snackbar.make(articlesParent, "No articles, trying to sync", Snackbar.LENGTH_LONG).show()
+		launch(UI + job) {
+			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
+			val animator = startRotatingAnimation(refreshMenu)
+			presenter.syncArticlesFromAllCategoriesAsync()
+			loadArticles()
+			endAnimation(refreshMenu, animator)
+		}
 	}
 
 	companion object {
