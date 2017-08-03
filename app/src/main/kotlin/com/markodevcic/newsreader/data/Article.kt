@@ -2,7 +2,7 @@ package com.markodevcic.newsreader.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.markodevcic.newsreader.util.DateToLongSerializer
+import com.markodevcic.newsreader.util.DateToLongDeserializer
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 
@@ -15,7 +15,7 @@ open class Article : RealmObject() {
 	var description: String? = null
 	var urlToImage: String? = null
 	lateinit var category: String
-	@JsonDeserialize(using = DateToLongSerializer::class)
+	@JsonDeserialize(using = DateToLongDeserializer::class)
 	var publishedAt: Long? = null
 
 	@JsonIgnore
