@@ -1,7 +1,6 @@
 package com.markodevcic.newsreader.injection
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.markodevcic.newsreader.api.ApiFactory
 import com.markodevcic.newsreader.api.NewsApi
 import com.markodevcic.newsreader.data.Article
@@ -34,9 +33,7 @@ class AppModule(private val context: Context) {
 	@Provides
 	fun providesSyncService(newsApi: NewsApi,
 							sourcesRepository: Provider<Repository<Source>>,
-							articlesRepository: Provider<Repository<Article>>,
-							sharedPreferences: SharedPreferences): SyncService = SyncServiceImpl(newsApi,
+							articlesRepository: Provider<Repository<Article>>): SyncService = SyncServiceImpl(newsApi,
 			sourcesRepository,
-			articlesRepository,
-			sharedPreferences)
+			articlesRepository)
 }
