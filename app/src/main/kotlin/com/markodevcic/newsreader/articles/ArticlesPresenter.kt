@@ -12,7 +12,7 @@ import java.io.Closeable
 import javax.inject.Inject
 
 class ArticlesPresenter @Inject constructor(private val articlesRepository: Repository<Article>,
-											private val sourcesRespository: Repository<Source>,
+											private val sourcesRepository: Repository<Source>,
 											private val sharedPreferences: SharedPreferences,
 											private val syncService: SyncService) : Presenter<ArticlesView>, Closeable {
 	private lateinit var view: ArticlesView
@@ -21,10 +21,25 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		this.view = view
 	}
 
+	fun onStart() {
+		view.onUnreadCountChanged(getUnreadCount())
+		if (articlesRepository.count { } == 0L) {
+			view.onNoArticlesSaved()
+		}
+	}
+
+	suspend fun syncArticlesFromAllCategoriesAsync() {
+		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
+		categories?.forEach { cat ->
+			syncCategoryAsync(cat)
+		}
+	}
+
 	suspend fun markArticleReadAsync(articleUrl: String) {
 		articlesRepository.update(articleUrl) {
 			isUnread = false
 		}
+		view.onUnreadCountChanged(getUnreadCount())
 	}
 
 	suspend fun getAllArticlesAsync(): List<Article> {
@@ -45,9 +60,10 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		articlesRepository.update(items) {
 			isUnread = false
 		}
+		view.onUnreadCountChanged(getUnreadCount())
 	}
 
-	fun syncUnreadCount(): Map<String, Long> {
+	private fun getUnreadCount(): Map<String, Long> {
 		val result = ArrayMap<String, Long>()
 		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
 		categories?.forEach { cat ->
@@ -61,14 +77,15 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 	}
 
 	suspend fun syncCategoryAsync(category: String?) {
-		val sources = sourcesRespository.query({
+		val sources = sourcesRepository.query({
 			if (category != null) {
 				equalTo("category", category)
 			}
 		}, null, true)
-		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends
+		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
 			syncService.downloadArticlesAsync(src)
 		}
+		view.onUnreadCountChanged(getUnreadCount())
 	}
 
 	override fun close() {
