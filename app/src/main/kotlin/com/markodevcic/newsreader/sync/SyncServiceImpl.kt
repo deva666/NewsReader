@@ -30,8 +30,8 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
 		async(CommonPool) {
-			val repo = articlesRepository.get()
-			repo.use { repo ->
+			val repository = articlesRepository.get()
+			repository.use { repo ->
 				for (article in response.articles) {
 					if (repo.getById(article.url) == null) {
 						if (article.publishedAt == null) {
