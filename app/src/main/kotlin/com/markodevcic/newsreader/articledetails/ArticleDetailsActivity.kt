@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.markodevcic.newsreader.R
 import kotlinx.android.synthetic.main.activity_article_details.*
 
@@ -39,6 +39,9 @@ class ArticleDetailsActivity : AppCompatActivity() {
 				super.onReceivedTitle(view, title)
 				supportActionBar?.title = title
 			}
+		})
+		webView.setWebViewClient(object : WebViewClient() {
+
 		})
 		articleUrl = intent.getStringExtra(KEY_ARTICLE_URL) ?: throw IllegalStateException("article url expected in bundle")
 		webView.visibility = View.GONE
