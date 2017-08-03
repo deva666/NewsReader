@@ -2,7 +2,7 @@ package com.markodevcic.newsreader;
 
 import android.content.SharedPreferences;
 
-import com.markodevcic.newsreader.sync.SyncService;
+import com.markodevcic.newsreader.sync.SyncServiceImpl;
 import com.markodevcic.newsreader.util.Keys;
 
 import org.junit.Before;
@@ -15,7 +15,7 @@ import org.mockito.MockitoAnnotations;
 public class StartupPresenterTests {
 
 	@Mock
-	private SyncService syncService;
+	private SyncServiceImpl syncService;
 	
 	@Mock
 	private SharedPreferences sharedPreferences;

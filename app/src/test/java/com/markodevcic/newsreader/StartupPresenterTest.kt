@@ -1,6 +1,7 @@
 package com.markodevcic.newsreader
 
 import android.content.SharedPreferences
+import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import kotlinx.coroutines.experimental.runBlocking
@@ -15,16 +16,16 @@ class StartupPresenterTest {
 
 	@Mock
 	private lateinit var syncService: SyncService
-	
+
 	@Mock
 	private lateinit var sharedPreferences: SharedPreferences
-	
+
 	@Mock
 	private lateinit var editor: SharedPreferences.Editor
-	
+
 	@Mock
 	private lateinit var startupView: StartupView
-	
+
 	@InjectMocks
 	private lateinit var sut: StartupPresenter
 
@@ -48,5 +49,17 @@ class StartupPresenterTest {
 			sut.downloadAllArticlesAsync()
 		}
 		Mockito.verify(startupView).showNoCategorySelected()
+	}
+
+	@Test
+	fun testDownloadSources() {
+		runBlocking {
+			val categories = setOf("entertainment")
+			Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(categories)
+			Mockito.`when`(syncService.downloadSourcesAsync(categories)).thenReturn(listOf<Source>())
+			sut.bind(startupView)
+			sut.downloadAllArticlesAsync()
+			Mockito.verify(startupView).startMainView()
+		}
 	}
 }
