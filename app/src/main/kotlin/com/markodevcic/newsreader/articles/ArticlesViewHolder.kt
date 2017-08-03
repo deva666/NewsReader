@@ -40,7 +40,7 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 		}
 
 		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category]!!)
-		date.text = formatDate(article.publishedAt ?: Date().time)
+		date.text = formatDate(article.publishedAt)
 		val imageUrl = article.urlToImage
 		if (imageUrl != null && imageUrl.isNotBlank()) {
 			Picasso.with(view.context)
@@ -62,7 +62,10 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 		}
 	}
 
-	private fun formatDate(time: Long): String {
+	private fun formatDate(time: Long?): String {
+		if (time == null) {
+			return ""
+		}
 		val date = Date(time)
 		val dateFormat = android.text.format.DateFormat.getMediumDateFormat(view.context)
 		return dateFormat.format(date)
