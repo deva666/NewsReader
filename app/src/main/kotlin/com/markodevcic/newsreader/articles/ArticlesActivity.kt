@@ -19,6 +19,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.widget.TextView
 import com.markodevcic.newsreader.R
+import com.markodevcic.newsreader.StartupActivity
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
@@ -167,6 +168,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			R.id.action_settings -> {
 				startActivity<SettingsActivity>()
 				true
+			}
+			R.id.action_categories -> {
+				val intent = Intent(this, StartupActivity::class.java)
+				intent.putExtra(StartupActivity.KEY_CHANGE_CATEGORY, true)
+				startActivity(intent)
+				return true
 			}
 			else -> super.onOptionsItemSelected(item)
 		}

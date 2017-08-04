@@ -15,6 +15,11 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 		this.view = view
 	}
 
+	fun onStartCategorySelect() {
+		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
+		categorySet?.let { c -> view.onCategorySelected(c) }
+	}
+
 	fun onCategoryChanging(tag: String, enabled: Boolean) {
 		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		if (enabled) {
