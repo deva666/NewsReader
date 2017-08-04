@@ -2,7 +2,10 @@ package com.markodevcic.newsreader.storage
 
 import com.markodevcic.newsreader.extensions.inTransactionAsync
 import com.markodevcic.newsreader.extensions.loadAsync
-import io.realm.*
+import io.realm.Realm
+import io.realm.RealmModel
+import io.realm.RealmQuery
+import io.realm.Sort
 
 abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
@@ -26,11 +29,11 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 				.loadAsync()
 	}
 
-	override suspend fun delete(items: List<T>) {
+	override suspend fun delete(query: RealmQuery<T>.() -> Unit) {
 		return realm.inTransactionAsync {
-			if (items is RealmResults<T>) {
-				items.deleteAllFromRealm()
-			}
+			val results = where(clazz)
+			query(results)
+			results.findAll().deleteAllFromRealm()
 		}
 	}
 

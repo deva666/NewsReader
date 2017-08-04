@@ -14,7 +14,7 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	suspend fun deleteAll()
 
-	suspend fun delete(items: List<T>)
+	suspend fun delete(query: RealmQuery<T>.() -> Unit)
 
 	fun update(id:String, modifier: T.() -> Unit)
 

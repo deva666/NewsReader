@@ -17,6 +17,13 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 					  private val articlesRepository: Provider<Repository<Article>>) : SyncService {
 
 	override suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source> {
+		articlesRepository.get().use { repo ->
+			repo.delete {
+				for (c in categories) {
+					notEqualTo("category", c)
+				}
+			}
+		}
 		sourcesRepository.get().use { repo ->
 			repo.deleteAll()
 			val downloadJobs = categories.map { cat -> newsApi.getSources(cat).launchAsync() }
