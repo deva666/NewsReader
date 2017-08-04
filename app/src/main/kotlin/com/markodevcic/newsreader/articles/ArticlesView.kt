@@ -6,4 +6,6 @@ interface ArticlesView : BaseView {
 	fun onUnreadCountChanged(counts: Map<String, Long>)
 
 	fun onNoArticlesSaved()
+
+	fun onArticlesDownloaded(count: Int)
 }

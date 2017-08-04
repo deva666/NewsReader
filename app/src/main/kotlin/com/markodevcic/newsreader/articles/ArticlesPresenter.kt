@@ -82,10 +82,13 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 				equalTo("category", category)
 			}
 		}, null, true)
+		var dowloadCount = 0
 		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
-			syncService.downloadArticlesAsync(src)
+			dowloadCount += syncService.downloadArticlesAsync(src)
 		}
 		view.onUnreadCountChanged(getUnreadCount())
+		view.onArticlesDownloaded(dowloadCount)
+
 	}
 
 	override fun close() {

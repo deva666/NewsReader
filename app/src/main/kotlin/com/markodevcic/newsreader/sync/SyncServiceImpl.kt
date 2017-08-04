@@ -26,26 +26,29 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 		}
 	}
 
-	override suspend fun downloadArticlesAsync(source: Source) {
+	override suspend fun downloadArticlesAsync(source: Source): Int {
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
+		var downloadCount = 0
 		async(CommonPool) {
 			val repository = articlesRepository.get()
 			repository.use { repo ->
 				for (article in response.articles) {
 					if (repo.getById(article.url) == null) {
-						if (article.publishedAt == null) {
+						if (article.publishedAt == null || article.publishedAt!! == 0L) {
 							article.publishedAt = Date().time
 						}
 						repo.add(article)
+						downloadCount++
 					}
 				}
 			}
 		}.await()
+		return downloadCount
 	}
 }
 
 interface SyncService {
 	suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source>
-	suspend fun downloadArticlesAsync(source: Source)
+	suspend fun downloadArticlesAsync(source: Source): Int
 }

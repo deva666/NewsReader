@@ -256,6 +256,16 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		}
 	}
 
+	override fun onArticlesDownloaded(count: Int) {
+		val message : String
+		if (count > 0) {
+			message = "Downloaded $count articles"
+		} else {
+			message = "No new articles"
+		}
+		Snackbar.make(articlesParent, message, Snackbar.LENGTH_LONG).show()
+	}
+
 	companion object {
 		private const val KEY_CATEGORY = "KEY_CATEGORY"
 		const val REQUEST_ARTICLE_READ = 1231
