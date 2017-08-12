@@ -1,7 +1,6 @@
 package com.markodevcic.newsreader.articles
 
 import android.animation.ObjectAnimator
-import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -172,7 +171,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			R.id.action_categories -> {
 				val intent = Intent(this, StartupActivity::class.java)
 				intent.putExtra(StartupActivity.KEY_CHANGE_CATEGORY, true)
-				startActivity(intent)
+				startActivityForResult(intent, REQUEST_SETTINGS)
 				return true
 			}
 			else -> super.onOptionsItemSelected(item)
@@ -229,10 +228,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
-		if (requestCode == REQUEST_ARTICLE_READ && resultCode == Activity.RESULT_OK) {
+		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
 			launch(UI + job) {
 				presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 			}
+		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
+			syncAllArticles()
 		}
 	}
 
@@ -249,17 +250,16 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	override fun onNoArticlesSaved() {
-		articlesParent.postDelayed(this::syncAllArticles, 200)
+		articlesParent.postDelayed(this::syncAllArticles, 100)
+		Snackbar.make(articlesParent, R.string.no_articles_try_sync, Snackbar.LENGTH_LONG).show()
 	}
 
 	private fun syncAllArticles() {
-		Snackbar.make(articlesParent, R.string.no_articles_try_sync, Snackbar.LENGTH_LONG).show()
 		launch(UI + job) {
 			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 			val animator = startRotatingAnimation(refreshMenu)
-			presenter.syncAllArticles()
 			noItemsText.visibility = View.GONE
-			loadArticles()
+			presenter.syncCategoryAsync(null)
 			endAnimation(refreshMenu, animator)
 		}
 	}
@@ -277,5 +277,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	companion object {
 		private const val KEY_CATEGORY = "KEY_CATEGORY"
 		const val REQUEST_ARTICLE_READ = 1231
+		const val REQUEST_SETTINGS = 2213
 	}
 }

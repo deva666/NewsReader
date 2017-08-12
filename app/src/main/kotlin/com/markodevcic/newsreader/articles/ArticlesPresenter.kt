@@ -28,11 +28,19 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		}
 	}
 
-	suspend fun syncAllArticles() {
-		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
-		categories?.forEach { cat ->
-			syncCategoryAsync(cat)
+	suspend fun syncCategoryAsync(category: String?) {
+		val sources = sourcesRepository.query({
+			if (category != null) {
+				equalTo("category", category)
+			}
+		}, null, true)
+		var downloadCount = 0
+		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
+			downloadCount += syncService.downloadArticlesAsync(src)
 		}
+		view.onUnreadCountChanged(getUnreadCount())
+		view.onArticlesDownloaded(downloadCount)
+
 	}
 
 	suspend fun markArticleReadAsync(articleUrl: String) {
@@ -40,10 +48,6 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 			isUnread = false
 		}
 		view.onUnreadCountChanged(getUnreadCount())
-	}
-
-	suspend fun getAllArticlesAsync(): List<Article> {
-		return articlesRepository.getAll()
 	}
 
 	suspend fun getArticlesInCategoryAsync(category: String?): List<Article> {
@@ -74,21 +78,6 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 			result.put(cat, count)
 		}
 		return result
-	}
-
-	suspend fun syncCategoryAsync(category: String?) {
-		val sources = sourcesRepository.query({
-			if (category != null) {
-				equalTo("category", category)
-			}
-		}, null, true)
-		var dowloadCount = 0
-		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
-			dowloadCount += syncService.downloadArticlesAsync(src)
-		}
-		view.onUnreadCountChanged(getUnreadCount())
-		view.onArticlesDownloaded(dowloadCount)
-
 	}
 
 	override fun close() {

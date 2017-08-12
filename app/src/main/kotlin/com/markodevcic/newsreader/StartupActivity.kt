@@ -1,5 +1,6 @@
 package com.markodevcic.newsreader
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.graphics.Typeface
 import android.os.Bundle
@@ -77,6 +78,7 @@ class StartupActivity : AppCompatActivity(), StartupView {
 	}
 
 	override fun startMainView() {
+		setResult(Activity.RESULT_OK)
 		startActivity<ArticlesActivity>()
 	}
 
