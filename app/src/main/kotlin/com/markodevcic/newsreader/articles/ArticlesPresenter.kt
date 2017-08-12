@@ -24,7 +24,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 	fun onStart() {
 		view.onUnreadCountChanged(getUnreadCount())
 		if (articlesRepository.count { } == 0L) {
-			view.onNoArticlesSaved()
+			view.onNoArticlesAvailable()
 		}
 	}
 
@@ -43,7 +43,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 
 	}
 
-	suspend fun markArticleReadAsync(articleUrl: String) {
+	fun markArticleReadAsync(articleUrl: String) {
 		articlesRepository.update(articleUrl) {
 			isUnread = false
 		}

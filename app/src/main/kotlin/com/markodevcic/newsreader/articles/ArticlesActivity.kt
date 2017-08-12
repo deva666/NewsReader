@@ -229,9 +229,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
-			launch(UI + job) {
-				presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
-			}
+			presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
 			syncAllArticles()
 		}
@@ -249,7 +247,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		articlesView.clearOnScrollListeners()
 	}
 
-	override fun onNoArticlesSaved() {
+	override fun onNoArticlesAvailable() {
 		articlesParent.postDelayed(this::syncAllArticles, 100)
 		Snackbar.make(articlesParent, R.string.no_articles_try_sync, Snackbar.LENGTH_LONG).show()
 	}
@@ -265,7 +263,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	override fun onArticlesDownloaded(count: Int) {
-		val message : String
+		val message: String
 		if (count > 0) {
 			message = "Downloaded $count articles"
 		} else {
