@@ -2,6 +2,7 @@ package com.markodevcic.newsreader
 
 import android.content.SharedPreferences
 import com.markodevcic.newsreader.data.Source
+import com.markodevcic.newsreader.startup.StartupPresenter
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import kotlinx.coroutines.experimental.runBlocking

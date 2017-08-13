@@ -42,7 +42,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2"
-            tools:context="com.markodevcic.newsreader.StartupActivity"
+            tools:context="com.markodevcic.newsreader.startup.StartupActivity"
             tools:showIn="@layout/activity_startup">
         </LinearLayout>
 

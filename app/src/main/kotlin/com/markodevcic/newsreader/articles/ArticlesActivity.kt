@@ -167,8 +167,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 					val animator = startRotatingAnimation(refreshMenu)
 					presenter.syncCategoryAsync(selectedCategory)
-					loadArticles()
 					noItemsText.visibility = View.GONE
+					loadArticles()
 					endAnimation(refreshMenu, animator)
 				}
 				true

@@ -1,6 +1,6 @@
 package com.markodevcic.newsreader.injection
 
-import com.markodevcic.newsreader.StartupActivity
+import com.markodevcic.newsreader.startup.StartupActivity
 import com.markodevcic.newsreader.articles.ArticlesActivity
 import com.markodevcic.newsreader.categories.SelectCategoriesActivity
 import dagger.Component
