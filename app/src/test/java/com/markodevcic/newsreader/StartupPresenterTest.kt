@@ -59,7 +59,7 @@ class StartupPresenterTest {
 			Mockito.`when`(syncService.downloadSourcesAsync(categories)).thenReturn(listOf<Source>())
 			sut.bind(startupView)
 			sut.downloadAllArticlesAsync()
-			Mockito.verify(startupView).startMainView()
+			Mockito.verify(startupView).finishView()
 		}
 	}
 }

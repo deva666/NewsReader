@@ -46,7 +46,7 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 			if (sourcesRepository.count { } == 0L) {
 				syncService.downloadSourcesAsync(CATEGORIES_TO_RES_MAP.keys)
 			}
-			view.startMainView()
+			view.finishView()
 		}
 	}
 

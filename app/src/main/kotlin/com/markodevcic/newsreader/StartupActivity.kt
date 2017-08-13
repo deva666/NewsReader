@@ -14,7 +14,7 @@ import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
-import kotlinx.android.synthetic.main.activity_startup.*
+import kotlinx.android.synthetic.main.layout_categories.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -24,6 +24,8 @@ class StartupActivity : AppCompatActivity(), StartupView {
 
 	@Inject
 	lateinit var presenter: StartupPresenter
+
+	private var isFirstRun = false
 
 	private val job = Job()
 
@@ -40,6 +42,7 @@ class StartupActivity : AppCompatActivity(), StartupView {
 				supportActionBar?.title = "Categories"
 			} else {
 				supportActionBar?.title = getString(R.string.app_name)
+				isFirstRun = true
 			}
 			for ((key, resId) in CATEGORIES_TO_RES_MAP) {
 				val checkBox = LayoutInflater.from(this).inflate(R.layout.item_category, categoriesHost, false) as CheckBox
@@ -67,7 +70,7 @@ class StartupActivity : AppCompatActivity(), StartupView {
 			}
 			presenter.onStartCategorySelect()
 		} else {
-			startMainView()
+			finishView()
 		}
 	}
 
@@ -77,9 +80,13 @@ class StartupActivity : AppCompatActivity(), StartupView {
 		showToast("Please choose at least one category")
 	}
 
-	override fun startMainView() {
-		setResult(Activity.RESULT_OK)
-		startActivity<ArticlesActivity>()
+	override fun finishView() {
+		if (isFirstRun) {
+			setResult(Activity.RESULT_OK)
+			onBackPressed()
+		} else {
+			startActivity<ArticlesActivity>()
+		}
 	}
 
 	override fun onCategorySelected(categorySet: Set<String>) {
