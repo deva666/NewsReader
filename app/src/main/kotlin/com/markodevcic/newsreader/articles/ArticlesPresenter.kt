@@ -43,9 +43,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 				equalTo("category", category)
 			} else {
 				val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
-				for (cat in selectedCategories.toTypedArray()) {
-					equalTo("category", cat)
-				}
+				`in`("category", selectedCategories.toTypedArray())
 			}
 		}, null, true)
 		var downloadCount = 0
@@ -54,7 +52,6 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		}
 		view.onUnreadCountChanged(getUnreadCount())
 		view.onArticlesDownloaded(downloadCount)
-
 	}
 
 	fun markArticleReadAsync(articleUrl: String) {
