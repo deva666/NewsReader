@@ -170,7 +170,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			}
 			R.id.action_categories -> {
 				val intent = Intent(this, StartupActivity::class.java)
-				intent.putExtra(StartupActivity.KEY_CHANGE_CATEGORY, true)
 				startActivityForResult(intent, REQUEST_SETTINGS)
 				return true
 			}

@@ -1,7 +1,7 @@
 package com.markodevcic.newsreader
 
-interface StartupView : BaseView{
-	fun showNoCategorySelected()
-	fun finishView()
-	fun onCategorySelected(categorySet: Set<String>)
+import com.markodevcic.newsreader.categories.BaseCategoriesView
+
+interface StartupView : BaseCategoriesView {
+	fun startMainView()
 }

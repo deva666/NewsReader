@@ -1,7 +1,7 @@
 package com.markodevcic.newsreader
 
 
-interface Presenter<T : BaseView> {
+interface Presenter<in T : BaseView> {
 
 	fun bind(view: T)
 }

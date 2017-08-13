@@ -46,7 +46,7 @@ class StartupPresenterTest {
 		Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(setOf())
 		sut.bind(startupView)
 		runBlocking {
-			sut.downloadAllArticlesAsync()
+			sut.downloadSourcesAsync()
 		}
 		Mockito.verify(startupView).showNoCategorySelected()
 	}
@@ -58,8 +58,8 @@ class StartupPresenterTest {
 			Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(categories)
 			Mockito.`when`(syncService.downloadSourcesAsync(categories)).thenReturn(listOf<Source>())
 			sut.bind(startupView)
-			sut.downloadAllArticlesAsync()
-			Mockito.verify(startupView).finishView()
+			sut.downloadSourcesAsync()
+			Mockito.verify(startupView).startMainView()
 		}
 	}
 }

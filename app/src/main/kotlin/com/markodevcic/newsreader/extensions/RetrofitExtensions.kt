@@ -39,6 +39,6 @@ fun <T> Call<T>.launchAsync(): Deferred<T> {
 	return async(CommonPool) { this@launchAsync.execute().body()!! }
 }
 
-suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
+suspend fun <T> List<Deferred<T>>.waitAllAsync(): List<T> {
 	return this.map { job -> job.await() }
 }

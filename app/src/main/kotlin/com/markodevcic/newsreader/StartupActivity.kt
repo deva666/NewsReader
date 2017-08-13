@@ -1,16 +1,12 @@
 package com.markodevcic.newsreader
 
-import android.app.Activity
 import android.app.ProgressDialog
-import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.MenuItem
-import android.widget.CheckBox
+import android.view.ViewGroup
 import com.markodevcic.newsreader.articles.ArticlesActivity
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.categories.BaseCategoriesActivity
 import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
@@ -20,12 +16,13 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
-class StartupActivity : AppCompatActivity(), StartupView {
+class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 	@Inject
-	lateinit var presenter: StartupPresenter
+	override lateinit var presenter: StartupPresenter
 
-	private var isFirstRun = false
+	override val categoriesViewGroup: ViewGroup
+		get() = categoriesHost
 
 	private val job = Job()
 
@@ -34,31 +31,16 @@ class StartupActivity : AppCompatActivity(), StartupView {
 		Injector.appComponent.inject(this)
 		presenter.bind(this)
 
-		if (intent.hasExtra(KEY_CHANGE_CATEGORY) || !presenter.canOpenMainView) {
+		if (!presenter.canOpenMainView) {
 			setContentView(R.layout.activity_startup)
 			setSupportActionBar(toolbar)
-			if (intent.hasExtra(KEY_CHANGE_CATEGORY)) {
-				supportActionBar?.setDisplayHomeAsUpEnabled(true)
-				supportActionBar?.title = "Categories"
-			} else {
-				supportActionBar?.title = getString(R.string.app_name)
-				isFirstRun = true
-			}
-			for ((key, resId) in CATEGORIES_TO_RES_MAP) {
-				val checkBox = LayoutInflater.from(this).inflate(R.layout.item_category, categoriesHost, false) as CheckBox
-				checkBox.tag = key
-				checkBox.setText(resId)
-				checkBox.typeface = Typeface.SERIF
-				checkBox.setOnCheckedChangeListener { box, checked ->
-					presenter.onCategoryChanging(box.tag.toString(), checked)
-				}
-				categoriesHost.addView(checkBox)
-			}
+			supportActionBar?.title = getString(R.string.app_name)
+			fillCategories()
 			saveCategoriesBtn.setOnClickListener {
 				launch(UI + job) {
 					val dialog = showProgressDialog()
 					try {
-						presenter.downloadAllArticlesAsync()
+						presenter.downloadSourcesAsync()
 					} catch (fail: Throwable) {
 						Log.e("Sync", fail.message, fail)
 						dialog.dismiss()
@@ -70,31 +52,14 @@ class StartupActivity : AppCompatActivity(), StartupView {
 			}
 			presenter.onStartCategorySelect()
 		} else {
-			finishView()
+			startMainView()
 		}
 	}
 
 	private fun showProgressDialog() = ProgressDialog.show(this, "Downloading sources", "", true, false)
 
-	override fun showNoCategorySelected() {
-		showToast("Please choose at least one category")
-	}
-
-	override fun finishView() {
-		if (isFirstRun) {
-			setResult(Activity.RESULT_OK)
-			onBackPressed()
-		} else {
-			startActivity<ArticlesActivity>()
-		}
-	}
-
-	override fun onCategorySelected(categorySet: Set<String>) {
-		(0..categoriesHost.childCount - 1)
-				.map { categoriesHost.getChildAt(it) }
-				.filterIsInstance<CheckBox>()
-				.filter { categorySet.contains(it.tag) }
-				.forEach { it.isChecked = true }
+	override fun startMainView() {
+		startActivity<ArticlesActivity>()
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -108,9 +73,5 @@ class StartupActivity : AppCompatActivity(), StartupView {
 	override fun onDestroy() {
 		super.onDestroy()
 		job.cancel()
-	}
-
-	companion object {
-		const val KEY_CHANGE_CATEGORY = "KEY_CHANGE_CATEGORY"
 	}
 }
