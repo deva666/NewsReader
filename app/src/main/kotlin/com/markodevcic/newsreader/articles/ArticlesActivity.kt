@@ -18,8 +18,8 @@ import android.view.View
 import android.view.animation.Animation
 import android.widget.TextView
 import com.markodevcic.newsreader.R
-import com.markodevcic.newsreader.StartupActivity
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
+import com.markodevcic.newsreader.categories.SelectCategoriesActivity
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.startActivity
@@ -102,6 +102,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	private fun setupMenuItems(): Menu {
 		val menu = navigationView.menu
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
+		(1..menu.size() - 1)
+				.map { menu.getItem(it) }
+				.forEach { menu.removeItem(it.itemId) }
+
 		selectedCategories?.forEach { cat ->
 			menu.add(R.id.groupCategories, cat.hashCode(), Menu.NONE,
 					getString(CATEGORIES_TO_RES_MAP[cat] ?: throw IllegalStateException("unknown category"))).apply {
@@ -169,7 +173,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				true
 			}
 			R.id.action_categories -> {
-				val intent = Intent(this, StartupActivity::class.java)
+				val intent = Intent(this, SelectCategoriesActivity::class.java)
 				startActivityForResult(intent, REQUEST_SETTINGS)
 				return true
 			}
@@ -201,7 +205,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		} else {
 			val category = item.actionView.tag.toString()
 			selectedCategory = category
-			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: throw IllegalStateException("unknow category"))
+			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: throw IllegalStateException("unknown category"))
 		}
 		loadArticles()
 		drawerLayout.closeDrawer(GravityCompat.START)
@@ -230,6 +234,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
 			presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
+			setupMenuItems()
 			syncAllArticles()
 		}
 	}

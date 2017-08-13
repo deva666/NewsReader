@@ -20,6 +20,7 @@
 
     <string name="no_articles_try_sync">There are no articles downloaded, trying to sync.</string>
 
+    <string name="categories">Categories</string>
     <string name="categories_save">Save</string>
     <string name="categories_choose_category_title">Let\'s begin with choosing a couple of categories.\nDon\'t worry, you can always change them later.</string>
     <string name="title_activity_articles">Articles</string>

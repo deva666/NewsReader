@@ -32,6 +32,11 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		val sources = sourcesRepository.query({
 			if (category != null) {
 				equalTo("category", category)
+			} else {
+				val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
+				selectedCategories?.toTypedArray()?.forEach { cat ->
+					equalTo("category", cat)
+				}
 			}
 		}, null, true)
 		var downloadCount = 0
