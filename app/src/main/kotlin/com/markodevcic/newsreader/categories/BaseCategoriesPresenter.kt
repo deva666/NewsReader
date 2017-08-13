@@ -8,17 +8,22 @@ abstract class BaseCategoriesPresenter (private val sharedPreferences: SharedPre
 
 	protected abstract val view: BaseCategoriesView
 
-	fun onCategoryChanging(tag: String, enabled: Boolean) {
+	fun onCategoryChanging(tag: String, enabled: Boolean) : Boolean {
 		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		if (enabled) {
 			sharedPreferences.editorApply {
 				putStringSet(KEY_CATEGORIES, categorySet + tag)
 			}
 		} else {
+			if (categorySet.size == 1) {
+				view.showNoCategorySelected()
+				return false
+			}
 			sharedPreferences.editorApply {
 				putStringSet(KEY_CATEGORIES, categorySet - tag)
 			}
 		}
+		return true
 	}
 
 	fun onStartCategorySelect() {

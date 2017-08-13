@@ -2,6 +2,8 @@ package com.markodevcic.newsreader.categories
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.injection.Injector
@@ -22,14 +24,23 @@ class SelectCategoriesActivity: BaseCategoriesActivity(), SelectCategoriesView {
 		Injector.appComponent.inject(this)
 		setSupportActionBar(toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
+		chooseCategoriesText.text = "Select categories"
 		presenter.bind(this)
 		fillCategories()
-		saveCategoriesBtn.setOnClickListener { presenter.onSaveClicked() }
+		saveCategoriesBtn.visibility = View.GONE
 		presenter.onStartCategorySelect()
 	}
 
 	override fun finishOk() {
 		setResult(Activity.RESULT_OK)
 		finish()
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem): Boolean {
+		if (item.itemId == android.R.id.home) {
+			finishOk()
+			return true
+		}
+		return super.onOptionsItemSelected(item)
 	}
 }

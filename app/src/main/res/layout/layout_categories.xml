@@ -41,7 +41,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/chooseCategoriesText"
             tools:context="com.markodevcic.newsreader.startup.StartupActivity"
             tools:showIn="@layout/activity_startup">
         </LinearLayout>
@@ -66,7 +66,7 @@
             tools:text="@string/categories_save"/>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/chooseCategoriesText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"

@@ -22,7 +22,9 @@ abstract class BaseCategoriesActivity : AppCompatActivity(), BaseCategoriesView 
 			checkBox.setText(resId)
 			checkBox.typeface = Typeface.SERIF
 			checkBox.setOnCheckedChangeListener { box, checked ->
-				presenter.onCategoryChanging(box.tag.toString(), checked)
+				if (!presenter.onCategoryChanging(box.tag.toString(), checked)) {
+					box.isChecked = true
+				}
 			}
 			categoriesViewGroup.addView(checkBox)
 		}
