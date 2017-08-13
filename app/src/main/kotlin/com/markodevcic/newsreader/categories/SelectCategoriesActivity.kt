@@ -20,8 +20,8 @@ class SelectCategoriesActivity: BaseCategoriesActivity(), SelectCategoriesView {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_select_categories)
 		Injector.appComponent.inject(this)
+		setSupportActionBar(toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
-		supportActionBar?.title = "Categories"
 		presenter.bind(this)
 		fillCategories()
 		saveCategoriesBtn.setOnClickListener { presenter.onSaveClicked() }

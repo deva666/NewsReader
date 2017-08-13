@@ -102,6 +102,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	private fun setupMenuItems(): Menu {
 		val menu = navigationView.menu
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
+
+		if (selectedCategory !in selectedCategories) {
+			onNavigationItemSelected(menu.getItem(0))
+		}
+
 		(1..menu.size() - 1)
 				.map { menu.getItem(it) }
 				.forEach { menu.removeItem(it.itemId) }
