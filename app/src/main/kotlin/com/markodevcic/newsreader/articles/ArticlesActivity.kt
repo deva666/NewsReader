@@ -235,6 +235,9 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
 			setupMenuItems()
+			launch(UI + job) {
+				presenter.onSelectedCategoryChanging()
+			}
 			syncAllArticles()
 		}
 	}

@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.util.ArrayMap
 import com.markodevcic.newsreader.Presenter
 import com.markodevcic.newsreader.data.Article
+import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.sync.SyncService
@@ -28,13 +29,21 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		}
 	}
 
+	suspend fun onSelectedCategoryChanging() {
+		val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
+		val deletedCategories = CATEGORIES_TO_RES_MAP.keys.subtract(selectedCategories)
+		articlesRepository.delete {
+			`in`("category", deletedCategories.toTypedArray())
+		}
+	}
+
 	suspend fun syncCategoryAsync(category: String?) {
 		val sources = sourcesRepository.query({
 			if (category != null) {
 				equalTo("category", category)
 			} else {
-				val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
-				selectedCategories?.toTypedArray()?.forEach { cat ->
+				val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
+				for (cat in selectedCategories.toTypedArray()) {
 					equalTo("category", cat)
 				}
 			}
