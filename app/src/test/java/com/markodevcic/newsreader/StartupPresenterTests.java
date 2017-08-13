@@ -3,6 +3,7 @@ package com.markodevcic.newsreader;
 import android.content.SharedPreferences;
 
 import com.markodevcic.newsreader.startup.StartupPresenter;
+import com.markodevcic.newsreader.startup.StartupView;
 import com.markodevcic.newsreader.sync.SyncServiceImpl;
 import com.markodevcic.newsreader.util.Keys;
 

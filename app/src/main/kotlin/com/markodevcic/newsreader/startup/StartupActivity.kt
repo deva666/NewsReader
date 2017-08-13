@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.ViewGroup
 import com.markodevcic.newsreader.R
-import com.markodevcic.newsreader.StartupView
 import com.markodevcic.newsreader.articles.ArticlesActivity
 import com.markodevcic.newsreader.categories.BaseCategoriesActivity
 import com.markodevcic.newsreader.extensions.showToast
