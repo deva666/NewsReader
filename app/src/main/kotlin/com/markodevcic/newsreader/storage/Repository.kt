@@ -2,6 +2,7 @@ package com.markodevcic.newsreader.storage
 
 import io.realm.RealmModel
 import io.realm.RealmQuery
+import io.realm.Sort
 import java.io.Closeable
 
 interface Repository<T> : Closeable  where T : RealmModel {
@@ -26,7 +27,7 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun count(query: RealmQuery<T>.() -> Unit): Long
 
-	suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: String?, descending: Boolean): List<T>
+	suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T>
 
 	val clazz: Class<T>
 }

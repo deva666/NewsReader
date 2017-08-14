@@ -9,6 +9,7 @@ import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
+import io.realm.Sort
 import java.io.Closeable
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 		}
 	}
 
-	suspend fun onSelectedCategoryChanging() {
+	suspend fun onSelectedCategoriesChanged() {
 		val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		val deletedCategories = CATEGORIES_TO_RES_MAP.keys.subtract(selectedCategories)
 		articlesRepository.delete {
@@ -45,7 +46,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 				val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 				`in`("category", selectedCategories.toTypedArray())
 			}
-		}, null, true)
+		}, null, null)
 		var downloadCount = 0
 		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
 			downloadCount += syncService.downloadArticlesAsync(src)
@@ -68,7 +69,7 @@ class ArticlesPresenter @Inject constructor(private val articlesRepository: Repo
 			} else {
 				equalTo("isUnread", true)
 			}
-		}, "isUnread", true)
+		}, arrayOf("isUnread", "publishedAt"), arrayOf(Sort.DESCENDING, Sort.DESCENDING))
 	}
 
 	fun markItemsRead(items: Array<Article>) {

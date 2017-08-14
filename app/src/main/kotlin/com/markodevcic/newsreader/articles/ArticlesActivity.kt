@@ -241,7 +241,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
 			setupMenuItems()
 			launch(UI + job) {
-				presenter.onSelectedCategoryChanging()
+				presenter.onSelectedCategoriesChanged()
 			}
 			syncAllArticles()
 		}
@@ -268,8 +268,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		launch(UI + job) {
 			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 			val animator = startRotatingAnimation(refreshMenu)
-			noItemsText.visibility = View.GONE
 			presenter.syncCategoryAsync(null)
+			noItemsText.visibility = View.GONE
 			endAnimation(refreshMenu, animator)
 		}
 	}
