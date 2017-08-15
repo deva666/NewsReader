@@ -3,11 +3,12 @@ package com.markodevcic.newsreader.startup
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.ViewGroup
+import android.widget.CheckBox
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articles.ArticlesActivity
 import com.markodevcic.newsreader.categories.BaseCategoriesActivity
+import com.markodevcic.newsreader.extensions.iterator
 import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
@@ -37,6 +38,12 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 			setSupportActionBar(toolbar)
 			supportActionBar?.title = getString(R.string.app_name)
 			fillCategories()
+
+			categoriesHost.iterator().asSequence()
+					.filter { v -> v is CheckBox }
+					.map { v -> v as CheckBox }
+					.first().isChecked = true
+
 			saveCategoriesBtn.setOnClickListener {
 				launch(UI + job) {
 					val dialog = showProgressDialog()
@@ -45,7 +52,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 					} catch (fail: Throwable) {
 						Log.e("Sync", fail.message, fail)
 						dialog.dismiss()
-						showToast("An error occurred while downloading articles")
+						showToast("An error occurred while downloading sources")
 					} finally {
 						dialog.dismiss()
 					}
@@ -61,14 +68,6 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 	override fun startMainView() {
 		startActivity<ArticlesActivity>()
-	}
-
-	override fun onOptionsItemSelected(item: MenuItem): Boolean {
-		if (item.itemId == android.R.id.home) {
-			onBackPressed()
-			return true
-		}
-		return super.onOptionsItemSelected(item)
 	}
 
 	override fun onDestroy() {
