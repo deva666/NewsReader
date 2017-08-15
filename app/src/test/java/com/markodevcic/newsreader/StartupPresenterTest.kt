@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.startup.StartupPresenter
 import com.markodevcic.newsreader.startup.StartupView
+import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import kotlinx.coroutines.experimental.runBlocking
@@ -27,6 +28,9 @@ class StartupPresenterTest {
 
 	@Mock
 	private lateinit var startupView: StartupView
+
+	@Mock
+	private lateinit var sourcesRepository: Repository<Source>
 
 	@InjectMocks
 	private lateinit var sut: StartupPresenter
