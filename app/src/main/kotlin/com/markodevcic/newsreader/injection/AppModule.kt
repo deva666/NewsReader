@@ -1,7 +1,6 @@
 package com.markodevcic.newsreader.injection
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.markodevcic.newsreader.api.ApiFactory
 import com.markodevcic.newsreader.api.NewsApi
 import com.markodevcic.newsreader.articles.ArticlesUseCase
@@ -41,7 +40,7 @@ class AppModule(private val context: Context) {
 			articlesRepository)
 
 	@Provides
-	fun providesArticlesUseCase(sharedPrefs: SharedPreferences,
-								repository: Repository<Article>) : ArticlesUseCase =
-			ArticlesUseCaseImpl(sharedPrefs, repository)
+	fun providesArticlesUseCase(articlesRepository: Repository<Article>,
+								sourcesRepository: Repository<Source>) : ArticlesUseCase =
+			ArticlesUseCaseImpl(articlesRepository, sourcesRepository)
 }
