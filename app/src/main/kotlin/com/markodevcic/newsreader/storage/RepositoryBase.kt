@@ -9,7 +9,7 @@ import io.realm.Sort
 
 abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
-	protected val realm = Realm.getDefaultInstance()
+	protected val realm: Realm = Realm.getDefaultInstance()
 
 	abstract protected val primaryKey: String
 
