@@ -3,9 +3,9 @@ package com.markodevcic.newsreader.sync
 import com.markodevcic.newsreader.api.NewsApi
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.Source
-import com.markodevcic.newsreader.extensions.waitAllAsync
 import com.markodevcic.newsreader.extensions.executeAsync
 import com.markodevcic.newsreader.extensions.launchAsync
+import com.markodevcic.newsreader.extensions.waitAllAsync
 import com.markodevcic.newsreader.storage.Repository
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
@@ -48,7 +48,7 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 	}
 }
 
-interface 	SyncService {
+interface SyncService {
 	suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source>
 	suspend fun downloadArticlesAsync(source: Source): Int
 }

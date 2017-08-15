@@ -64,7 +64,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 		btnMarkAllRead.setOnClickListener {
 			val adapterCopy = adapter ?: return@setOnClickListener
-			presenter.markItemsRead(adapterCopy.articles.toTypedArray())
+			val articleUrls = adapterCopy.articles
+					.map { a -> a.url }
+					.toTypedArray()
+			presenter.markArticleRead(*articleUrls)
 		}
 
 		val toggle = ActionBarDrawerToggle(
@@ -107,7 +110,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			onNavigationItemSelected(menu.getItem(0))
 		}
 
-		(1..menu.size() - 1)
+		(1 until menu.size())
 				.map { menu.getItem(it) }
 				.forEach { menu.removeItem(it.itemId) }
 
@@ -125,8 +128,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	private fun checkSelectedMenuItem(savedInstanceState: Bundle?): Int {
 		var selectedId: Int = R.id.nav_unread
-		if (savedInstanceState?.containsKey(KEY_CATEGORY) ?: false) {
-			val cat = savedInstanceState?.getString(KEY_CATEGORY)
+		if (savedInstanceState?.containsKey(KEY_CATEGORY) == true) {
+			val cat = savedInstanceState.getString(KEY_CATEGORY)
 			if (cat != null) {
 				selectedId = cat.hashCode()
 			}
@@ -237,11 +240,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
-			presenter.markArticleReadAsync(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+			presenter.markArticleRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
 			setupMenuItems()
 			launch(UI + job) {
-				presenter.onSelectedCategoriesChanged()
+				presenter.onSelectedCategoriesChangedAsync()
 			}
 			syncAllArticles()
 		}
@@ -275,11 +278,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	override fun onArticlesDownloaded(count: Int) {
-		val message: String
-		if (count > 0) {
-			message = "Downloaded $count articles"
+		val message: String = if (count > 0) {
+			"Downloaded $count articles"
 		} else {
-			message = "No new articles"
+			"No new articles"
 		}
 		Snackbar.make(articlesParent, message, Snackbar.LENGTH_LONG).show()
 	}
