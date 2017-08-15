@@ -1,23 +1,17 @@
 package com.markodevcic.newsreader.articles
 
-import android.content.SharedPreferences
 import android.util.ArrayMap
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
-import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import io.realm.Sort
 
-class ArticlesUseCaseImpl(private val sharedPreferences: SharedPreferences,
-						  private val articlesRepository: Repository<Article>,
+class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 						  private val sourcesRepository: Repository<Source>): ArticlesUseCase {
 
 	override fun hasArticles(): Boolean = articlesRepository.count { } > 0L
 
-	suspend override fun onCategoriesChangedAsync() {
-		val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
-		val deletedCategories = CATEGORIES_TO_RES_MAP.keys.subtract(selectedCategories)
+	suspend override fun onCategoriesChangedAsync(deletedCategories: Collection<String>) {
 		articlesRepository.delete {
 			`in`("category", deletedCategories.toTypedArray())
 		}
@@ -41,21 +35,19 @@ class ArticlesUseCaseImpl(private val sharedPreferences: SharedPreferences,
 		}, arrayOf("isUnread", "publishedAt"), arrayOf(Sort.DESCENDING, Sort.DESCENDING))
 	}
 
-	suspend override fun getSourcesAsync(category: String?): List<Source> {
+	suspend override fun getSourcesAsync(category: String?, selectedCategories: Collection<String>): List<Source> {
 		return sourcesRepository.query({
 			if (category != null) {
 				equalTo("category", category)
 			} else {
-				val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 				`in`("category", selectedCategories.toTypedArray())
 			}
 		}, null, null)
 	}
 
-	override fun getUnreadCount(): Map<String, Long> {
+	override fun getUnreadCount(categories: Collection<String>): Map<String, Long> {
 		val result = ArrayMap<String, Long>()
-		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
-		categories?.forEach { cat ->
+		categories.forEach { cat ->
 			val count = articlesRepository.count {
 				equalTo("category", cat)
 				equalTo("isUnread", true)

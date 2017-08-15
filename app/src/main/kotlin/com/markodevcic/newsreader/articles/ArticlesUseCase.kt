@@ -7,8 +7,8 @@ import java.io.Closeable
 interface ArticlesUseCase : Closeable {
 	fun hasArticles(): Boolean
 	fun markArticleRead(vararg url: String)
-	fun getUnreadCount(): Map<String, Long>
+	fun getUnreadCount(categories: Collection<String>): Map<String, Long>
 	suspend fun getArticlesAsync(category: String?): List<Article>
-	suspend fun getSourcesAsync(category: String?): List<Source>
-	suspend fun onCategoriesChangedAsync()
+	suspend fun getSourcesAsync(category: String?, selectedCategories: Collection<String>): List<Source>
+	suspend fun onCategoriesChangedAsync(deletedCategories: Collection<String>)
 }

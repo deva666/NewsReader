@@ -4,11 +4,11 @@ import android.content.SharedPreferences
 import com.markodevcic.newsreader.extensions.editorApply
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 
-abstract class BaseCategoriesPresenter (private val sharedPreferences: SharedPreferences)  {
+abstract class BaseCategoriesPresenter(private val sharedPreferences: SharedPreferences) {
 
 	protected abstract val view: BaseCategoriesView
 
-	fun onCategoryChanging(tag: String, enabled: Boolean) : Boolean {
+	fun onCategoryChanging(tag: String, enabled: Boolean): Boolean {
 		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		if (enabled) {
 			sharedPreferences.editorApply {
