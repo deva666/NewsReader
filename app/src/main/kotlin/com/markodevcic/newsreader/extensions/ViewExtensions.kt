@@ -13,10 +13,12 @@ private class ViewGroupIterator(private val viewGroup: ViewGroup) : Iterator<Vie
 	private var currentIndex = 0
 
 	override fun hasNext(): Boolean  {
+		checkModification()
 		return currentIndex < viewGroup.childCount
 	}
 
 	override fun next(): View {
+		checkModification()
 		return viewGroup.getChildAt(currentIndex++)
 	}
 
