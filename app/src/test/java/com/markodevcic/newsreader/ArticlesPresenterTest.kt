@@ -57,4 +57,13 @@ class ArticlesPresenterTest {
 		Mockito.verify(view).onUnreadCountChanged(unreads)
 		Mockito.verify(view).onNoArticlesAvailable()
 	}
+
+	@Test
+	fun testOnReadCallsUnreadCount() {
+		Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf())
+		val unreads = mapOf("gaming" to 20L)
+		Mockito.`when`(articlesUseCase.getUnreadCount(setOf())).thenReturn(unreads)
+		sut.markArticleRead("url")
+		Mockito.verify(view).onUnreadCountChanged(unreads)
+	}
 }
