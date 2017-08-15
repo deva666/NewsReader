@@ -4,12 +4,14 @@ import android.content.SharedPreferences
 import android.util.ArrayMap
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import io.realm.Sort
 
 class ArticlesUseCaseImpl(private val sharedPreferences: SharedPreferences,
-						  private val articlesRepository: Repository<Article>): ArticlesUseCase {
+						  private val articlesRepository: Repository<Article>,
+						  private val sourcesRepository: Repository<Source>): ArticlesUseCase {
 
 	override fun hasArticles(): Boolean = articlesRepository.count { } > 0L
 
@@ -39,6 +41,17 @@ class ArticlesUseCaseImpl(private val sharedPreferences: SharedPreferences,
 		}, arrayOf("isUnread", "publishedAt"), arrayOf(Sort.DESCENDING, Sort.DESCENDING))
 	}
 
+	suspend override fun getSourcesAsync(category: String?): List<Source> {
+		return sourcesRepository.query({
+			if (category != null) {
+				equalTo("category", category)
+			} else {
+				val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
+				`in`("category", selectedCategories.toTypedArray())
+			}
+		}, null, null)
+	}
+
 	override fun getUnreadCount(): Map<String, Long> {
 		val result = ArrayMap<String, Long>()
 		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, null)
@@ -54,5 +67,6 @@ class ArticlesUseCaseImpl(private val sharedPreferences: SharedPreferences,
 
 	override fun close() {
 		articlesRepository.close()
+		sourcesRepository.close()
 	}
 }

@@ -37,9 +37,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		}
 	}
 
-	override suspend fun deleteAll() {
-		return realm.inTransactionAsync { delete(clazz) }
-	}
+	override suspend fun deleteAll() = realm.inTransactionAsync { delete(clazz) }
 
 	override fun update(id: String, modifier: T.() -> Unit) {
 		realm.executeTransaction { r ->
@@ -64,9 +62,8 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		}
 	}
 
-	override suspend fun addAll(items: List<T>) {
-		return realm.inTransactionAsync { copyToRealmOrUpdate(items) }
-	}
+	override suspend fun addAll(items: List<T>) =
+			realm.inTransactionAsync { copyToRealmOrUpdate(items) }
 
 	override fun count(query: RealmQuery<T>.() -> Unit): Long {
 		val results = realm.where(clazz)
@@ -77,11 +74,11 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 	override suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T> {
 		val results = realm.where(clazz)
 		init(results)
-		if (sortField == null) {
-			return results.findAllAsync()
+		return if (sortField == null) {
+			results.findAllAsync()
 					.loadAsync()
 		} else {
-			return results.findAllSortedAsync(sortField, order)
+			results.findAllSortedAsync(sortField, order)
 					.loadAsync()
 		}
 	}
