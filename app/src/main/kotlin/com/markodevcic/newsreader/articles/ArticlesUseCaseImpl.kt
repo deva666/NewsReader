@@ -17,10 +17,18 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 		}
 	}
 
-	override fun markArticleRead(vararg url: String) {
+	override fun markArticlesRead(vararg url: String) {
 		url.forEach {
 			articlesRepository.update(it) {
 				isUnread = false
+			}
+		}
+	}
+
+	override fun markArticlesUnread(vararg url: String) {
+		url.forEach {
+			articlesRepository.update(it) {
+				isUnread = true
 			}
 		}
 	}

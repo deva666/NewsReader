@@ -65,9 +65,13 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		btnMarkAllRead.setOnClickListener {
 			val adapterCopy = adapter ?: return@setOnClickListener
 			val articleUrls = adapterCopy.articles
+					.filter { a -> a.isUnread }
 					.map { a -> a.url }
 					.toTypedArray()
-			presenter.markArticleRead(*articleUrls)
+			presenter.markArticlesRead(*articleUrls)
+			Snackbar.make(articlesParent, "Marked all read", Snackbar.LENGTH_LONG)
+					.setAction("Undo", { presenter.markArticlesUnread(*articleUrls) })
+					.show()
 		}
 
 		val toggle = ActionBarDrawerToggle(
@@ -240,7 +244,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
-			presenter.markArticleRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+			presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
 			setupMenuItems()
 			launch(UI + job) {

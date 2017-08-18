@@ -63,7 +63,7 @@ class ArticlesPresenterTest {
 		Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf())
 		val unreads = mapOf("gaming" to 20L)
 		Mockito.`when`(articlesUseCase.getUnreadCount(setOf())).thenReturn(unreads)
-		sut.markArticleRead("url")
+		sut.markArticlesRead("url")
 		Mockito.verify(view).onUnreadCountChanged(unreads)
 	}
 }

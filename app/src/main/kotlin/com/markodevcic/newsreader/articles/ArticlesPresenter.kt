@@ -42,8 +42,13 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 		view.onArticlesDownloaded(downloadCount)
 	}
 
-	fun markArticleRead(vararg articleUrl: String) {
-		articlesUseCase.markArticleRead(*articleUrl)
+	fun markArticlesRead(vararg articleUrl: String) {
+		articlesUseCase.markArticlesRead(*articleUrl)
+		view.onUnreadCountChanged(getUnreadCount())
+	}
+
+	fun markArticlesUnread(vararg articleUrl: String) {
+		articlesUseCase.markArticlesUnread(*articleUrl)
 		view.onUnreadCountChanged(getUnreadCount())
 	}
 
