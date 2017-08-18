@@ -38,6 +38,7 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:parentActivityName=".articles.ArticlesActivity"
+            android:theme="@style/AppTheme.Translucent"
             android:label="@string/title_activity_settings">
         </activity>
         <activity android:name=".categories.SelectCategoriesActivity"

@@ -41,16 +41,16 @@
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string name="pref_title_add_friends_to_messages">Delete articles older then</string>
     <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
+        <item>Three days</item>
+        <item>Five days</item>
+        <item>Seven days</item>
     </string-array>
     <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>-</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->
