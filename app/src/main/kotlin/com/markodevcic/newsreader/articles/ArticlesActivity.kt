@@ -173,7 +173,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				launch(UI + job) {
 					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 					val animator = startRotatingAnimation(refreshMenu)
-					presenter.syncCategoryAsync(selectedCategory)
+					try {
+						presenter.syncCategoryAsync(selectedCategory)
+					} catch (fail: Exception) {
+						onNetworkError()
+					}
 					noItemsText.visibility = View.GONE
 					loadArticles()
 					endAnimation(refreshMenu, animator)
@@ -275,7 +279,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		launch(UI + job) {
 			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 			val animator = startRotatingAnimation(refreshMenu)
-			presenter.syncCategoryAsync(null)
+			try {
+				presenter.syncCategoryAsync(null)
+			} catch (fail: Exception) {
+				onNetworkError()
+			}
 			noItemsText.visibility = View.GONE
 			endAnimation(refreshMenu, animator)
 		}
@@ -288,6 +296,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			"No new articles"
 		}
 		Snackbar.make(articlesParent, message, Snackbar.LENGTH_LONG).show()
+	}
+
+	private fun onNetworkError() {
+		Snackbar.make(articlesParent, "An error occurred while connecting to server, please try again", Snackbar.LENGTH_LONG).show()
 	}
 
 	companion object {
