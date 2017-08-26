@@ -178,7 +178,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					} catch (fail: Exception) {
 						onNetworkError()
 					}
-					noItemsText.visibility = View.GONE
 					loadArticles()
 					endAnimation(refreshMenu, animator)
 				}
@@ -237,11 +236,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			} else {
 				adapter?.onDataChanged(articles as OrderedRealmCollection<Article>)
 			}
-			if (articles.isEmpty()) {
-				noItemsText.visibility = View.VISIBLE
-			} else {
-				noItemsText.visibility = View.GONE
-			}
 		}
 	}
 
@@ -284,7 +278,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			} catch (fail: Exception) {
 				onNetworkError()
 			}
-			noItemsText.visibility = View.GONE
 			endAnimation(refreshMenu, animator)
 		}
 	}
