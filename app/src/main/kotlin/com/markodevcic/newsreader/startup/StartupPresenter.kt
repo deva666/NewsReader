@@ -34,7 +34,5 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 	}
 
 	val canOpenMainView: Boolean
-		get() {
-			return sourcesRepository.count() > 0
-		}
+		get() = sourcesRepository.count() > 0
 }

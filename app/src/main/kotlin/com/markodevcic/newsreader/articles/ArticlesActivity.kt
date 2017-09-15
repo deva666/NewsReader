@@ -113,6 +113,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
 
 		if (selectedCategory !in selectedCategories) {
+			//no selection, load all
 			onNavigationItemSelected(menu.getItem(0))
 		}
 

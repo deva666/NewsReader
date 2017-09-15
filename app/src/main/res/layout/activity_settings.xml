@@ -16,46 +16,62 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingTop="36dp"
+            android:paddingBottom="20dp"
             android:paddingStart="16dp"
-            android:paddingBottom="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Settings"
-                android:layout_gravity="center_horizontal"
-                android:textSize="20sp"/>
+            android:paddingEnd="16dp"
+            android:paddingTop="36dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Delete automatically Articles older than"
-                android:textSize="14sp"
+                android:layout_gravity="center_horizontal"
+                android:text="Settings"
+                android:textColor="@color/cardview_dark_background"
+                android:textSize="24sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/cardview_dark_background"
                 />
-            <RadioGroup
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="12dp"
+                android:text="Delete automatically Articles older than"
+                android:textColor="@color/cardview_dark_background"
+                android:textSize="16sp"
+                />
+
+            <RadioGroup
                 android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
+
                 <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/radioBtn3Days"
-                    android:text="3 days"
-                    android:tag="3"/>
-                <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tag="3"
+                    android:text="3 days"/>
+
+                <RadioButton
                     android:id="@+id/radioBtn5Days"
-                    android:text="5 days"
-                    android:tag="5"/>
-                <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tag="5"
+                    android:text="5 days"/>
+
+                <RadioButton
                     android:id="@+id/radioBtn7Days"
-                    android:text="7 days"
-                    android:tag="7"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="7"
+                    android:text="7 days"/>
 
             </RadioGroup>
         </LinearLayout>
