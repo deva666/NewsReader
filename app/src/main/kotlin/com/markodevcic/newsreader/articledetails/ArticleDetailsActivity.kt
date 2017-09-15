@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebChromeClient
@@ -48,9 +49,21 @@ class ArticleDetailsActivity : AppCompatActivity() {
 		webView.loadUrl(articleUrl)
 	}
 
+	override fun onCreateOptionsMenu(menu: Menu): Boolean {
+		menuInflater.inflate(R.menu.article_details, menu)
+		return true
+	}
+
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		if (item.itemId == android.R.id.home) {
 			onBackPressed()
+			return true
+		} else if (item.itemId == R.id.action_share) {
+			val intent = Intent(Intent.ACTION_SEND)
+			intent.type = "text/plain"
+			intent.putExtra(Intent.EXTRA_SUBJECT, "Share Article Link")
+			intent.putExtra(Intent.EXTRA_TEXT, articleUrl)
+			startActivity(Intent.createChooser(intent, "Share Article Link"))
 			return true
 		}
 		return super.onOptionsItemSelected(item)
