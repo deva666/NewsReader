@@ -6,6 +6,7 @@ import com.markodevcic.newsreader.articles.ArticlesUseCase
 import com.markodevcic.newsreader.articles.ArticlesView
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
+import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mockito.InjectMocks
@@ -42,7 +43,9 @@ class ArticlesPresenterTest {
 		val unreads = mapOf("gaming" to 20L)
 		Mockito.`when`(articlesUseCase.getUnreadCount(setOf())).thenReturn(unreads)
 		Mockito.`when`(articlesUseCase.hasArticles()).thenReturn(true)
-		sut.onStart()
+		runBlocking {
+			sut.onStart()
+		}
 		Mockito.verify(view).onUnreadCountChanged(unreads)
 		Mockito.verify(view, Mockito.never()).onNoArticlesAvailable()
 	}
@@ -53,7 +56,9 @@ class ArticlesPresenterTest {
 		val unreads = mapOf("gaming" to 20L)
 		Mockito.`when`(articlesUseCase.getUnreadCount(setOf())).thenReturn(unreads)
 		Mockito.`when`(articlesUseCase.hasArticles()).thenReturn(false)
-		sut.onStart()
+		runBlocking {
+			sut.onStart()
+		}
 		Mockito.verify(view).onUnreadCountChanged(unreads)
 		Mockito.verify(view).onNoArticlesAvailable()
 	}

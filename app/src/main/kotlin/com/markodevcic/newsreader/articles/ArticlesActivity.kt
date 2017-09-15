@@ -69,7 +69,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					.map { a -> a.url }
 					.toTypedArray()
 			presenter.markArticlesRead(*articleUrls)
-			Snackbar.make(articlesParent, "Marked all read", Snackbar.LENGTH_LONG)
+			Snackbar.make(articlesParent, "Marked all articles as read", Snackbar.LENGTH_LONG)
 					.setAction("Undo", { presenter.markArticlesUnread(*articleUrls) })
 					.show()
 		}
@@ -113,7 +113,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
 
 		if (selectedCategory !in selectedCategories) {
-			//no selection, load all
+			//no selected category, load all unread
 			onNavigationItemSelected(menu.getItem(0))
 		}
 

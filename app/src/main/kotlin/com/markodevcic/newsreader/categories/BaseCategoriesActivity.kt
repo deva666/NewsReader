@@ -35,7 +35,7 @@ abstract class BaseCategoriesActivity : AppCompatActivity(), BaseCategoriesView 
 	}
 
 	override fun onCategorySelected(categorySet: Set<String>) {
-		(0..categoriesViewGroup.childCount - 1)
+		(0 until categoriesViewGroup.childCount)
 				.map { categoriesViewGroup.getChildAt(it) }
 				.filterIsInstance<CheckBox>()
 				.filter { categorySet.contains(it.tag) }
