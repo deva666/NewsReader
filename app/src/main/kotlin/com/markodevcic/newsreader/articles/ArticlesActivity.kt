@@ -190,7 +190,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			R.id.action_categories -> {
 				val intent = Intent(this, SelectCategoriesActivity::class.java)
 				startActivityForResult(intent, REQUEST_SETTINGS)
-				return true
+				true
 			}
 			else -> super.onOptionsItemSelected(item)
 		}
@@ -277,8 +277,9 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				presenter.syncCategoryAsync(null)
 			} catch (fail: Exception) {
 				onNetworkError()
+			} finally {
+				endAnimation(refreshMenu, animator)
 			}
-			endAnimation(refreshMenu, animator)
 		}
 	}
 

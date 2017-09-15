@@ -12,5 +12,4 @@ object Injector {
 				.appModule(AppModule(context))
 				.build()
 	}
-
 }

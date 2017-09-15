@@ -33,7 +33,7 @@ class SelectCategoriesActivity: BaseCategoriesActivity(), SelectCategoriesView {
 
 	override fun finishOk() {
 		setResult(Activity.RESULT_OK)
-		finish()
+		onBackPressed()
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
