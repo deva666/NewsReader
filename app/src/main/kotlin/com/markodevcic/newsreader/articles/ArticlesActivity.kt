@@ -69,8 +69,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					.map { a -> a.url }
 					.toTypedArray()
 			presenter.markArticlesRead(*articleUrls)
-			Snackbar.make(articlesParent, "Marked all articles as read", Snackbar.LENGTH_LONG)
-					.setAction("Undo", { presenter.markArticlesUnread(*articleUrls) })
+			Snackbar.make(articlesParent, getString(R.string.all_articles_read), Snackbar.LENGTH_LONG)
+					.setAction(getString(R.string.undo), { presenter.markArticlesUnread(*articleUrls) })
 					.show()
 		}
 

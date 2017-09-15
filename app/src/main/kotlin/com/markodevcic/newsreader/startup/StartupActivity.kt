@@ -52,7 +52,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 					} catch (fail: Throwable) {
 						Log.e("Sync", fail.message, fail)
 						dialog.dismiss()
-						showToast("An error occurred while downloading sources")
+						showToast(getString(R.string.error_download_sources))
 					} finally {
 						dialog.dismiss()
 					}
@@ -64,7 +64,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 		}
 	}
 
-	private fun showProgressDialog() = ProgressDialog.show(this, "Downloading sources", "", true, false)
+	private fun showProgressDialog() = ProgressDialog.show(this, getString(R.string.downloading_sources), "", true, false)
 
 	override fun startMainView() {
 		startActivity<ArticlesActivity>()

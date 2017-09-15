@@ -24,7 +24,7 @@ class SelectCategoriesActivity: BaseCategoriesActivity(), SelectCategoriesView {
 		Injector.appComponent.inject(this)
 		setSupportActionBar(toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
-		chooseCategoriesText.text = "Select categories"
+		chooseCategoriesText.text = getString(R.string.available_categories)
 		presenter.bind(this)
 		fillCategories()
 		saveCategoriesBtn.visibility = View.GONE

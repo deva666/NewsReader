@@ -31,7 +31,7 @@ abstract class BaseCategoriesActivity : AppCompatActivity(), BaseCategoriesView 
 	}
 
 	override fun showNoCategorySelected() {
-		showToast("Please choose at least one category")
+		showToast(getString(R.string.choose_one_category))
 	}
 
 	override fun onCategorySelected(categorySet: Set<String>) {
