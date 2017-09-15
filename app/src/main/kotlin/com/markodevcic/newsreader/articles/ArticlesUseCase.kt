@@ -12,4 +12,5 @@ interface ArticlesUseCase : Closeable {
 	suspend fun getArticlesAsync(category: String?): List<Article>
 	suspend fun getSourcesAsync(category: String?, selectedCategories: Collection<String>): List<Source>
 	suspend fun onCategoriesChangedAsync(deletedCategories: Collection<String>)
+	suspend fun deleteOldArticles(daysToDelete: Int)
 }

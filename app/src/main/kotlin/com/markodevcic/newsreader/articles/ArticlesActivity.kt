@@ -85,7 +85,9 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
 
-		presenter.onStart()
+		launch(UI + job) {
+			presenter.onStart()
+		}
 	}
 
 	private fun setupArticlesView() {

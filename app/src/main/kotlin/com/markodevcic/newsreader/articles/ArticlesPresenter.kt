@@ -6,6 +6,7 @@ import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
+import com.markodevcic.newsreader.util.KEY_DELETE_DAYS
 import java.io.Closeable
 import javax.inject.Inject
 
@@ -18,8 +19,10 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 		this.view = view
 	}
 
-	fun onStart() {
+	suspend fun onStart() {
 		view.onUnreadCountChanged(getUnreadCount())
+		val deleteDays = sharedPreferences.getInt(KEY_DELETE_DAYS, 3)
+		articlesUseCase.deleteOldArticles(deleteDays)
 		if (!articlesUseCase.hasArticles()) {
 			view.onNoArticlesAvailable()
 		}

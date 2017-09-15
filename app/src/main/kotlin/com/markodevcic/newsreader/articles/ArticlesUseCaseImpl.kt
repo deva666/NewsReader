@@ -5,11 +5,21 @@ import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import io.realm.Sort
+import java.util.*
+
+private const val MILLIS_IN_DAY = 24 * 60 * 60 * 1000
 
 class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 						  private val sourcesRepository: Repository<Source>): ArticlesUseCase {
 
 	override fun hasArticles(): Boolean = articlesRepository.count() > 0L
+
+	suspend override fun deleteOldArticles(daysToDelete: Int) {
+		val deleteThreshold = Date().time - daysToDelete * MILLIS_IN_DAY
+		articlesRepository.delete {
+			lessThan("publishedAt", deleteThreshold)
+		}
+	}
 
 	suspend override fun onCategoriesChangedAsync(deletedCategories: Collection<String>) {
 		articlesRepository.delete {
