@@ -9,7 +9,7 @@ import io.realm.Sort
 class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 						  private val sourcesRepository: Repository<Source>): ArticlesUseCase {
 
-	override fun hasArticles(): Boolean = articlesRepository.count { } > 0L
+	override fun hasArticles(): Boolean = articlesRepository.count() > 0L
 
 	suspend override fun onCategoriesChangedAsync(deletedCategories: Collection<String>) {
 		articlesRepository.delete {

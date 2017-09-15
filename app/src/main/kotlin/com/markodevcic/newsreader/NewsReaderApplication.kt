@@ -15,6 +15,8 @@ class NewsReaderApplication : Application() {
 		val picasso = Picasso.Builder(this)
 				.build()
 		Picasso.setSingletonInstance(picasso)
+
+
 		val threeDaysAgo = Date().time - 3 * 24 * 60 * 60 * 1000
 		Realm.getDefaultInstance().executeTransaction { realm ->
 			realm.where(Article::class.java)

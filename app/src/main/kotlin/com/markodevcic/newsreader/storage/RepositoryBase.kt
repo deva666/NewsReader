@@ -71,6 +71,10 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		return results.count()
 	}
 
+	override fun count(): Long {
+		return realm.where(clazz).count()
+	}
+
 	override suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T> {
 		val results = realm.where(clazz)
 		init(results)

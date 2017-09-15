@@ -27,6 +27,8 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun count(query: RealmQuery<T>.() -> Unit): Long
 
+	fun count(): Long
+
 	suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T>
 
 	val clazz: Class<T>

@@ -26,12 +26,15 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 			view.showNoCategorySelected()
 			return
 		} else {
-			if (sourcesRepository.count { } == 0L) {
+			if (sourcesRepository.count() == 0L) {
 				syncService.downloadSourcesAsync(CATEGORIES_TO_RES_MAP.keys)
 			}
 			view.startMainView()
 		}
 	}
 
-	val canOpenMainView = sourcesRepository.count { } > 0
+	val canOpenMainView: Boolean
+		get() {
+			return sourcesRepository.count() > 0
+		}
 }
