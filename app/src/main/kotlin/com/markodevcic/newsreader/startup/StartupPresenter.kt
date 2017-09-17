@@ -7,13 +7,13 @@ import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.sync.SyncService
-import com.markodevcic.newsreader.util.KEY_CATEGORIES
-import rx.Observable
+import com.markodevcic.newsreader.util.SchedulerProvider
 import javax.inject.Inject
 
 class StartupPresenter @Inject constructor(private val syncService: SyncService,
 										   private val sharedPreferences: SharedPreferences,
-										   private val sourcesRepository: Repository<Source>) : BaseCategoriesPresenter(sharedPreferences), Presenter<StartupView> {
+										   private val sourcesRepository: Repository<Source>,
+										   private val schedulerProvider: SchedulerProvider) : BaseCategoriesPresenter(sharedPreferences), Presenter<StartupView> {
 
 	protected override lateinit var view: StartupView
 
@@ -21,16 +21,17 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 		this.view = view
 	}
 
-	fun downloadSourcesAsync(): Observable<Unit> {
-		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
-//		if (categorySet.isEmpty()) {
-//			view.showNoCategorySelected()
-//		} else {
-			if (sourcesRepository.count() == 0L) {
-				return syncService.downloadSources(CATEGORIES_TO_RES_MAP.keys)
-			}
-//		}
-		return Observable.just(Unit)
+	fun downloadSources() {
+		if (sourcesRepository.count() == 0L) {
+			syncService.downloadSources(CATEGORIES_TO_RES_MAP.keys)
+					.subscribeOn(schedulerProvider.io)
+					.observeOn(schedulerProvider.ui)
+					.subscribe({},{ fail ->
+						view.onError(fail)
+					},{
+						view.startMainView()
+					})
+		}
 	}
 
 	val canOpenMainView: Boolean

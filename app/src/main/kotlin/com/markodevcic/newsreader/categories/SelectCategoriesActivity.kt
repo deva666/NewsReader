@@ -28,7 +28,7 @@ class SelectCategoriesActivity: BaseCategoriesActivity(), SelectCategoriesView {
 		presenter.bind(this)
 		fillCategories()
 		saveCategoriesBtn.visibility = View.GONE
-		presenter.onStartCategorySelect()
+		presenter.onStart()
 	}
 
 	override fun finishOk() {

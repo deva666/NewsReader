@@ -13,8 +13,6 @@ import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
 import kotlinx.android.synthetic.main.layout_categories.*
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import javax.inject.Inject
 
 class StartupActivity : BaseCategoriesActivity(), StartupView {
@@ -24,6 +22,8 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 	override val categoriesViewGroup: ViewGroup
 		get() = categoriesHost
+
+	private var dialog: ProgressDialog? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -42,21 +42,10 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 					.first().isChecked = true
 
 			saveCategoriesBtn.setOnClickListener {
-				val dialog = showProgressDialog()
-
-				presenter.downloadSourcesAsync()
-						.subscribeOn(Schedulers.io())
-						.observeOn(AndroidSchedulers.mainThread())
-						.subscribe({}, { fail ->
-							Log.e("Sync", fail.message, fail)
-							dialog.dismiss()
-							showToast(getString(R.string.error_download_sources))
-						}, {
-							dialog.dismiss()
-							startMainView()
-						})
+				dialog = showProgressDialog()
+				presenter.downloadSources()
 			}
-			presenter.onStartCategorySelect()
+			presenter.onStart()
 		} else {
 			startMainView()
 		}
@@ -65,6 +54,13 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 	private fun showProgressDialog() = ProgressDialog.show(this, getString(R.string.downloading_sources), "", true, false)
 
 	override fun startMainView() {
+		dialog?.dismiss()
 		startActivity<ArticlesActivity>()
+	}
+
+	override fun onError(fail: Throwable) {
+		Log.e("Sync", fail.message, fail)
+		dialog?.dismiss()
+		showToast(getString(R.string.error_download_sources))
 	}
 }
