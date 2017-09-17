@@ -14,5 +14,5 @@ interface ArticlesView : BaseView {
 
 	fun onArticlesUpdated(articles: List<Article>)
 
-	fun onSyncFailed()
+	fun onSyncFailed(fail: Throwable)
 }

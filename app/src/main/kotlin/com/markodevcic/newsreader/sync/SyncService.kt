@@ -4,6 +4,6 @@ import com.markodevcic.newsreader.data.Source
 import rx.Observable
 
 interface SyncService {
-	fun downloadSourcesAsync(categories: Collection<String>): Observable<Unit>
-	fun downloadArticlesAsync(source: Source): Observable<Int>
+	fun downloadSources(categories: Collection<String>): Observable<Unit>
+	fun downloadArticles(source: Source): Observable<Int>
 }

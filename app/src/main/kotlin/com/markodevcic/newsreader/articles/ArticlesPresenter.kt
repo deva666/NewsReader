@@ -50,7 +50,7 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 		val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		subscriptions.add(articlesUseCase.getSources(category, selectedCategories)
 				.flatMap { sources -> Observable.from(sources) }
-				.flatMap { s -> syncService.downloadArticlesAsync(s) }
+				.flatMap { s -> syncService.downloadArticles(s) }
 				.toList()
 				.map { l -> l.sum() }
 				.observeOn(schedulerProvider.ui)
@@ -58,7 +58,7 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 					view.onUnreadCountChanged(getUnreadCount())
 					view.onArticlesDownloaded(s)
 				}, { fail ->
-					view.onSyncFailed()
+					view.onSyncFailed(fail)
 				}))
 	}
 

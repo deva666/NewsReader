@@ -27,7 +27,7 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 //			view.showNoCategorySelected()
 //		} else {
 			if (sourcesRepository.count() == 0L) {
-				return syncService.downloadSourcesAsync(CATEGORIES_TO_RES_MAP.keys)
+				return syncService.downloadSources(CATEGORIES_TO_RES_MAP.keys)
 			}
 //		}
 		return Observable.just(Unit)

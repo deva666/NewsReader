@@ -5,6 +5,8 @@ import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.util.*
 import javax.inject.Provider
 
@@ -12,7 +14,7 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 					  private val sourcesRepository: Provider<Repository<Source>>,
 					  private val articlesRepository: Provider<Repository<Article>>) : SyncService {
 
-	override fun downloadSourcesAsync(categories: Collection<String>): Observable<Unit> {
+	override fun downloadSources(categories: Collection<String>): Observable<Unit> {
 		val repo = sourcesRepository.get()
 		return repo.deleteAll()
 				.flatMap { Observable.from(categories) }
@@ -21,9 +23,12 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 				.doOnTerminate { repo.close() }
 	}
 
-	override fun downloadArticlesAsync(source: Source): Observable<Int> {
+	override fun downloadArticles(source: Source): Observable<Int> {
 		val repo = articlesRepository.get()
-		return newsApi.getArticles(source.id)
+		return Observable.just(source.id)
+				.observeOn(Schedulers.io())
+				.flatMap { id -> newsApi.getArticles(id) }
+				.observeOn(AndroidSchedulers.mainThread())
 				.doOnNext { r -> r.articles.forEach { article -> article.category = source.category } }
 				.flatMap { r -> Observable.from(r.articles) }
 				.filter { article -> repo.getById(article.url) == null }
@@ -34,5 +39,6 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 					repo.add(article)
 				}
 				.count()
+				.doOnTerminate { repo.close() }
 	}
 }

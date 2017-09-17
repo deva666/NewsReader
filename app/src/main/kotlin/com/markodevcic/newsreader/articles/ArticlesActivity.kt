@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.Animation
@@ -264,9 +265,10 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		presenter.syncCategory(null)
 	}
 
-	override fun onSyncFailed() {
+	override fun onSyncFailed(fail: Throwable) {
 		Snackbar.make(articlesParent, getString(R.string.network_error), Snackbar.LENGTH_LONG).show()
 		endAnimation()
+		Log.d("Articles", fail.message, fail)
 	}
 
 	override fun onArticlesDownloaded(count: Int) {
@@ -276,10 +278,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			"No new articles"
 		}
 		Snackbar.make(articlesParent, message, Snackbar.LENGTH_LONG).show()
-	}
-
-	private fun onNetworkError() {
-
+		endAnimation()
 	}
 
 	companion object {

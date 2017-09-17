@@ -52,7 +52,7 @@
 //		Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(setOf())
 //		sut.bind(startupView)
 //		runBlocking {
-//			sut.downloadSourcesAsync()
+//			sut.downloadSources()
 //		}
 //		Mockito.verify(startupView).showNoCategorySelected()
 //	}
@@ -62,9 +62,9 @@
 //		runBlocking {
 //			val categories = setOf("entertainment")
 //			Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(categories)
-//			Mockito.`when`(syncService.downloadSourcesAsync(categories)).thenReturn(listOf<Source>())
+//			Mockito.`when`(syncService.downloadSources(categories)).thenReturn(listOf<Source>())
 //			sut.bind(startupView)
-//			sut.downloadSourcesAsync()
+//			sut.downloadSources()
 //			Mockito.verify(startupView).startMainView()
 //		}
 //	}
