@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -28,6 +29,7 @@ object ApiFactory {
 		val retrofit = Retrofit.Builder()
 				.baseUrl("https://newsapi.org/v1/")
 				.addConverterFactory(JacksonConverterFactory.create(createObjectMapper()))
+				.addCallAdapterFactory(RxJavaCallAdapterFactory.create())
 				.client(httpClient)
 				.build()
 

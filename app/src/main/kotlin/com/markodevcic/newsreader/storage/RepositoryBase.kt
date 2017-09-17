@@ -1,11 +1,10 @@
 package com.markodevcic.newsreader.storage
 
-import com.markodevcic.newsreader.extensions.inTransactionAsync
-import com.markodevcic.newsreader.extensions.loadAsync
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmQuery
 import io.realm.Sort
+import rx.Observable
 
 abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
@@ -23,21 +22,40 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 				.findFirst()
 	}
 
-	override suspend fun getAll(): List<T> {
+	override fun getAll(): Observable<out List<T>> {
 		return realm.where(clazz)
 				.findAllAsync()
-				.loadAsync()
+				.asObservable()
+				.filter { r -> r.isLoaded }
+				.first()
+
 	}
 
-	override suspend fun delete(query: RealmQuery<T>.() -> Unit) {
-		return realm.inTransactionAsync {
-			val results = where(clazz)
-			query(results)
-			results.findAll().deleteAllFromRealm()
+	override fun delete(query: RealmQuery<T>.() -> Unit): Observable<Unit> {
+		return Observable.create { s ->
+			realm.executeTransactionAsync { r ->
+				val results = r.where(clazz)
+				query(results)
+				results.findAll().deleteAllFromRealm()
+				if (!s.isUnsubscribed) {
+					s.onNext(Unit)
+					s.onCompleted()
+				}
+			}
 		}
 	}
 
-	override suspend fun deleteAll() = realm.inTransactionAsync { delete(clazz) }
+	override fun deleteAll(): Observable<Unit> {
+		return Observable.create { s ->
+			realm.executeTransactionAsync { r ->
+				r.delete(clazz)
+				if (!s.isUnsubscribed) {
+					s.onNext(Unit)
+					s.onCompleted()
+				}
+			}
+		}
+	}
 
 	override fun update(id: String, modifier: T.() -> Unit) {
 		realm.executeTransaction { r ->
@@ -62,8 +80,17 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		}
 	}
 
-	override suspend fun addAll(items: List<T>) =
-			realm.inTransactionAsync { copyToRealmOrUpdate(items) }
+	override fun addAll(items: List<T>): Observable<Unit> {
+		return Observable.create { s ->
+			realm.executeTransactionAsync { r ->
+				r.copyToRealmOrUpdate(items)
+				if (!s.isUnsubscribed) {
+					s.onNext(Unit)
+					s.onCompleted()
+				}
+			}
+		}
+	}
 
 	override fun count(query: RealmQuery<T>.() -> Unit): Long {
 		val results = realm.where(clazz)
@@ -75,15 +102,19 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		return realm.where(clazz).count()
 	}
 
-	override suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T> {
+	override fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): Observable<out List<T>> {
 		val results = realm.where(clazz)
 		init(results)
 		return if (sortField == null) {
 			results.findAllAsync()
-					.loadAsync()
+					.asObservable()
+					.filter { r -> r.isLoaded }
+					.first()
 		} else {
 			results.findAllSortedAsync(sortField, order)
-					.loadAsync()
+					.asObservable()
+					.filter { r -> r.isLoaded }
+					.first()
 		}
 	}
 

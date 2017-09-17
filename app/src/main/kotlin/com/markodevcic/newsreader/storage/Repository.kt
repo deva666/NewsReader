@@ -3,6 +3,7 @@ package com.markodevcic.newsreader.storage
 import io.realm.RealmModel
 import io.realm.RealmQuery
 import io.realm.Sort
+import rx.Observable
 import java.io.Closeable
 
 interface Repository<T> : Closeable  where T : RealmModel {
@@ -11,11 +12,11 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun getById(id: String): T?
 
-	suspend fun getAll(): List<T>
+	fun getAll(): Observable<out List<T>>
 
-	suspend fun deleteAll()
+	fun deleteAll(): Observable<Unit>
 
-	suspend fun delete(query: RealmQuery<T>.() -> Unit)
+	fun delete(query: RealmQuery<T>.() -> Unit): Observable<Unit>
 
 	fun update(id:String, modifier: T.() -> Unit)
 
@@ -23,13 +24,13 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun add(item: T)
 
-	suspend fun addAll(items: List<T>)
+	fun addAll(items: List<T>): Observable<Unit>
 
 	fun count(query: RealmQuery<T>.() -> Unit): Long
 
 	fun count(): Long
 
-	suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T>
+	fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): Observable<out List<T>>
 
 	val clazz: Class<T>
 }

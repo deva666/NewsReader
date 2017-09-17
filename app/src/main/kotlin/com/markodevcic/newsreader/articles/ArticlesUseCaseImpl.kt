@@ -5,24 +5,25 @@ import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import io.realm.Sort
+import rx.Observable
 import java.util.*
 
 private const val MILLIS_IN_DAY = 24 * 60 * 60 * 1000
 
 class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
-						  private val sourcesRepository: Repository<Source>): ArticlesUseCase {
+						  private val sourcesRepository: Repository<Source>) : ArticlesUseCase {
 
 	override fun hasArticles(): Boolean = articlesRepository.count() > 0L
 
-	suspend override fun deleteOldArticles(daysToDelete: Int) {
+	override fun deleteOldArticles(daysToDelete: Int): Observable<Unit> {
 		val deleteThreshold = Date().time - daysToDelete * MILLIS_IN_DAY
-		articlesRepository.delete {
+		return articlesRepository.delete {
 			lessThan("publishedAt", deleteThreshold)
 		}
 	}
 
-	suspend override fun onCategoriesChangedAsync(deletedCategories: Collection<String>) {
-		articlesRepository.delete {
+	override fun onSelectedCategoriesChanged(deletedCategories: Collection<String>): Observable<Unit> {
+		return articlesRepository.delete {
 			`in`("category", deletedCategories.toTypedArray())
 		}
 	}
@@ -43,7 +44,7 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 		}
 	}
 
-	suspend override fun getArticlesAsync(category: String?): List<Article> {
+	override fun getArticles(category: String?): Observable<out List<Article>> {
 		return articlesRepository.query({
 			if (category != null) {
 				equalTo("category", category)
@@ -53,7 +54,7 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 		}, arrayOf("isUnread", "publishedAt"), arrayOf(Sort.DESCENDING, Sort.DESCENDING))
 	}
 
-	suspend override fun getSourcesAsync(category: String?, selectedCategories: Collection<String>): List<Source> {
+	override fun getSources(category: String?, selectedCategories: Collection<String>): Observable<out List<Source>> {
 		return sourcesRepository.query({
 			if (category != null) {
 				equalTo("category", category)

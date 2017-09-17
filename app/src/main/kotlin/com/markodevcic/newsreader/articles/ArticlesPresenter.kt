@@ -2,47 +2,64 @@ package com.markodevcic.newsreader.articles
 
 import android.content.SharedPreferences
 import com.markodevcic.newsreader.Presenter
-import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.markodevcic.newsreader.util.KEY_DELETE_DAYS
+import com.markodevcic.newsreader.util.SchedulerProvider
+import rx.Observable
+import rx.subscriptions.CompositeSubscription
 import java.io.Closeable
 import javax.inject.Inject
 
 class ArticlesPresenter @Inject constructor(private val articlesUseCase: ArticlesUseCase,
 											private val sharedPreferences: SharedPreferences,
-											private val syncService: SyncService) : Presenter<ArticlesView>, Closeable {
+											private val syncService: SyncService,
+											private val schedulerProvider: SchedulerProvider) : Presenter<ArticlesView>, Closeable {
+
 	private lateinit var view: ArticlesView
+
+	private val subscriptions = CompositeSubscription()
 
 	override fun bind(view: ArticlesView) {
 		this.view = view
 	}
 
-	suspend fun onStart() {
+	fun onStart() {
 		view.onUnreadCountChanged(getUnreadCount())
 		val deleteDays = sharedPreferences.getInt(KEY_DELETE_DAYS, 3)
-		articlesUseCase.deleteOldArticles(deleteDays)
-		if (!articlesUseCase.hasArticles()) {
-			view.onNoArticlesAvailable()
-		}
+		subscriptions.add(articlesUseCase.deleteOldArticles(deleteDays)
+				.observeOn(schedulerProvider.ui)
+				.subscribe {
+					if (!articlesUseCase.hasArticles()) {
+						view.onNoArticlesAvailable()
+					}
+				}
+		)
 	}
 
-	suspend fun onSelectedCategoriesChangedAsync() {
+	fun onSelectedCategoriesChanged() {
 		val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		val deletedCategories = CATEGORIES_TO_RES_MAP.keys.subtract(selectedCategories)
-		articlesUseCase.onCategoriesChangedAsync(deletedCategories)
+		subscriptions.add(articlesUseCase.onSelectedCategoriesChanged(deletedCategories)
+				.observeOn(schedulerProvider.ui)
+				.subscribe { view.onCategoriesUpdated() })
 	}
 
-	suspend fun syncCategoryAsync(category: String?) {
-		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
-		val sources = articlesUseCase.getSourcesAsync(category, categories)
-		var downloadCount = 0
-		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
-			downloadCount += syncService.downloadArticlesAsync(src)
-		}
-		view.onUnreadCountChanged(getUnreadCount())
-		view.onArticlesDownloaded(downloadCount)
+	fun syncCategory(category: String?) {
+		val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
+		subscriptions.add(articlesUseCase.getSources(category, selectedCategories)
+				.flatMap { sources -> Observable.from(sources) }
+				.flatMap { s -> syncService.downloadArticlesAsync(s) }
+				.toList()
+				.map { l -> l.sum() }
+				.observeOn(schedulerProvider.ui)
+				.subscribe({ s ->
+					view.onUnreadCountChanged(getUnreadCount())
+					view.onArticlesDownloaded(s)
+				}, { fail ->
+					view.onSyncFailed()
+				}))
 	}
 
 	fun markArticlesRead(vararg articleUrl: String) {
@@ -55,15 +72,21 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 		view.onUnreadCountChanged(getUnreadCount())
 	}
 
-	suspend fun getArticlesInCategoryAsync(category: String?): List<Article> =
-			articlesUseCase.getArticlesAsync(category)
+	fun getArticlesInCategory(category: String?) {
+		subscriptions.add(articlesUseCase.getArticles(category)
+				.observeOn(schedulerProvider.ui)
+				.subscribe { articles ->
+					view.onArticlesUpdated(articles)
+				})
+	}
 
-	private fun getUnreadCount(): Map<String, Long>  {
+	private fun getUnreadCount(): Map<String, Long> {
 		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		return articlesUseCase.getUnreadCount(categories)
 	}
 
 	override fun close() {
 		articlesUseCase.close()
+		subscriptions.clear()
 	}
 }

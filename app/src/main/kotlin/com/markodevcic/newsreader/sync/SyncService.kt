@@ -1,8 +1,9 @@
 package com.markodevcic.newsreader.sync
 
 import com.markodevcic.newsreader.data.Source
+import rx.Observable
 
 interface SyncService {
-	suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source>
-	suspend fun downloadArticlesAsync(source: Source): Int
+	fun downloadSourcesAsync(categories: Collection<String>): Observable<Unit>
+	fun downloadArticlesAsync(source: Source): Observable<Int>
 }

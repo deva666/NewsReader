@@ -8,6 +8,7 @@ import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
+import rx.Observable
 import javax.inject.Inject
 
 class StartupPresenter @Inject constructor(private val syncService: SyncService,
@@ -20,17 +21,16 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 		this.view = view
 	}
 
-	suspend fun downloadSourcesAsync() {
+	fun downloadSourcesAsync(): Observable<Unit> {
 		val categorySet = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
-		if (categorySet.isEmpty()) {
-			view.showNoCategorySelected()
-			return
-		} else {
+//		if (categorySet.isEmpty()) {
+//			view.showNoCategorySelected()
+//		} else {
 			if (sourcesRepository.count() == 0L) {
-				syncService.downloadSourcesAsync(CATEGORIES_TO_RES_MAP.keys)
+				return syncService.downloadSourcesAsync(CATEGORIES_TO_RES_MAP.keys)
 			}
-			view.startMainView()
-		}
+//		}
+		return Observable.just(Unit)
 	}
 
 	val canOpenMainView: Boolean

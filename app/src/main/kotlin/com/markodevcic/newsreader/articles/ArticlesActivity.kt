@@ -14,7 +14,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.animation.Animation
 import android.widget.TextView
 import com.markodevcic.newsreader.R
@@ -31,9 +30,6 @@ import io.realm.OrderedRealmCollection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
 
@@ -49,7 +45,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	private var selectedCategory: String? = null
 
-	private val job = Job()
+	private var objectAnimator: ObjectAnimator? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -84,10 +80,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val selectedId: Int = checkSelectedMenuItem(savedInstanceState)
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
-
-		launch(UI + job) {
-			presenter.onStart()
-		}
+		presenter.onStart()
 	}
 
 	private fun setupArticlesView() {
@@ -173,17 +166,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val id = item.itemId
 		return when (id) {
 			R.id.action_refresh -> {
-				launch(UI + job) {
-					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
-					val animator = startRotatingAnimation(refreshMenu)
-					try {
-						presenter.syncCategoryAsync(selectedCategory)
-					} catch (fail: Exception) {
-						onNetworkError()
-					}
-					loadArticles()
-					endAnimation(refreshMenu, animator)
-				}
+				startRotatingAnimation()
+				presenter.syncCategory(selectedCategory)
 				true
 			}
 			R.id.action_settings -> {
@@ -199,18 +183,20 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		}
 	}
 
-	private fun startRotatingAnimation(refreshMenu: View): ObjectAnimator {
-		val animator = ObjectAnimator
+	private fun startRotatingAnimation() {
+		val refreshMenu = toolbar.findViewById(R.id.action_refresh)
+		objectAnimator?.cancel()
+		objectAnimator = ObjectAnimator
 				.ofFloat(refreshMenu, "rotation", refreshMenu.rotation + 360)
-		animator.duration = 1000L
-		animator.repeatCount = Animation.INFINITE
-		animator.start()
-		return animator
+		objectAnimator?.duration = 1000L
+		objectAnimator?.repeatCount = Animation.INFINITE
+		objectAnimator?.start()
 	}
 
-	private fun endAnimation(refreshMenu: View, animator: ObjectAnimator) {
+	private fun endAnimation() {
+		val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 		refreshMenu.clearAnimation()
-		animator.cancel()
+		objectAnimator?.cancel()
 		refreshMenu.rotation = 0f
 	}
 
@@ -231,14 +217,15 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun loadArticles() {
-		launch(UI + job) {
-			val articles = presenter.getArticlesInCategoryAsync(selectedCategory)
-			if (adapter == null) {
-				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
-				articlesView.adapter = adapter
-			} else {
-				adapter?.onDataChanged(articles as OrderedRealmCollection<Article>)
-			}
+		presenter.getArticlesInCategory(selectedCategory)
+	}
+
+	override fun onArticlesUpdated(articles: List<Article>) {
+		if (adapter == null) {
+			adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
+			articlesView.adapter = adapter
+		} else {
+			adapter?.onDataChanged(articles as OrderedRealmCollection<Article>)
 		}
 	}
 
@@ -248,10 +235,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
 			setupMenuItems()
-			launch(UI + job) {
-				presenter.onSelectedCategoriesChangedAsync()
-			}
-			syncAllArticles()
+			presenter.onSelectedCategoriesChanged()
 		}
 	}
 
@@ -263,7 +247,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onDestroy() {
 		super.onDestroy()
 		presenter.close()
-		job.cancel()
 		articlesView.clearOnScrollListeners()
 	}
 
@@ -272,18 +255,18 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		Snackbar.make(articlesParent, R.string.no_articles_try_sync, Snackbar.LENGTH_LONG).show()
 	}
 
+	override fun onCategoriesUpdated() {
+		syncAllArticles()
+	}
+
 	private fun syncAllArticles() {
-		launch(UI + job) {
-			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
-			val animator = startRotatingAnimation(refreshMenu)
-			try {
-				presenter.syncCategoryAsync(null)
-			} catch (fail: Exception) {
-				onNetworkError()
-			} finally {
-				endAnimation(refreshMenu, animator)
-			}
-		}
+		startRotatingAnimation()
+		presenter.syncCategory(null)
+	}
+
+	override fun onSyncFailed() {
+		Snackbar.make(articlesParent, getString(R.string.network_error), Snackbar.LENGTH_LONG).show()
+		endAnimation()
 	}
 
 	override fun onArticlesDownloaded(count: Int) {
@@ -296,7 +279,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun onNetworkError() {
-		Snackbar.make(articlesParent, "An error occurred while connecting to server, please try again", Snackbar.LENGTH_LONG).show()
+
 	}
 
 	companion object {

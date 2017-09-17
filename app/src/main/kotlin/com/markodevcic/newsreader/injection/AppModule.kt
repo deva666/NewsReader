@@ -13,6 +13,8 @@ import com.markodevcic.newsreader.storage.SourcesRepository
 import com.markodevcic.newsreader.sync.SyncService
 import com.markodevcic.newsreader.sync.SyncServiceImpl
 import com.markodevcic.newsreader.util.SHARED_PREFS
+import com.markodevcic.newsreader.util.SchedulerProvider
+import com.markodevcic.newsreader.util.SchedulerProviderImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -43,4 +45,9 @@ class AppModule(private val context: Context) {
 	fun providesArticlesUseCase(articlesRepository: Repository<Article>,
 								sourcesRepository: Repository<Source>) : ArticlesUseCase =
 			ArticlesUseCaseImpl(articlesRepository, sourcesRepository)
+
+	@Provides
+	fun provideSchedulerProvider(): SchedulerProvider {
+		return SchedulerProviderImpl()
+	}
 }
