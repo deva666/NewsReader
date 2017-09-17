@@ -37,9 +37,11 @@ class AppModule(private val context: Context) {
 	@Provides
 	fun providesSyncService(newsApi: NewsApi,
 							sourcesRepository: Provider<Repository<Source>>,
-							articlesRepository: Provider<Repository<Article>>): SyncService = SyncServiceImpl(newsApi,
+							articlesRepository: Provider<Repository<Article>>,
+							schedulerProvider: SchedulerProvider): SyncService = SyncServiceImpl(newsApi,
 			sourcesRepository,
-			articlesRepository)
+			articlesRepository,
+			schedulerProvider)
 
 	@Provides
 	fun providesArticlesUseCase(articlesRepository: Repository<Article>,
