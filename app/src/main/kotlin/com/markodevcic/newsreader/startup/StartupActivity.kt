@@ -63,4 +63,9 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 		dialog?.dismiss()
 		showToast(getString(R.string.error_download_sources))
 	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		presenter.close()
+	}
 }

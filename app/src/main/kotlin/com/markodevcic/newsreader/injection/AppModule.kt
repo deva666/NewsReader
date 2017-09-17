@@ -17,7 +17,6 @@ import com.markodevcic.newsreader.util.SchedulerProvider
 import com.markodevcic.newsreader.util.SchedulerProviderImpl
 import dagger.Module
 import dagger.Provides
-import javax.inject.Provider
 
 @Module
 class AppModule(private val context: Context) {
@@ -36,8 +35,8 @@ class AppModule(private val context: Context) {
 
 	@Provides
 	fun providesSyncService(newsApi: NewsApi,
-							sourcesRepository: Provider<Repository<Source>>,
-							articlesRepository: Provider<Repository<Article>>,
+							sourcesRepository: Repository<Source>,
+							articlesRepository: Repository<Article>,
 							schedulerProvider: SchedulerProvider): SyncService = SyncServiceImpl(newsApi,
 			sourcesRepository,
 			articlesRepository,

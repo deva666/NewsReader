@@ -88,5 +88,6 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 	override fun close() {
 		articlesUseCase.close()
 		subscriptions.clear()
+		syncService.close()
 	}
 }
