@@ -22,16 +22,13 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 	}
 
 	fun downloadSources() {
-		if (sourcesRepository.count() == 0L) {
-			syncService.downloadSources(CATEGORIES_TO_RES_MAP.keys)
-					.subscribeOn(schedulerProvider.io)
-					.observeOn(schedulerProvider.ui)
-					.subscribe({},{ fail ->
-						view.onError(fail)
-					},{
-						view.startMainView()
-					})
-		}
+		syncService.downloadSources(CATEGORIES_TO_RES_MAP.keys)
+				.observeOn(schedulerProvider.ui)
+				.subscribe({}, { fail ->
+					view.onError(fail)
+				}, {
+					view.startMainView()
+				})
 	}
 
 	val canOpenMainView: Boolean
