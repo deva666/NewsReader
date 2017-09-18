@@ -64,7 +64,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 	}
 
 	override fun add(item: T) {
-		return realm.executeTransaction { r ->
+		realm.executeTransactionAsync { r ->
 			r.copyToRealm(item)
 		}
 	}

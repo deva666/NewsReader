@@ -34,9 +34,10 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 					if (article.publishedAt == null || article.publishedAt!! == 0L) {
 						article.publishedAt = Date().time
 					}
-					articlesRepository.add(article)
 				}
-				.count()
+				.collect({ ArrayList<Article>() }, { r, a -> r.add(a) })
+				.flatMap { Observable.zip(Observable.just(it), articlesRepository.addAll(it), { p1, p2 -> Pair(p1, p2) }) }
+				.map { (first) -> first.count() }
 	}
 
 	override fun close() {
