@@ -1,5 +1,6 @@
 package com.markodevcic.newsreader.storage
 
+import com.markodevcic.newsreader.extensions.transactionAsObservable
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmQuery
@@ -32,28 +33,16 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 	}
 
 	override fun delete(query: RealmQuery<T>.() -> Unit): Observable<Unit> {
-		return Observable.create { s ->
-			realm.executeTransactionAsync { r ->
-				val results = r.where(clazz)
-				query(results)
-				results.findAll().deleteAllFromRealm()
-				if (!s.isUnsubscribed) {
-					s.onNext(Unit)
-					s.onCompleted()
-				}
-			}
+		return realm.transactionAsObservable {
+			val results = where(clazz)
+			query(results)
+			results.findAll().deleteAllFromRealm()
 		}
 	}
 
 	override fun deleteAll(): Observable<Unit> {
-		return Observable.create { s ->
-			realm.executeTransactionAsync { r ->
-				r.delete(clazz)
-				if (!s.isUnsubscribed) {
-					s.onNext(Unit)
-					s.onCompleted()
-				}
-			}
+		return realm.transactionAsObservable {
+			delete(clazz)
 		}
 	}
 
@@ -81,14 +70,8 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 	}
 
 	override fun addAll(items: List<T>): Observable<Unit> {
-		return Observable.create { s ->
-			realm.executeTransactionAsync { r ->
-				r.copyToRealmOrUpdate(items)
-				if (!s.isUnsubscribed) {
-					s.onNext(Unit)
-					s.onCompleted()
-				}
-			}
+		return realm.transactionAsObservable {
+			copyToRealmOrUpdate(items)
 		}
 	}
 

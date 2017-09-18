@@ -1,38 +1,18 @@
-//package com.markodevcic.newsreader.extensions
-//
-//import io.realm.Realm
-//import io.realm.RealmModel
-//import io.realm.RealmObject
-//import io.realm.RealmResults
-//import kotlinx.coroutines.experimental.suspendCancellableCoroutine
-//
-//suspend fun <T> T.loadAsync(): T  where T : RealmModel {
-//	return suspendCancellableCoroutine { continuation ->
-//		(this as RealmObject).addChangeListener<T> { item, _ ->
-//			this.removeAllChangeListeners()
-//			continuation.resume(item)
-//		}
-//	}
-//}
-//
-//suspend fun <T> RealmResults<T>.loadAsync(): List<T> where T : RealmModel {
-//	return suspendCancellableCoroutine { continuation ->
-//		this.addChangeListener { items, _ ->
-//			this.removeAllChangeListeners()
-//			continuation.resume(items)
-//		}
-//	}
-//}
-//
-//inline suspend fun Realm.inTransactionAsync(crossinline receiver: Realm.() -> Unit) {
-//	return suspendCancellableCoroutine { continuation ->
-//		this.executeTransactionAsync({ realm ->
-//			receiver(realm)
-//		}, {
-//			this.refresh()
-//			continuation.resume(Unit)
-//		}, { fail ->
-//			continuation.resumeWithException(fail)
-//		})
-//	}
-//}
+package com.markodevcic.newsreader.extensions
+
+import io.realm.Realm
+import rx.Emitter
+import rx.Observable
+
+fun Realm.transactionAsObservable(init: Realm.() -> Unit): Observable<Unit> {
+	return Observable.create({ emitter ->
+		this.executeTransactionAsync({ r ->
+			r.init()
+		}, {
+			emitter.onNext(Unit)
+			emitter.onCompleted()
+		}, { fail ->
+			emitter.onError(fail)
+		})
+	}, Emitter.BackpressureMode.DROP)
+}
