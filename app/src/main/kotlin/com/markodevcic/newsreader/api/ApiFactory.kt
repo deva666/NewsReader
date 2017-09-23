@@ -34,7 +34,7 @@ object ApiFactory {
 		return retrofit.create(T::class.java)
 	}
 
-	fun createObjectMapper(): ObjectMapper {
+	private fun createObjectMapper(): ObjectMapper {
 		val objectMapper = ObjectMapper()
 		objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false)
 		objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false)
