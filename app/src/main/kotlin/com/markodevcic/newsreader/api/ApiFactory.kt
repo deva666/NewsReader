@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanPrivate")
+
 package com.markodevcic.newsreader.api
 
 import android.util.Log
@@ -34,7 +36,7 @@ object ApiFactory {
 		return retrofit.create(T::class.java)
 	}
 
-	private fun createObjectMapper(): ObjectMapper {
+	fun createObjectMapper(): ObjectMapper {
 		val objectMapper = ObjectMapper()
 		objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false)
 		objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false)
