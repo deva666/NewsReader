@@ -1,5 +1,6 @@
 package com.markodevcic.newsreader.articledetails
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.markodevcic.newsreader.R
 import kotlinx.android.synthetic.main.activity_article_details.*
+@SuppressLint("SetJavaScriptEnabled")
 
 class ArticleDetailsActivity : AppCompatActivity() {
 

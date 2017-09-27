@@ -117,6 +117,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			onNavigationItemSelected(menu.getItem(0))
 		}
 
+		//there were maybe changes in selected categories, remove all and fill the menu again
 		(1 until menu.size())
 				.map { menu.getItem(it) }
 				.forEach { menu.removeItem(it.itemId) }
