@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
+import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,7 +26,7 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 
 	fun bind(article: Article) {
 		description.text = article.description
-		title.text = article.title
+		title.text = Html.fromHtml(article.title)
 		val isUnread = article.isUnread
 		if (!isUnread) {
 			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
