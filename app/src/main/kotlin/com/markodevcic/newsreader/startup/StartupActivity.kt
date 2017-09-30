@@ -3,8 +3,9 @@ package com.markodevcic.newsreader.startup
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.ToggleButton
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articles.ArticlesActivity
 import com.markodevcic.newsreader.categories.BaseCategoriesActivity
@@ -35,14 +36,14 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 		if (!presenter.canOpenMainView) {
 			setContentView(R.layout.activity_startup)
-			setSupportActionBar(toolbar)
-			supportActionBar?.title = getString(R.string.app_name)
+			toolbar.visibility = View.GONE
 			fillCategories()
 
 			categoriesHost.iterator().asSequence()
-					.filter { v -> v is CheckBox }
-					.map { v -> v as CheckBox }
-					.first().isChecked = true
+					.filter { v -> v is ToggleButton }
+					.map { v -> v as ToggleButton }
+					.first()
+					.isChecked = true
 
 			saveCategoriesBtn.setOnClickListener {
 				launch(UI + job) {
