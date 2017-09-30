@@ -289,7 +289,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onArticlesDownloaded(count: Int) {
 		val message: String = if (count > 0) {
-			"Downloaded $count articles"
+			"Downloaded $count ${if (count == 1) "article" else "articles" }"
 		} else {
 			"No new articles"
 		}
