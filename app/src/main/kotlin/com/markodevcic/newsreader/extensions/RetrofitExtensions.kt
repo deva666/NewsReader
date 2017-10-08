@@ -1,6 +1,5 @@
 package com.markodevcic.newsreader.extensions
 
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
@@ -36,7 +35,7 @@ suspend fun <T> Call<T>.executeAsync(): T {
 }
 
 fun <T> Call<T>.launchAsync(): Deferred<T> {
-	return async(CommonPool) { this@launchAsync.execute().body()!! }
+	return async { this@launchAsync.execute().body()!! }
 }
 
 suspend fun <T> List<Deferred<T>>.waitAllAsync(): List<T> {

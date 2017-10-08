@@ -7,7 +7,6 @@ import com.markodevcic.newsreader.extensions.executeAsync
 import com.markodevcic.newsreader.extensions.launchAsync
 import com.markodevcic.newsreader.extensions.waitAllAsync
 import com.markodevcic.newsreader.storage.Repository
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import java.util.*
 import javax.inject.Provider
@@ -30,7 +29,7 @@ class SyncServiceImpl(private val newsApi: NewsApi,
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { article -> article.category = source.category }
 		var downloadCount = 0
-		async(CommonPool) {
+		async {
 			val repository = articlesRepository.get()
 			repository.use { repo ->
 				for (article in response.articles) {
