@@ -34,10 +34,6 @@ suspend fun <T> Call<T>.executeAsync(): T {
 	}
 }
 
-fun <T> Call<T>.launchAsync(): Deferred<T> {
-	return async { this@launchAsync.execute().body()!! }
-}
+fun <T> Call<T>.launchAsync(): Deferred<T> = async { this@launchAsync.execute().body()!! }
 
-suspend fun <T> List<Deferred<T>>.waitAllAsync(): List<T> {
-	return this.map { job -> job.await() }
-}
+suspend fun <T> List<Deferred<T>>.waitAllAsync(): List<T> = this.map { job -> job.await() }
