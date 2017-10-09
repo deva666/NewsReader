@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.markodevcic.newsreader.Presenter
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
-import com.markodevcic.newsreader.sync.SyncService
+import com.markodevcic.newsreader.sync.SyncUseCase
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.markodevcic.newsreader.util.KEY_DELETE_DAYS
 import java.io.Closeable
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class ArticlesPresenter @Inject constructor(private val articlesUseCase: ArticlesUseCase,
 											private val sharedPreferences: SharedPreferences,
-											private val syncService: SyncService) : Presenter<ArticlesView>, Closeable {
+											private val syncUseCase: SyncUseCase) : Presenter<ArticlesView>, Closeable {
 	private lateinit var view: ArticlesView
 
 	override fun bind(view: ArticlesView) {
@@ -39,7 +39,7 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 		val sources = articlesUseCase.getSourcesAsync(category, categories)
 		var downloadCount = 0
 		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
-			downloadCount += syncService.downloadArticlesAsync(src)
+			downloadCount += syncUseCase.downloadArticlesAsync(src)
 		}
 		view.onUnreadCountChanged(getUnreadCount())
 		view.onArticlesDownloaded(downloadCount)

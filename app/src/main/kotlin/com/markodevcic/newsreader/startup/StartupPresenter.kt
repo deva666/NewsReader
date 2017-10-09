@@ -6,11 +6,11 @@ import com.markodevcic.newsreader.categories.BaseCategoriesPresenter
 import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
-import com.markodevcic.newsreader.sync.SyncService
+import com.markodevcic.newsreader.sync.SyncUseCase
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import javax.inject.Inject
 
-class StartupPresenter @Inject constructor(private val syncService: SyncService,
+class StartupPresenter @Inject constructor(private val syncUseCase: SyncUseCase,
 										   private val sharedPreferences: SharedPreferences,
 										   private val sourcesRepository: Repository<Source>) : BaseCategoriesPresenter(sharedPreferences), Presenter<StartupView> {
 
@@ -27,7 +27,7 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 			return
 		} else {
 			if (sourcesRepository.count() == 0L) {
-				syncService.downloadSourcesAsync(CATEGORIES_TO_RES_MAP.keys)
+				syncUseCase.downloadSourcesAsync(CATEGORIES_TO_RES_MAP.keys)
 			}
 			view.startMainView()
 		}

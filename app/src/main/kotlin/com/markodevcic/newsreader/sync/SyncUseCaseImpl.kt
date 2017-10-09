@@ -11,9 +11,9 @@ import kotlinx.coroutines.experimental.async
 import java.util.*
 import javax.inject.Provider
 
-class SyncServiceImpl(private val newsApi: NewsApi,
+class SyncUseCaseImpl(private val newsApi: NewsApi,
 					  private val sourcesRepository: Provider<Repository<Source>>,
-					  private val articlesRepository: Provider<Repository<Article>>) : SyncService {
+					  private val articlesRepository: Provider<Repository<Article>>) : SyncUseCase {
 
 	override suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source> {
 		sourcesRepository.get().use { repo ->

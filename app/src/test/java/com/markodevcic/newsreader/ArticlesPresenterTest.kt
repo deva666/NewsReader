@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.markodevcic.newsreader.articles.ArticlesPresenter
 import com.markodevcic.newsreader.articles.ArticlesUseCase
 import com.markodevcic.newsreader.articles.ArticlesView
-import com.markodevcic.newsreader.sync.SyncService
+import com.markodevcic.newsreader.sync.SyncUseCase
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Before
@@ -23,7 +23,7 @@ class ArticlesPresenterTest {
 	private lateinit var sharedPreferences: SharedPreferences
 
 	@Mock
-	private lateinit var syncService: SyncService
+	private lateinit var syncUseCase: SyncUseCase
 
 	@Mock
 	private lateinit var view: ArticlesView

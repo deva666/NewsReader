@@ -5,7 +5,7 @@ import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.startup.StartupPresenter
 import com.markodevcic.newsreader.startup.StartupView
 import com.markodevcic.newsreader.storage.Repository
-import com.markodevcic.newsreader.sync.SyncService
+import com.markodevcic.newsreader.sync.SyncUseCase
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Before
@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations
 class StartupPresenterTest {
 
 	@Mock
-	private lateinit var syncService: SyncService
+	private lateinit var syncUseCase: SyncUseCase
 
 	@Mock
 	private lateinit var sharedPreferences: SharedPreferences
@@ -62,7 +62,7 @@ class StartupPresenterTest {
 		runBlocking {
 			val categories = setOf("entertainment")
 			Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(categories)
-			Mockito.`when`(syncService.downloadSourcesAsync(categories)).thenReturn(listOf<Source>())
+			Mockito.`when`(syncUseCase.downloadSourcesAsync(categories)).thenReturn(listOf<Source>())
 			sut.bind(startupView)
 			sut.downloadSourcesAsync()
 			Mockito.verify(startupView).startMainView()

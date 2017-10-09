@@ -10,8 +10,8 @@ import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.ArticlesRepository
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.storage.SourcesRepository
-import com.markodevcic.newsreader.sync.SyncService
-import com.markodevcic.newsreader.sync.SyncServiceImpl
+import com.markodevcic.newsreader.sync.SyncUseCase
+import com.markodevcic.newsreader.sync.SyncUseCaseImpl
 import com.markodevcic.newsreader.util.SHARED_PREFS
 import dagger.Module
 import dagger.Provides
@@ -35,7 +35,7 @@ class AppModule(private val context: Context) {
 	@Provides
 	fun providesSyncService(newsApi: NewsApi,
 							sourcesRepository: Provider<Repository<Source>>,
-							articlesRepository: Provider<Repository<Article>>): SyncService = SyncServiceImpl(newsApi,
+							articlesRepository: Provider<Repository<Article>>): SyncUseCase = SyncUseCaseImpl(newsApi,
 			sourcesRepository,
 			articlesRepository)
 
