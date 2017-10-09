@@ -3,7 +3,7 @@ package com.markodevcic.newsreader.startup
 import android.content.SharedPreferences
 import com.markodevcic.newsreader.Presenter
 import com.markodevcic.newsreader.categories.BaseCategoriesPresenter
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.sync.SyncService

@@ -21,7 +21,7 @@ import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.categories.SelectCategoriesActivity
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
 import com.markodevcic.newsreader.settings.SettingsActivity

@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.find
 import com.squareup.picasso.Picasso
 import java.util.*

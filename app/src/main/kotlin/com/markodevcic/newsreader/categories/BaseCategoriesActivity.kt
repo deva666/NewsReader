@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ToggleButton
 import com.markodevcic.newsreader.R
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.showToast
 
 abstract class BaseCategoriesActivity : AppCompatActivity(), BaseCategoriesView {
