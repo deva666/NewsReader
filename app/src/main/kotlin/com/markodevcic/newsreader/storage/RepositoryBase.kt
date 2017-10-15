@@ -13,20 +13,10 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
 	abstract protected val primaryKey: String
 
-	override fun refresh() {
-		realm.refresh()
-	}
-
 	override fun getById(id: String): T? {
 		return realm.where(clazz)
 				.equalTo(primaryKey, id)
 				.findFirst()
-	}
-
-	override suspend fun getAll(): List<T> {
-		return realm.where(clazz)
-				.findAllAsync()
-				.loadAsync()
 	}
 
 	override suspend fun delete(query: RealmQuery<T>.() -> Unit) {
@@ -47,15 +37,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 			modifier(dbItem)
 		}
 	}
-
-	override fun update(items: Array<T>, modifier: T.() -> Unit) {
-		realm.executeTransaction {
-			for (item in items) {
-				modifier(item)
-			}
-		}
-	}
-
+	
 	override fun add(item: T) {
 		return realm.executeTransaction { r ->
 			r.copyToRealm(item)

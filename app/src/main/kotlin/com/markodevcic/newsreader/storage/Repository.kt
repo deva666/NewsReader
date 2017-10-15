@@ -7,19 +7,13 @@ import java.io.Closeable
 
 interface Repository<T> : Closeable  where T : RealmModel {
 
-	fun refresh()
-
 	fun getById(id: String): T?
-
-	suspend fun getAll(): List<T>
 
 	suspend fun deleteAll()
 
 	suspend fun delete(query: RealmQuery<T>.() -> Unit)
 
 	fun update(id:String, modifier: T.() -> Unit)
-
-	fun update(items: Array<T>, modifier: T.() -> Unit)
 
 	fun add(item: T)
 
