@@ -37,7 +37,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 			modifier(dbItem)
 		}
 	}
-	
+
 	override fun add(item: T) {
 		return realm.executeTransaction { r ->
 			r.copyToRealm(item)
@@ -53,9 +53,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		return results.count()
 	}
 
-	override fun count(): Long {
-		return realm.where(clazz).count()
-	}
+	override fun count(): Long = realm.where(clazz).count()
 
 	override suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T> {
 		val results = realm.where(clazz)
