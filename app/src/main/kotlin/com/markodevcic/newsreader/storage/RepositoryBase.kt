@@ -19,10 +19,10 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 				.findFirst()
 	}
 
-	override suspend fun delete(query: RealmQuery<T>.() -> Unit) {
+	override suspend fun delete(filter: RealmQuery<T>.() -> Unit) {
 		return realm.inTransactionAsync {
 			val results = where(clazz)
-			query(results)
+			filter(results)
 			results.findAll().deleteAllFromRealm()
 		}
 	}
@@ -47,22 +47,22 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 	override suspend fun addAll(items: List<T>) =
 			realm.inTransactionAsync { copyToRealmOrUpdate(items) }
 
-	override fun count(query: RealmQuery<T>.() -> Unit): Long {
+	override fun count(filter: RealmQuery<T>.() -> Unit): Long {
 		val results = realm.where(clazz)
-		query(results)
+		filter(results)
 		return results.count()
 	}
 
 	override fun count(): Long = realm.where(clazz).count()
 
-	override suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T> {
+	override suspend fun query(filter: RealmQuery<T>.() -> Unit, sortFields: Array<String>?, orders: Array<Sort>?): List<T> {
 		val results = realm.where(clazz)
-		init(results)
-		return if (sortField == null) {
+		filter(results)
+		return if (sortFields == null) {
 			results.findAllAsync()
 					.loadAsync()
 		} else {
-			results.findAllSortedAsync(sortField, order)
+			results.findAllSortedAsync(sortFields, orders)
 					.loadAsync()
 		}
 	}

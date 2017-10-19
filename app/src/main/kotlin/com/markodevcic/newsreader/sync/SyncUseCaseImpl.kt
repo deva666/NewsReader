@@ -27,6 +27,7 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 
 	override suspend fun downloadArticlesAsync(source: Source): Int {
 		val response = newsApi.getArticles(source.id).executeAsync()
+		response.articles.forEach { it.category = source.category }
 		var downloadCount = 0
 		async {
 			val repository = articlesRepository.get()
@@ -36,7 +37,6 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 						if (article.publishedAt == null || article.publishedAt!! == 0L) {
 							article.publishedAt = Date().time
 						}
-						article.category = source.category
 						repo.add(article)
 						downloadCount++
 					}

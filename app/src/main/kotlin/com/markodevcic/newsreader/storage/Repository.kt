@@ -11,7 +11,7 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	suspend fun deleteAll()
 
-	suspend fun delete(query: RealmQuery<T>.() -> Unit)
+	suspend fun delete(filter: RealmQuery<T>.() -> Unit)
 
 	fun update(id:String, modifier: T.() -> Unit)
 
@@ -19,11 +19,11 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	suspend fun addAll(items: List<T>)
 
-	fun count(query: RealmQuery<T>.() -> Unit): Long
+	fun count(filter: RealmQuery<T>.() -> Unit): Long
 
 	fun count(): Long
 
-	suspend fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): List<T>
+	suspend fun query(filter: RealmQuery<T>.() -> Unit, sortFields: Array<String>?, orders: Array<Sort>?): List<T>
 
 	val clazz: Class<T>
 }

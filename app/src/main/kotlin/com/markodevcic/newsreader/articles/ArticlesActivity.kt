@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,10 +22,10 @@ import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.categories.SelectCategoriesActivity
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
 import com.markodevcic.newsreader.settings.SettingsActivity
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.squareup.picasso.Picasso
 import io.realm.OrderedRealmCollection
@@ -281,6 +282,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				presenter.syncCategoryAsync(null)
 			} catch (fail: Exception) {
 				onNetworkError()
+				Log.e(this@ArticlesActivity::class.java.simpleName, fail.message, fail)
 			} finally {
 				endAnimation(refreshMenu, animator)
 			}
