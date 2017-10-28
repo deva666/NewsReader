@@ -17,9 +17,9 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 
 	override suspend fun downloadSourcesAsync(categories: Collection<String>) {
 		sourcesRepository.get().use { repo ->
-			repo.deleteAll()
 			val downloadJobs = categories.map { cat -> newsApi.getSources(cat).launchAsync() }
 			val sources = downloadJobs.waitAllAsync().flatMap { job -> job.sources }
+			repo.deleteAll()
 			repo.addAll(sources)
 		}
 	}
