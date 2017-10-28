@@ -33,7 +33,7 @@ class AppModule(private val context: Context) {
 	fun providesArticlesRepo(): Repository<Article> = ArticlesRepository()
 
 	@Provides
-	fun providesSyncService(newsApi: NewsApi,
+	fun providesSyncUseCase(newsApi: NewsApi,
 							sourcesRepository: Provider<Repository<Source>>,
 							articlesRepository: Provider<Repository<Article>>): SyncUseCase = SyncUseCaseImpl(newsApi,
 			sourcesRepository,
