@@ -62,7 +62,6 @@ class StartupPresenterTest {
 		runBlocking {
 			val categories = setOf("entertainment")
 			Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(categories)
-			Mockito.`when`(syncUseCase.downloadSourcesAsync(categories)).thenReturn(listOf<Source>())
 			sut.bind(startupView)
 			sut.downloadSourcesAsync()
 			Mockito.verify(startupView).startMainView()

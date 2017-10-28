@@ -15,13 +15,12 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 					  private val sourcesRepository: Provider<Repository<Source>>,
 					  private val articlesRepository: Provider<Repository<Article>>) : SyncUseCase {
 
-	override suspend fun downloadSourcesAsync(categories: Collection<String>): Collection<Source> {
+	override suspend fun downloadSourcesAsync(categories: Collection<String>) {
 		sourcesRepository.get().use { repo ->
 			repo.deleteAll()
 			val downloadJobs = categories.map { cat -> newsApi.getSources(cat).launchAsync() }
 			val sources = downloadJobs.waitAllAsync().flatMap { job -> job.sources }
 			repo.addAll(sources)
-			return sources
 		}
 	}
 
