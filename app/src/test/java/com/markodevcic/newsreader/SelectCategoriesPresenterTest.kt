@@ -36,7 +36,16 @@ class SelectCategoriesPresenterTest {
 	fun onSaveClicked() {
 		Mockito.`when`(sharedPrefs.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf("general"))
 		sut.onSaveClicked()
+		Mockito.verify(selectCategoriesView, Mockito.never()).showNoCategorySelected()
 		Mockito.verify(selectCategoriesView).finishOk()
+	}
+
+	@Test
+	fun onSaveClickedEmptyCategories() {
+		Mockito.`when`(sharedPrefs.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf())
+		sut.onSaveClicked()
+		Mockito.verify(selectCategoriesView, Mockito.never()).finishOk()
+		Mockito.verify(selectCategoriesView).showNoCategorySelected()
 	}
 
 	@Test
