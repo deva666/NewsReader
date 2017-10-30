@@ -49,10 +49,16 @@ class SelectCategoriesPresenterTest {
 	}
 
 	@Test
-	fun testCategoryChanging() {
+	fun testCategoryAdd() {
 		Mockito.`when`(sharedPrefs.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf())
 		sut.onCategoryChanging("music", true)
 		Mockito.verify(editor).putStringSet(KEY_CATEGORIES, setOf("music"))
 	}
 
+	@Test
+	fun testCategoryRemoval() {
+		Mockito.`when`(sharedPrefs.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf("general", "music"))
+		sut.onCategoryChanging("general", false)
+		Mockito.verify(editor).putStringSet(KEY_CATEGORIES, setOf("music"))
+	}
 }
