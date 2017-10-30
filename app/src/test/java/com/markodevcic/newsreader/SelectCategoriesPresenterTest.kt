@@ -17,6 +17,9 @@ class SelectCategoriesPresenterTest {
 	private lateinit var sharedPrefs: SharedPreferences
 
 	@Mock
+	private lateinit var editor: SharedPreferences.Editor
+
+	@Mock
 	private lateinit var selectCategoriesView: SelectCategoriesView
 
 	@InjectMocks
@@ -25,6 +28,7 @@ class SelectCategoriesPresenterTest {
 	@Before
 	fun setup() {
 		MockitoAnnotations.initMocks(this)
+		Mockito.`when`(sharedPrefs.edit()).thenReturn(editor)
 		sut.bind(selectCategoriesView)
 	}
 
@@ -33,6 +37,13 @@ class SelectCategoriesPresenterTest {
 		Mockito.`when`(sharedPrefs.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf("general"))
 		sut.onSaveClicked()
 		Mockito.verify(selectCategoriesView).finishOk()
+	}
+
+	@Test
+	fun testCategoryChanging() {
+		Mockito.`when`(sharedPrefs.getStringSet(KEY_CATEGORIES, setOf())).thenReturn(setOf())
+		sut.onCategoryChanging("music", true)
+		Mockito.verify(editor).putStringSet(KEY_CATEGORIES, setOf("music"))
 	}
 
 }
