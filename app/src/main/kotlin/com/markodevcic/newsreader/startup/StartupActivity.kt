@@ -8,7 +8,6 @@ import android.widget.ToggleButton
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articles.ArticlesActivity
 import com.markodevcic.newsreader.categories.BaseCategoriesActivity
-import com.markodevcic.newsreader.extensions.iterator
 import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
@@ -38,17 +37,28 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 			toolbar.title = getString(R.string.app_name)
 			fillCategories()
 
-			categoriesHost.iterator().asSequence()
+			(0 until categoriesHost.childCount)
+					.map { i -> categoriesHost.getChildAt(i) }
 					.filter { v -> v is ToggleButton }
 					.map { v -> v as ToggleButton }
 					.first()
 					.isChecked = true
+
+//			var foundFirst = false
+//			for (i in 0 until categoriesHost.childCount) {
+//				val view = categoriesHost.getChildAt(i)
+//				if (view is ToggleButton && !foundFirst) {
+//					view.isChecked = true
+//					foundFirst = true
+//				}
+//			}
 
 			saveCategoriesBtn.setOnClickListener {
 				launch(UI + job) {
 					val dialog = showProgressDialog()
 					try {
 						presenter.downloadSourcesAsync()
+						startMainView()
 					} catch (fail: Throwable) {
 						Log.e("Sync", fail.message, fail)
 						dialog.dismiss()
@@ -66,7 +76,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 	private fun showProgressDialog() = ProgressDialog.show(this, getString(R.string.downloading_sources), "", true, false)
 
-	override fun startMainView() {
+	private fun startMainView() {
 		startActivity<ArticlesActivity>()
 	}
 
