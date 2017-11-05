@@ -3,7 +3,6 @@ package com.markodevcic.newsreader.startup
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ToggleButton
 import com.markodevcic.newsreader.R
@@ -36,7 +35,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 		if (!presenter.canOpenMainView) {
 			setContentView(R.layout.activity_startup)
-			toolbar.visibility = View.GONE
+			toolbar.title = getString(R.string.app_name)
 			fillCategories()
 
 			categoriesHost.iterator().asSequence()
