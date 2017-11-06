@@ -58,13 +58,12 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 					val dialog = showProgressDialog()
 					try {
 						presenter.downloadSourcesAsync()
+						dialog.dismiss()
 						startMainView()
 					} catch (fail: Throwable) {
 						Log.e("Sync", fail.message, fail)
 						dialog.dismiss()
 						showToast(getString(R.string.error_download_sources))
-					} finally {
-						dialog.dismiss()
 					}
 				}
 			}
