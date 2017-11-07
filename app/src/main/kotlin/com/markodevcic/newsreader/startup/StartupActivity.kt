@@ -25,7 +25,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 	override val categoriesViewGroup: ViewGroup
 		get() = categoriesHost
 
-	private val job = Job()
+	private var job: Job? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -37,24 +37,17 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 			toolbar.title = getString(R.string.app_name)
 			fillCategories()
 
-			(0 until categoriesHost.childCount)
-					.map { i -> categoriesHost.getChildAt(i) }
-					.filter { v -> v is ToggleButton }
-					.map { v -> v as ToggleButton }
-					.first()
-					.isChecked = true
+			var foundFirst = false
+			for (i in 0 until categoriesHost.childCount) {
+				val view = categoriesHost.getChildAt(i)
+				if (view is ToggleButton && !foundFirst) {
+					view.isChecked = true
+					foundFirst = true
+				}
+			}
 
-//			var foundFirst = false
-//			for (i in 0 until categoriesHost.childCount) {
-//				val view = categoriesHost.getChildAt(i)
-//				if (view is ToggleButton && !foundFirst) {
-//					view.isChecked = true
-//					foundFirst = true
-//				}
-//			}
-
-			saveCategoriesBtn.setOnClickListener {
-				launch(UI + job) {
+			downloadBtn.setOnClickListener {
+				job = launch(UI) {
 					val dialog = showProgressDialog()
 					try {
 						presenter.downloadSourcesAsync()
@@ -81,6 +74,6 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		job.cancel()
+		job?.cancel()
 	}
 }

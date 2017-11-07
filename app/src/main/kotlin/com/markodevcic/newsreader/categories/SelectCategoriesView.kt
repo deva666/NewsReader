@@ -1,5 +1,3 @@
 package com.markodevcic.newsreader.categories
 
-interface SelectCategoriesView : BaseCategoriesView {
-	fun finishOk()
-}
+interface SelectCategoriesView : BaseCategoriesView

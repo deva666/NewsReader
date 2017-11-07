@@ -27,11 +27,11 @@ class SelectCategoriesActivity: BaseCategoriesActivity(), SelectCategoriesView {
 		chooseCategoriesText.text = getString(R.string.available_categories)
 		presenter.bind(this)
 		fillCategories()
-		saveCategoriesBtn.visibility = View.GONE
+		downloadBtn.visibility = View.GONE
 		presenter.onStartCategorySelect()
 	}
 
-	override fun finishOk() {
+	private fun finishOk() {
 		setResult(Activity.RESULT_OK)
 		onBackPressed()
 	}
