@@ -22,31 +22,33 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".categories.SelectCategoriesActivity"
+            android:parentActivityName=".articles.ArticlesActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/categories"/>
         <activity
             android:name=".articles.ArticlesActivity"
             android:label="@string/title_activity_articles"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
         <activity
             android:name=".articledetails.ArticleDetailsActivity"
             android:parentActivityName=".articles.ArticlesActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
         <activity
             android:name=".settings.SettingsActivity"
             android:parentActivityName=".articles.ArticlesActivity"
             android:theme="@style/AppTheme.Translucent"
             android:label="@string/title_activity_settings">
         </activity>
-        <activity
-            android:name=".categories.SelectCategoriesActivity"
-                  android:parentActivityName=".articles.ArticlesActivity"
-                  android:theme="@style/AppTheme.NoActionBar"
-                  android:label="@string/categories"/>
 
     </application>
 
