@@ -14,7 +14,7 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 
 	override fun hasArticles(): Boolean = articlesRepository.count() > 0L
 
-	suspend override fun deleteOldArticles(daysToDelete: Int) {
+	suspend override fun deleteOldArticlesAsync(daysToDelete: Int) {
 		val deleteThreshold = Date().time - daysToDelete * MILLIS_IN_DAY
 		articlesRepository.delete {
 			lessThan("publishedAt", deleteThreshold)

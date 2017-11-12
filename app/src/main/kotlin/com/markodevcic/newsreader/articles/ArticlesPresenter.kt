@@ -22,7 +22,7 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 	suspend fun onStart() {
 		view.onUnreadCountChanged(getUnreadCount())
 		val deleteDays = sharedPreferences.getInt(KEY_DELETE_DAYS, 3) // 3 days is default value
-		articlesUseCase.deleteOldArticles(deleteDays)
+		articlesUseCase.deleteOldArticlesAsync(deleteDays)
 		if (!articlesUseCase.hasArticles()) {
 			view.onNoArticlesAvailable()
 		}
