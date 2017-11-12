@@ -3,8 +3,8 @@ package com.markodevcic.newsreader.articles
 import android.content.SharedPreferences
 import com.markodevcic.newsreader.Presenter
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.sync.SyncUseCase
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.markodevcic.newsreader.util.KEY_DELETE_DAYS
 import java.io.Closeable
@@ -21,7 +21,7 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 
 	suspend fun onStart() {
 		view.onUnreadCountChanged(getUnreadCount())
-		val deleteDays = sharedPreferences.getInt(KEY_DELETE_DAYS, 3)
+		val deleteDays = sharedPreferences.getInt(KEY_DELETE_DAYS, 3) // 3 days is default value
 		articlesUseCase.deleteOldArticles(deleteDays)
 		if (!articlesUseCase.hasArticles()) {
 			view.onNoArticlesAvailable()
