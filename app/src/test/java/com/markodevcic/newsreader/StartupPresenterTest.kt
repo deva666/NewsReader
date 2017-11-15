@@ -56,15 +56,4 @@ class StartupPresenterTest {
 		}
 		Mockito.verify(startupView).showNoCategorySelected()
 	}
-
-	@Test
-	fun testDownloadSources() {
-		runBlocking {
-			val categories = setOf("entertainment")
-			Mockito.`when`(sharedPreferences.getStringSet(KEY_CATEGORIES, setOf<String>())).thenReturn(categories)
-			sut.bind(startupView)
-			sut.downloadSourcesAsync()
-			Mockito.verify(startupView).startMainView()
-		}
-	}
 }
