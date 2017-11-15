@@ -19,9 +19,3 @@ inline fun <reified T : Activity> Context.startActivity() =
 inline fun <reified T : Activity> Context.newIntent(): Intent =
 		Intent(this, T::class.java)
 
-inline fun <reified T : Activity> Context.newIntent(data: Array<out Pair<String, String>>): Intent =
-		Intent(this, T::class.java).apply {
-			data.forEach {
-				putExtra(it.first, it.second)
-			}
-		}
