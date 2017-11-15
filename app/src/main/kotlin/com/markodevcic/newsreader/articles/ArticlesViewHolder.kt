@@ -11,8 +11,8 @@ import android.widget.TextView
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.find
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -56,11 +56,15 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 			image.setImageDrawable(view.context.getDrawable(R.drawable.ic_image))
 		}
 		view.setOnClickListener {
-			val activity = view.context as Activity
-			val intent = Intent(activity, ArticleDetailsActivity::class.java)
-			intent.putExtra(ArticleDetailsActivity.KEY_ARTICLE_URL, article.url)
-			activity.startActivityForResult(intent, ArticlesActivity.REQUEST_ARTICLE_READ)
+			openArticleDetails(article)
 		}
+	}
+
+	private fun openArticleDetails(article: Article) {
+		val activity = view.context as Activity
+		val intent = Intent(activity, ArticleDetailsActivity::class.java)
+		intent.putExtra(ArticleDetailsActivity.KEY_ARTICLE_URL, article.url)
+		activity.startActivityForResult(intent, ArticlesActivity.REQUEST_ARTICLE_READ)
 	}
 
 	private fun formatDate(time: Long?): String {
