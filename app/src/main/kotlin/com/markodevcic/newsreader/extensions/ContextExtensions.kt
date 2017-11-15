@@ -7,9 +7,7 @@ import android.view.View
 import android.widget.Toast
 
 @Suppress("UNCHECKED_CAST")
-fun <T : View> View.find(id: Int): T {
-	return this.findViewById(id) as T
-}
+fun <T : View> View.find(id: Int): T = this.findViewById(id) as T
 
 fun Context.showToast(charSequence: CharSequence, length: Int = Toast.LENGTH_LONG) {
 	Toast.makeText(this, charSequence, length).show()
