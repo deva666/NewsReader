@@ -39,7 +39,7 @@ import javax.inject.Inject
 
 private const val KEY_CATEGORY = "KEY_CATEGORY"
 const val REQUEST_ARTICLE_READ = 1231
-const val REQUEST_SETTINGS = 2213
+const val REQUEST_CHANGE_CATEGORIES = 2213
 
 
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
@@ -221,7 +221,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			}
 			R.id.action_categories -> {
 				val intent = Intent(this, SelectCategoriesActivity::class.java)
-				startActivityForResult(intent, REQUEST_SETTINGS)
+				startActivityForResult(intent, REQUEST_CHANGE_CATEGORIES)
 				true
 			}
 			else -> super.onOptionsItemSelected(item)
@@ -247,7 +247,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
 			presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
-		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
+		} else if (requestCode == REQUEST_CHANGE_CATEGORIES && resultCode == RESULT_OK) {
 			setupMenuItems()
 			launch(UI + job) {
 				presenter.onSelectedCategoriesChangedAsync()
