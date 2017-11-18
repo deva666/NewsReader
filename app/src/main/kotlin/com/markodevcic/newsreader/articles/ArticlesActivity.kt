@@ -256,6 +256,21 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		}
 	}
 
+	private fun syncAllArticles() {
+		launch(UI + job) {
+			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
+			val animator = startRotatingAnimation(refreshMenu)
+			try {
+				presenter.syncCategoryAsync(null)
+			} catch (fail: Exception) {
+				onNetworkError()
+				Log.e(this@ArticlesActivity::class.java.simpleName, fail.message, fail)
+			} finally {
+				endAnimation(refreshMenu, animator)
+			}
+		}
+	}
+
 	override fun onSaveInstanceState(outState: Bundle?) {
 		super.onSaveInstanceState(outState)
 		outState?.putString(KEY_CATEGORY, selectedCategory)
@@ -271,21 +286,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onNoArticlesAvailable() {
 		articlesParent.postDelayed(this::syncAllArticles, 100)
 		Snackbar.make(articlesParent, R.string.no_articles_try_sync, Snackbar.LENGTH_LONG).show()
-	}
-
-	private fun syncAllArticles() {
-		launch(UI + job) {
-			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
-			val animator = startRotatingAnimation(refreshMenu)
-			try {
-				presenter.syncCategoryAsync(null)
-			} catch (fail: Exception) {
-				onNetworkError()
-				Log.e(this@ArticlesActivity::class.java.simpleName, fail.message, fail)
-			} finally {
-				endAnimation(refreshMenu, animator)
-			}
-		}
 	}
 
 	override fun onArticlesDownloaded(count: Int) {
