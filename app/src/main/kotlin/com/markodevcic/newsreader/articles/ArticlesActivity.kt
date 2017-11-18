@@ -64,8 +64,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setupArticlesView()
 
 		btnMarkAllRead.setOnClickListener {
-			val adapterCopy = adapter ?: return@setOnClickListener
-			val articleUrls = adapterCopy.articles
+			val articles = adapter?.articles ?: return@setOnClickListener
+			val articleUrls = articles
 					.filter { a -> a.isUnread }
 					.map { a -> a.url }
 					.toTypedArray()
