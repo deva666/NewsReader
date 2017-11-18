@@ -141,6 +141,34 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		return selectedId
 	}
 
+	override fun onNavigationItemSelected(item: MenuItem): Boolean {
+		val id = item.itemId
+		if (id == R.id.nav_unread) {
+			item.isChecked = true
+			selectedCategory = null
+			supportActionBar?.title = getString(R.string.app_name)
+		} else {
+			val category = item.actionView.tag.toString()
+			selectedCategory = category
+			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: throw IllegalStateException("unknown category"))
+		}
+		loadArticles()
+		drawerLayout.closeDrawer(GravityCompat.START)
+		return true
+	}
+
+	private fun loadArticles() {
+		launch(UI + job) {
+			val articles = presenter.getArticlesInCategoryAsync(selectedCategory)
+			if (adapter == null) {
+				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
+				articlesView.adapter = adapter
+			} else {
+				adapter?.onDataChanged(articles as OrderedRealmCollection<Article>)
+			}
+		}
+	}
+
 	override fun onUnreadCountChanged(counts: Map<String, Long>) {
 		val menu = navigationView.menu
 		var totalUnread = 0L
@@ -209,34 +237,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		refreshMenu.clearAnimation()
 		animator.cancel()
 		refreshMenu.rotation = 0f
-	}
-
-	override fun onNavigationItemSelected(item: MenuItem): Boolean {
-		val id = item.itemId
-		if (id == R.id.nav_unread) {
-			item.isChecked = true
-			selectedCategory = null
-			supportActionBar?.title = getString(R.string.app_name)
-		} else {
-			val category = item.actionView.tag.toString()
-			selectedCategory = category
-			supportActionBar?.title = getString(CATEGORIES_TO_RES_MAP[category] ?: throw IllegalStateException("unknown category"))
-		}
-		loadArticles()
-		drawerLayout.closeDrawer(GravityCompat.START)
-		return true
-	}
-
-	private fun loadArticles() {
-		launch(UI + job) {
-			val articles = presenter.getArticlesInCategoryAsync(selectedCategory)
-			if (adapter == null) {
-				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
-				articlesView.adapter = adapter
-			} else {
-				adapter?.onDataChanged(articles as OrderedRealmCollection<Article>)
-			}
-		}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
