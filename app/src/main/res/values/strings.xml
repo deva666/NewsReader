@@ -105,4 +105,5 @@
     <string name="all_articles_read">Marked all articles as read</string>
     <string name="undo">Undo</string>
     <string name="choose_one_category">Please choose at least one category</string>
+    <string name="categories">Categories</string>
 </resources>
