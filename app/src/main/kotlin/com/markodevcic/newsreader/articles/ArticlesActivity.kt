@@ -37,6 +37,10 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
+private const val KEY_CATEGORY = "KEY_CATEGORY"
+const val REQUEST_ARTICLE_READ = 1231
+const val REQUEST_SETTINGS = 2213
+
 
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
 
@@ -295,11 +299,5 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	private fun onNetworkError() {
 		Snackbar.make(articlesParent, "An error occurred while connecting to server, please try again", Snackbar.LENGTH_LONG).show()
-	}
-
-	companion object {
-		private const val KEY_CATEGORY = "KEY_CATEGORY"
-		const val REQUEST_ARTICLE_READ = 1231
-		const val REQUEST_SETTINGS = 2213
 	}
 }
