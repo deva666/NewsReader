@@ -82,7 +82,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		navigationView.setNavigationItemSelectedListener(this)
 
 		val menu = setupMenuItems()
-		val selectedId: Int = checkSelectedMenuItem(savedInstanceState)
+		val selectedId: Int = checkIfMenuItemWasSaved(savedInstanceState)
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
 
@@ -113,11 +113,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val menu = navigationView.menu
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
 
-		if (selectedCategory !in selectedCategories) {
-			//no selected category, load all unread
-			onNavigationItemSelected(menu.getItem(0))
-		}
-
 		//there were maybe changes in selected categories, remove all and fill the menu again
 		(1 until menu.size())
 				.map { menu.getItem(it) }
@@ -135,7 +130,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		return menu
 	}
 
-	private fun checkSelectedMenuItem(savedInstanceState: Bundle?): Int {
+	private fun checkIfMenuItemWasSaved(savedInstanceState: Bundle?): Int {
 		var selectedId: Int = R.id.nav_unread
 		if (savedInstanceState?.containsKey(KEY_CATEGORY) == true) {
 			val cat = savedInstanceState.getString(KEY_CATEGORY)
