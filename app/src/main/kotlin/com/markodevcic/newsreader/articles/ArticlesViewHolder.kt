@@ -64,7 +64,7 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 		val activity = view.context as Activity
 		val intent = Intent(activity, ArticleDetailsActivity::class.java)
 		intent.putExtra(ArticleDetailsActivity.KEY_ARTICLE_URL, article.url)
-		activity.startActivityForResult(intent, ArticlesActivity.REQUEST_ARTICLE_READ)
+		activity.startActivityForResult(intent, REQUEST_ARTICLE_READ)
 	}
 
 	private fun formatDate(time: Long?): String {
