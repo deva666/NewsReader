@@ -50,4 +50,9 @@
     <string name="undo">Undo</string>
     <string name="choose_one_category">Please choose at least one category</string>
     <string name="unread">Unread</string>
+    <string name="delete_automatically_articles_older_than">Delete automatically Articles older than</string>
+    <string name="_3_days">3 days</string>
+    <string name="_5_days">5 days</string>
+    <string name="_7_days">7 days</string>
+    <string name="settings">Settings</string>
 </resources>

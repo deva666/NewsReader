@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Settings"
+                android:text="@string/settings"
                 android:textColor="@color/cardview_dark_background"
                 android:textSize="24sp"/>
 
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="12dp"
-                android:text="Delete automatically Articles older than"
+                android:text="@string/delete_automatically_articles_older_than"
                 android:textColor="@color/cardview_dark_background"
                 android:textSize="16sp"
                 />
@@ -57,21 +57,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:tag="3"
-                    android:text="3 days"/>
+                    android:text="@string/_3_days"/>
 
                 <RadioButton
                     android:id="@+id/radioBtn5Days"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:tag="5"
-                    android:text="5 days"/>
+                    android:text="@string/_5_days"/>
 
                 <RadioButton
                     android:id="@+id/radioBtn7Days"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:tag="7"
-                    android:text="7 days"/>
+                    android:text="@string/_7_days"/>
 
             </RadioGroup>
         </LinearLayout>
@@ -81,7 +81,7 @@
             android:id="@+id/settingsClose"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:layout_marginEnd="6dp"
             android:layout_marginTop="6dp"
             android:background="?selectableItemBackgroundBorderless"
