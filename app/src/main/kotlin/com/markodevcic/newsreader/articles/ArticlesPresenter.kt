@@ -38,7 +38,7 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 		val categories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		val sources = articlesUseCase.getSourcesAsync(category, categories)
 		var downloadCount = 0
-		for (src in sources.toTypedArray()) { //seems to be a bug in coroutines, if looping over normal List, only first item in the list is processed and function never ends... Works OK with Arrays
+		for (src in sources.toList()) {
 			downloadCount += syncUseCase.downloadArticlesAsync(src)
 		}
 		view.onUnreadCountChanged(getUnreadCount())
