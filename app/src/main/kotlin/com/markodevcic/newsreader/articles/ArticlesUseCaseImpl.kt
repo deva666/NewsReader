@@ -37,8 +37,8 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 	}
 
 	override fun markArticlesUnread(vararg url: String) {
-		url.forEach {
-			articlesRepository.update(it) {
+		url.forEach { u ->
+			articlesRepository.update(u) {
 				isUnread = true
 			}
 		}

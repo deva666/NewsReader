@@ -27,18 +27,18 @@ class SelectCategoriesActivity: BaseCategoriesActivity(), SelectCategoriesView {
 		chooseCategoriesText.text = getString(R.string.available_categories)
 		presenter.bind(this)
 		fillCategories()
-		saveCategoriesBtn.visibility = View.GONE
+		downloadBtn.visibility = View.GONE
 		presenter.onStart()
 	}
 
-	override fun finishOk() {
+	override fun onBackPressed() {
 		setResult(Activity.RESULT_OK)
-		onBackPressed()
+		super.onBackPressed()
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		if (item.itemId == android.R.id.home) {
-			finishOk()
+			onBackPressed()
 			return true
 		}
 		return super.onOptionsItemSelected(item)

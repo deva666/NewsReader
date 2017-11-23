@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.markodevcic.newsreader.R
-import com.markodevcic.newsreader.extensions.editorApply
+import com.markodevcic.newsreader.extensions.apply
 import com.markodevcic.newsreader.injection.Injector
 import com.markodevcic.newsreader.util.KEY_DELETE_DAYS
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -32,7 +32,7 @@ class SettingsActivity : AppCompatActivity() {
 
 		radioGroup.setOnCheckedChangeListener { group, checkedId ->
 			val radioBtn = group.findViewById(checkedId)
-			sharedPrefs.editorApply {
+			sharedPrefs.apply {
 				putInt(KEY_DELETE_DAYS, radioBtn.tag.toString().toInt())
 			}
 		}

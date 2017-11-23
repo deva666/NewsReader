@@ -4,11 +4,10 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.ToggleButton
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articles.ArticlesActivity
 import com.markodevcic.newsreader.categories.BaseCategoriesActivity
-import com.markodevcic.newsreader.extensions.iterator
 import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
@@ -32,16 +31,19 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 		if (!presenter.canOpenMainView) {
 			setContentView(R.layout.activity_startup)
-			setSupportActionBar(toolbar)
-			supportActionBar?.title = getString(R.string.app_name)
+			toolbar.title = getString(R.string.app_name)
 			fillCategories()
 
-			categoriesHost.iterator().asSequence()
-					.filter { v -> v is CheckBox }
-					.map { v -> v as CheckBox }
-					.first().isChecked = true
+			var foundFirst = false
+			for (i in 0 until categoriesHost.childCount) {
+				val view = categoriesHost.getChildAt(i)
+				if (view is ToggleButton && !foundFirst) {
+					view.isChecked = true
+					foundFirst = true
+				}
+			}
 
-			saveCategoriesBtn.setOnClickListener {
+			downloadBtn.setOnClickListener {
 				dialog = showProgressDialog()
 				presenter.downloadSources()
 			}

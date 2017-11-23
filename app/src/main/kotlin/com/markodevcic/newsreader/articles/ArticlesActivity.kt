@@ -21,10 +21,10 @@ import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.categories.SelectCategoriesActivity
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
 import com.markodevcic.newsreader.settings.SettingsActivity
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.squareup.picasso.Picasso
 import io.realm.OrderedRealmCollection
@@ -32,6 +32,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import javax.inject.Inject
+
+private const val KEY_CATEGORY = "KEY_CATEGORY"
+const val REQUEST_ARTICLE_READ = 1231
+const val REQUEST_CHANGE_CATEGORIES = 2213
 
 
 class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
@@ -60,8 +64,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setupArticlesView()
 
 		btnMarkAllRead.setOnClickListener {
-			val adapterCopy = adapter ?: return@setOnClickListener
-			val articleUrls = adapterCopy.articles
+			val articles = adapter?.articles ?: return@setOnClickListener
+			val articleUrls = articles
 					.filter { a -> a.isUnread }
 					.map { a -> a.url }
 					.toTypedArray()
@@ -78,7 +82,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		navigationView.setNavigationItemSelectedListener(this)
 
 		val menu = setupMenuItems()
-		val selectedId: Int = checkSelectedMenuItem(savedInstanceState)
+		val selectedId: Int = checkIfMenuItemWasSaved(savedInstanceState)
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
 		presenter.onStart()
@@ -106,11 +110,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val menu = navigationView.menu
 		val selectedCategories = sharedPrefs.getStringSet(KEY_CATEGORIES, null)
 
-		if (selectedCategory !in selectedCategories) {
-			//no selected category, load all unread
-			onNavigationItemSelected(menu.getItem(0))
-		}
-
+		//there were maybe changes in selected categories, remove all and fill the menu again
 		(1 until menu.size())
 				.map { menu.getItem(it) }
 				.forEach { menu.removeItem(it.itemId) }
@@ -127,7 +127,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		return menu
 	}
 
-	private fun checkSelectedMenuItem(savedInstanceState: Bundle?): Int {
+	private fun checkIfMenuItemWasSaved(savedInstanceState: Bundle?): Int {
 		var selectedId: Int = R.id.nav_unread
 		if (savedInstanceState?.containsKey(KEY_CATEGORY) == true) {
 			val cat = savedInstanceState.getString(KEY_CATEGORY)
@@ -177,7 +177,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 			}
 			R.id.action_categories -> {
 				val intent = Intent(this, SelectCategoriesActivity::class.java)
-				startActivityForResult(intent, REQUEST_SETTINGS)
+				startActivityForResult(intent, REQUEST_CHANGE_CATEGORIES)
 				true
 			}
 			else -> super.onOptionsItemSelected(item)
@@ -234,7 +234,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
 			presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
-		} else if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
+		} else if (requestCode == REQUEST_CHANGE_CATEGORIES && resultCode == RESULT_OK) {
 			setupMenuItems()
 			presenter.onSelectedCategoriesChanged()
 		}
@@ -273,17 +273,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onArticlesDownloaded(count: Int) {
 		val message: String = if (count > 0) {
-			"Downloaded $count articles"
+			"Downloaded $count ${if (count == 1) "article" else "articles" }"
 		} else {
 			"No new articles"
 		}
 		Snackbar.make(articlesParent, message, Snackbar.LENGTH_LONG).show()
 		endAnimation()
-	}
-
-	companion object {
-		private const val KEY_CATEGORY = "KEY_CATEGORY"
-		const val REQUEST_ARTICLE_READ = 1231
-		const val REQUEST_SETTINGS = 2213
 	}
 }

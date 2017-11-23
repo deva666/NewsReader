@@ -10,8 +10,8 @@ import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.ArticlesRepository
 import com.markodevcic.newsreader.storage.Repository
 import com.markodevcic.newsreader.storage.SourcesRepository
-import com.markodevcic.newsreader.sync.SyncService
-import com.markodevcic.newsreader.sync.SyncServiceImpl
+import com.markodevcic.newsreader.sync.SyncUseCase
+import com.markodevcic.newsreader.sync.SyncUseCaseImpl
 import com.markodevcic.newsreader.util.SHARED_PREFS
 import com.markodevcic.newsreader.util.SchedulerProvider
 import com.markodevcic.newsreader.util.SchedulerProviderImpl
@@ -34,17 +34,17 @@ class AppModule(private val context: Context) {
 	fun providesArticlesRepo(): Repository<Article> = ArticlesRepository()
 
 	@Provides
-	fun providesSyncService(newsApi: NewsApi,
+	fun providesSyncUseCase(newsApi: NewsApi,
 							sourcesRepository: Repository<Source>,
 							articlesRepository: Repository<Article>,
-							schedulerProvider: SchedulerProvider): SyncService = SyncServiceImpl(newsApi,
+							schedulerProvider: SchedulerProvider): SyncUseCase = SyncUseCaseImpl(newsApi,
 			sourcesRepository,
 			articlesRepository,
 			schedulerProvider)
 
 	@Provides
 	fun providesArticlesUseCase(articlesRepository: Repository<Article>,
-								sourcesRepository: Repository<Source>) : ArticlesUseCase =
+								sourcesRepository: Repository<Source>): ArticlesUseCase =
 			ArticlesUseCaseImpl(articlesRepository, sourcesRepository)
 
 	@Provides

@@ -8,10 +8,10 @@ import com.markodevcic.newsreader.util.SchedulerProvider
 import rx.Observable
 import java.util.*
 
-class SyncServiceImpl(private val newsApi: NewsApi,
+class SyncUseCaseImpl(private val newsApi: NewsApi,
 					  private val sourcesRepository: Repository<Source>,
 					  private val articlesRepository: Repository<Article>,
-					  private val schedulerProvider: SchedulerProvider) : SyncService {
+					  private val schedulerProvider: SchedulerProvider) : SyncUseCase {
 
 	override fun downloadSources(categories: Collection<String>): Observable<Unit> {
 		return sourcesRepository.deleteAll()

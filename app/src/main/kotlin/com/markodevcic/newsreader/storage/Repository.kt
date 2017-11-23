@@ -8,8 +8,6 @@ import java.io.Closeable
 
 interface Repository<T> : Closeable  where T : RealmModel {
 
-	fun refresh()
-
 	fun getById(id: String): T?
 
 	fun getAll(): Observable<out List<T>>
@@ -20,13 +18,11 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun update(id:String, modifier: T.() -> Unit)
 
-	fun update(items: Array<T>, modifier: T.() -> Unit)
-
 	fun add(item: T)
 
 	fun addAll(items: List<T>): Observable<Unit>
 
-	fun count(query: RealmQuery<T>.() -> Unit): Long
+	fun count(filter: RealmQuery<T>.() -> Unit): Long
 
 	fun count(): Long
 

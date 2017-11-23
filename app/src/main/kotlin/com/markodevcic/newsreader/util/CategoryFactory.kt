@@ -1,4 +1,6 @@
-package com.markodevcic.newsreader.data
+@file:JvmName("CategoriesFactory")
+
+package com.markodevcic.newsreader.util
 
 import com.markodevcic.newsreader.R
 

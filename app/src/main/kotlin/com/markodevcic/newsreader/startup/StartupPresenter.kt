@@ -3,14 +3,16 @@ package com.markodevcic.newsreader.startup
 import android.content.SharedPreferences
 import com.markodevcic.newsreader.Presenter
 import com.markodevcic.newsreader.categories.BaseCategoriesPresenter
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.data.Source
 import com.markodevcic.newsreader.storage.Repository
-import com.markodevcic.newsreader.sync.SyncService
+
 import com.markodevcic.newsreader.util.SchedulerProvider
+import com.markodevcic.newsreader.sync.SyncUseCase
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
+import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import javax.inject.Inject
 
-class StartupPresenter @Inject constructor(private val syncService: SyncService,
+class StartupPresenter @Inject constructor(private val syncUseCase: SyncUseCase,
 										   private val sharedPreferences: SharedPreferences,
 										   private val sourcesRepository: Repository<Source>,
 										   private val schedulerProvider: SchedulerProvider) : BaseCategoriesPresenter(sharedPreferences), Presenter<StartupView> {
@@ -22,7 +24,7 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 	}
 
 	fun downloadSources() {
-		syncService.downloadSources(CATEGORIES_TO_RES_MAP.keys)
+		syncUseCase.downloadSources(CATEGORIES_TO_RES_MAP.keys)
 				.observeOn(schedulerProvider.ui)
 				.subscribe({}, { fail ->
 					view.onError(fail)
@@ -35,6 +37,6 @@ class StartupPresenter @Inject constructor(private val syncService: SyncService,
 		get() = sourcesRepository.count() > 0
 
 	fun close() {
-		syncService.close()
+		syncUseCase.close()
 	}
 }

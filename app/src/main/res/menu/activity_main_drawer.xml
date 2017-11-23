@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_unread"
             android:icon="@drawable/ic_unread"
-            android:title="Unread"
+            android:title="@string/unread"
             app:actionLayout="@layout/menu_counter"/>
     </group>
 

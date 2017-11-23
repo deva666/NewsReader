@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanPrivate")
+
 package com.markodevcic.newsreader.api
 
 import android.util.Log
@@ -18,14 +20,13 @@ object ApiFactory {
 		httpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
 				.connectTimeout(60, TimeUnit.SECONDS)
 
-		val loggingInterceptor = HttpLoggingInterceptor({ l ->
-			Log.d("HTTP", l)
-		})
+		val loggingInterceptor = HttpLoggingInterceptor({ l -> Log.d("HTTP", l) })
 		loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
 
 		httpClientBuilder.addInterceptor(loggingInterceptor)
 
 		val httpClient = httpClientBuilder.build()
+
 		val retrofit = Retrofit.Builder()
 				.baseUrl("https://newsapi.org/v1/")
 				.addConverterFactory(JacksonConverterFactory.create(createObjectMapper()))

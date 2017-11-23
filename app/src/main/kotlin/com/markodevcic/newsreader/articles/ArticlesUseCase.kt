@@ -10,6 +10,7 @@ interface ArticlesUseCase : Closeable {
 	fun markArticlesRead(vararg url: String)
 	fun markArticlesUnread(vararg url: String)
 	fun getUnreadCount(categories: Collection<String>): Map<String, Long>
+
 	fun getArticles(category: String?): Observable<out List<Article>>
 	fun getSources(category: String?, selectedCategories: Collection<String>): Observable<out List<Source>>
 	fun onSelectedCategoriesChanged(deletedCategories: Collection<String>): Observable<Unit>

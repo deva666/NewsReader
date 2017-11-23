@@ -1,5 +1,6 @@
 package com.markodevcic.newsreader.articledetails
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -12,10 +13,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.markodevcic.newsreader.R
 import kotlinx.android.synthetic.main.activity_article_details.*
+@SuppressLint("SetJavaScriptEnabled")
 
 class ArticleDetailsActivity : AppCompatActivity() {
 
-	private var pageLoaded = false
 	private lateinit var articleUrl: String
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +29,6 @@ class ArticleDetailsActivity : AppCompatActivity() {
 			override fun onProgressChanged(view: WebView?, newProgress: Int) {
 				super.onProgressChanged(view, newProgress)
 				if (newProgress == 100) {
-					pageLoaded = true
 					webView.visibility = View.VISIBLE
 					progressBar.visibility = View.GONE
 					setResult(Activity.RESULT_OK, Intent().apply { putExtra(KEY_ARTICLE_URL, articleUrl) })

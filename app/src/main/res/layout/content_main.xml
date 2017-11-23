@@ -11,15 +11,6 @@
     android:orientation="vertical"
     android:id="@+id/articlesParent">
 
-    <!--<TextView-->
-        <!--android:id="@+id/noItemsText"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/noItems"-->
-        <!--android:layout_marginTop="24dp"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:visibility="gone"/>-->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/articlesView"
         android:layout_width="match_parent"

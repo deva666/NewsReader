@@ -15,20 +15,24 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     buildTypes.each {
         it.buildConfigField 'String', 'NEWS_READER_API_KEY', NEWS_READER_API_KEY
     }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-        androidTest.java.srcDirs += 'src/androidTest/kotlin'
-    }
+
     packagingOptions {
         //this is needed for some compile issue with jackson http://stackoverflow.com/questions/20673625/android-gradle-plugin-0-7-0-duplicate-files-during-packaging-of-apk
         exclude 'META-INF/LICENSE'
@@ -36,6 +40,7 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/license.txt'
     }
+
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
     }
@@ -53,6 +58,7 @@ dependencies {
     compile "com.android.support:cardview-v7:$support_lib_version"
     compile "com.android.support:recyclerview-v7:$support_lib_version"
 
+    compile 'com.google.android:flexbox:0.2.5'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
@@ -62,7 +68,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.11'
     compile 'javax.inject:javax.inject:1'
     compile 'com.google.dagger:dagger-android:2.11'
-    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex:rxjava:1.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-jackson:2.3.0'

@@ -2,8 +2,8 @@ package com.markodevcic.newsreader.articles
 
 import android.content.SharedPreferences
 import com.markodevcic.newsreader.Presenter
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
-import com.markodevcic.newsreader.sync.SyncService
+import com.markodevcic.newsreader.sync.SyncUseCase
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
 import com.markodevcic.newsreader.util.KEY_DELETE_DAYS
 import com.markodevcic.newsreader.util.SchedulerProvider
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class ArticlesPresenter @Inject constructor(private val articlesUseCase: ArticlesUseCase,
 											private val sharedPreferences: SharedPreferences,
-											private val syncService: SyncService,
+											private val syncUseCase: SyncUseCase,
 											private val schedulerProvider: SchedulerProvider) : Presenter<ArticlesView>, Closeable {
 
 	private lateinit var view: ArticlesView
@@ -50,7 +50,7 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 		val selectedCategories = sharedPreferences.getStringSet(KEY_CATEGORIES, setOf())
 		subscriptions.add(articlesUseCase.getSources(category, selectedCategories)
 				.flatMap { sources -> Observable.from(sources) }
-				.flatMap { s -> syncService.downloadArticles(s) }
+				.flatMap { s -> syncUseCase.downloadArticles(s) }
 				.toList()
 				.map { l -> l.sum() }
 				.observeOn(schedulerProvider.ui)
@@ -88,6 +88,6 @@ class ArticlesPresenter @Inject constructor(private val articlesUseCase: Article
 	override fun close() {
 		articlesUseCase.close()
 		subscriptions.clear()
-		syncService.close()
+		syncUseCase.close()
 	}
 }

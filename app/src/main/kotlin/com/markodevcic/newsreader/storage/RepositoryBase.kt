@@ -13,10 +13,6 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
 	abstract protected val primaryKey: String
 
-	override fun refresh() {
-		realm.refresh()
-	}
-
 	override fun getById(id: String): T? {
 		return realm.where(clazz)
 				.equalTo(primaryKey, id)
@@ -55,14 +51,6 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		}
 	}
 
-	override fun update(items: Array<T>, modifier: T.() -> Unit) {
-		realm.executeTransaction {
-			for (item in items) {
-				modifier(item)
-			}
-		}
-	}
-
 	override fun add(item: T) {
 		realm.executeTransactionAsync { r ->
 			r.copyToRealm(item)
@@ -75,15 +63,13 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		}
 	}
 
-	override fun count(query: RealmQuery<T>.() -> Unit): Long {
+	override fun count(filter: RealmQuery<T>.() -> Unit): Long {
 		val results = realm.where(clazz)
-		query(results)
+		filter(results)
 		return results.count()
 	}
 
-	override fun count(): Long {
-		return realm.where(clazz).count()
-	}
+	override fun count(): Long = realm.where(clazz).count()
 
 	override fun query(init: RealmQuery<T>.() -> Unit, sortField: Array<String>?, order: Array<Sort>?): Observable<out List<T>> {
 		val results = realm.where(clazz)

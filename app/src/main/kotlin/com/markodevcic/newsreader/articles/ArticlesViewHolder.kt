@@ -4,14 +4,15 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
+import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articledetails.ArticleDetailsActivity
 import com.markodevcic.newsreader.data.Article
-import com.markodevcic.newsreader.data.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.extensions.find
+import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -25,7 +26,7 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 
 	fun bind(article: Article) {
 		description.text = article.description
-		title.text = article.title
+		title.text = Html.fromHtml(article.title)
 		val isUnread = article.isUnread
 		if (!isUnread) {
 			title.setTextColor(ContextCompat.getColor(view.context, android.R.color.secondary_text_dark))
@@ -55,11 +56,15 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 			image.setImageDrawable(view.context.getDrawable(R.drawable.ic_image))
 		}
 		view.setOnClickListener {
-			val activity = view.context as Activity
-			val intent = Intent(activity, ArticleDetailsActivity::class.java)
-			intent.putExtra(ArticleDetailsActivity.KEY_ARTICLE_URL, article.url)
-			activity.startActivityForResult(intent, ArticlesActivity.REQUEST_ARTICLE_READ)
+			openArticleDetails(article)
 		}
+	}
+
+	private fun openArticleDetails(article: Article) {
+		val activity = view.context as Activity
+		val intent = Intent(activity, ArticleDetailsActivity::class.java)
+		intent.putExtra(ArticleDetailsActivity.KEY_ARTICLE_URL, article.url)
+		activity.startActivityForResult(intent, REQUEST_ARTICLE_READ)
 	}
 
 	private fun formatDate(time: Long?): String {
