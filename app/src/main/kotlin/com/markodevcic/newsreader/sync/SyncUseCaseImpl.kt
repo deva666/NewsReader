@@ -30,11 +30,6 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 				.doOnNext { r -> r.articles.forEach { article -> article.category = source.category } }
 				.flatMap { r -> Observable.from(r.articles) }
 				.filter { article -> articlesRepository.getById(article.url) == null }
-				.doOnNext { article ->
-					if (article.publishedAt == null || article.publishedAt!! == 0L) {
-						article.publishedAt = Date().time
-					}
-				}
 				.collect({ ArrayList<Article>() }, { r, a -> r.add(a) })
 				.flatMap { Observable.zip(Observable.just(it), articlesRepository.addAll(it), { p1, p2 -> Pair(p1, p2) }) }
 				.map { (first) -> first.count() }
