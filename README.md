@@ -6,4 +6,4 @@ Code that follows Packt Publishing [Kotlin in Practice](https://www.packtpub.com
 
 Example of Kotlin Coroutine usage, with Realm and Retrofit.
 
-Written by [Marko Devcic](https://www.markodevcic.com)
+Written by [Marko Devcic](http://www.markodevcic.com)
