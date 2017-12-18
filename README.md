@@ -6,4 +6,8 @@ Code that follows Packt Publishing [Kotlin in Practice](https://www.packtpub.com
 
 Example of Kotlin Coroutine usage, with Realm and Retrofit.
 
+There is also a RxJava branch wich that uses RxJava for Async and Reactive programming.
+
 Written by [Marko Devcic](http://www.markodevcic.com)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
