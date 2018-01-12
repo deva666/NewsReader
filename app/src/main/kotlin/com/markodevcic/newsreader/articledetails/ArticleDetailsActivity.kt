@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -29,11 +28,8 @@ class ArticleDetailsActivity : AppCompatActivity() {
 			override fun onProgressChanged(view: WebView?, newProgress: Int) {
 				super.onProgressChanged(view, newProgress)
 				if (newProgress == 100) {
-					webView.visibility = View.VISIBLE
-					progressBar.visibility = View.GONE
 					setResult(Activity.RESULT_OK, Intent().apply { putExtra(KEY_ARTICLE_URL, articleUrl) })
 				}
-				progressBar.progress = newProgress
 			}
 
 			override fun onReceivedTitle(view: WebView?, title: String?) {
@@ -45,7 +41,6 @@ class ArticleDetailsActivity : AppCompatActivity() {
 
 		})
 		articleUrl = intent.getStringExtra(KEY_ARTICLE_URL) ?: throw IllegalStateException("article url expected in bundle")
-		webView.visibility = View.GONE
 		webView.loadUrl(articleUrl)
 	}
 
