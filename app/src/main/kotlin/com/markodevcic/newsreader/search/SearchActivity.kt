@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.MenuItem
 import android.view.View
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articles.ArticlesViewHolder
@@ -34,7 +35,7 @@ class SearchActivity : AppCompatActivity() {
 		Injector.appComponent.inject(this)
 
 		setSupportActionBar(toolbar)
-		supportActionBar?.setHomeButtonEnabled(true)
+		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 		setupArticlesView()
 
@@ -69,5 +70,13 @@ class SearchActivity : AppCompatActivity() {
 				}
 			}
 		})
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem): Boolean {
+		if (item.itemId == android.R.id.home) {
+			onBackPressed()
+			return true
+		}
+		return super.onOptionsItemSelected(item)
 	}
 }

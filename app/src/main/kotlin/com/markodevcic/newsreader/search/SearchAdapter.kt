@@ -10,7 +10,7 @@ import com.markodevcic.newsreader.data.Article
 class SearchAdapter(private val articles: List<Article>) : RecyclerView.Adapter<ArticlesViewHolder>() {
 
 	init {
-		setHasStableIds(true)
+		setHasStableIds(false)
 	}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticlesViewHolder {

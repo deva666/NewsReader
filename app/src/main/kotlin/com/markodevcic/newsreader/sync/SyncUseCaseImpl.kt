@@ -48,5 +48,6 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 		return newsApi.search(query)
 				.executeAsync()
 				.articles
+				.distinctBy { article -> article.title }
 	}
 }
