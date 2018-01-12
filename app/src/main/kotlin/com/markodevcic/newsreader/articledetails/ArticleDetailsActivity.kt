@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_article_details.*
 class ArticleDetailsActivity : AppCompatActivity() {
 
 	private lateinit var articleUrl: String
+	private var resultSet = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -27,7 +28,8 @@ class ArticleDetailsActivity : AppCompatActivity() {
 		webView.setWebChromeClient(object : WebChromeClient() {
 			override fun onProgressChanged(view: WebView?, newProgress: Int) {
 				super.onProgressChanged(view, newProgress)
-				if (newProgress == 100) {
+				if (!resultSet && newProgress >= 50) {
+					resultSet = true
 					setResult(Activity.RESULT_OK, Intent().apply { putExtra(KEY_ARTICLE_URL, articleUrl) })
 				}
 			}
