@@ -38,6 +38,16 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		}
 	}
 
+	override suspend fun updateAsync(vararg ids: String, modifier: T.() -> Unit) {
+		realm.inTransactionAsync {
+			ids.map { id ->
+				where(clazz)
+						.equalTo(primaryKey, id)
+						.findFirst()
+			}.forEach { item -> modifier(item) }
+		}
+	}
+
 	override fun add(item: T) {
 		return realm.executeTransaction { r ->
 			r.copyToRealm(item)

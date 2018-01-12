@@ -15,6 +15,8 @@ interface Repository<T> : Closeable  where T : RealmModel {
 
 	fun update(id:String, modifier: T.() -> Unit)
 
+	suspend fun updateAsync(vararg ids: String, modifier: T.() -> Unit)
+
 	fun add(item: T)
 
 	suspend fun addAll(items: List<T>)

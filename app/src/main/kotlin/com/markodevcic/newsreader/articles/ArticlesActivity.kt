@@ -78,10 +78,16 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					.filter { a -> a.isUnread }
 					.map { a -> a.url }
 					.toTypedArray()
-			presenter.markArticlesRead(*articleUrls)
-			Snackbar.make(articlesParent, getString(R.string.all_articles_read), Snackbar.LENGTH_LONG)
-					.setAction(getString(R.string.undo), { presenter.markArticlesUnread(*articleUrls) })
-					.show()
+			launch(UI + job) {
+				presenter.markArticlesRead(*articleUrls)
+				Snackbar.make(articlesParent, getString(R.string.all_articles_read), Snackbar.LENGTH_LONG)
+						.setAction(getString(R.string.undo), {
+							launch(UI + job) {
+								presenter.markArticlesUnread(*articleUrls)
+							}
+						})
+						.show()
+			}
 		}
 
 		val toggle = ActionBarDrawerToggle(
@@ -260,7 +266,9 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
-			presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+			launch(UI + job) {
+				presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
+			}
 		} else if (requestCode == REQUEST_CHANGE_CATEGORIES && resultCode == RESULT_OK) {
 			setupMenuItems()
 			launch(UI + job) {
