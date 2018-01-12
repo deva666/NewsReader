@@ -22,8 +22,10 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 	}
 
 	suspend override fun onCategoriesChangedAsync(deletedCategories: Collection<String>) {
-		articlesRepository.delete {
-			`in`("category", deletedCategories.toTypedArray())
+		if (deletedCategories.isNotEmpty()) {
+			articlesRepository.delete {
+				`in`("category", deletedCategories.toTypedArray())
+			}
 		}
 	}
 
