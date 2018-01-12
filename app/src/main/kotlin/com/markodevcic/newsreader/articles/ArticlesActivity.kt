@@ -169,6 +169,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				articlesView.adapter = adapter
 			} else {
 				adapter?.onDataChanged(articles as OrderedRealmCollection<Article>)
+				articlesView.smoothScrollToPosition(0)
 			}
 		}
 	}
