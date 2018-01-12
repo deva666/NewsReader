@@ -9,8 +9,8 @@ import retrofit2.http.Query
 
 interface NewsApi {
 
-	@GET("articles")
-	fun getArticles(@Query("source") source: String,
+	@GET("top-headlines")
+	fun getArticles(@Query("sources") source: String,
 					@Query("apiKey") apiKey: String = BuildConfig.NEWS_READER_API_KEY): Call<ArticleResponse>
 
 	@GET("sources")

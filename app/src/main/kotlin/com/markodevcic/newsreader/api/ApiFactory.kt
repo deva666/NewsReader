@@ -27,7 +27,7 @@ object ApiFactory {
 		val httpClient = httpClientBuilder.build()
 
 		val retrofit = Retrofit.Builder()
-				.baseUrl("https://newsapi.org/v1/")
+				.baseUrl("https://newsapi.org/v2/")
 				.addConverterFactory(JacksonConverterFactory.create(createObjectMapper()))
 				.client(httpClient)
 				.build()
