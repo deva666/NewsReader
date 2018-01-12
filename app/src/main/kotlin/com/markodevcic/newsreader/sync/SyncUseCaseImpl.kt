@@ -14,7 +14,6 @@ import javax.inject.Provider
 class SyncUseCaseImpl(private val newsApi: NewsApi,
 					  private val sourcesRepository: Provider<Repository<Source>>,
 					  private val articlesRepository: Provider<Repository<Article>>) : SyncUseCase {
-
 	override suspend fun downloadSourcesAsync(categories: Collection<String>) {
 		sourcesRepository.get().use { repo ->
 			val downloadJobs = categories.map { cat -> newsApi.getSources(cat).launchAsync() }
@@ -43,5 +42,11 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 			}
 		}.await()
 		return downloadCount
+	}
+
+	suspend override fun search(query: String): List<Article> {
+		return newsApi.search(query)
+				.executeAsync()
+				.articles
 	}
 }

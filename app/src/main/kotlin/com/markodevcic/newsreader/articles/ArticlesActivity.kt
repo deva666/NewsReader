@@ -1,6 +1,9 @@
 package com.markodevcic.newsreader.articles
 
 import android.animation.ObjectAnimator
+import android.app.SearchManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -24,6 +27,7 @@ import com.markodevcic.newsreader.categories.SelectCategoriesActivity
 import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
+import com.markodevcic.newsreader.search.SearchActivity
 import com.markodevcic.newsreader.settings.SettingsActivity
 import com.markodevcic.newsreader.util.CATEGORIES_TO_RES_MAP
 import com.markodevcic.newsreader.util.KEY_CATEGORIES
@@ -66,6 +70,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setSupportActionBar(toolbar)
 
 		setupArticlesView()
+		setupSearchView()
 
 		btnMarkAllRead.setOnClickListener {
 			val articles = adapter?.articles ?: return@setOnClickListener
@@ -111,6 +116,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				}
 			}
 		})
+	}
+
+	private fun setupSearchView() {
+		val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+		searchView.setIconifiedByDefault(true)
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(this, SearchActivity::class.java)))
 	}
 
 	private fun setupMenuItems(): Menu {
@@ -291,7 +302,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onArticlesDownloaded(count: Int) {
 		val message: String = if (count > 0) {
-			"Downloaded $count ${if (count == 1) "article" else "articles" }"
+			"Downloaded $count ${if (count == 1) "article" else "articles"}"
 		} else {
 			"No new articles"
 		}

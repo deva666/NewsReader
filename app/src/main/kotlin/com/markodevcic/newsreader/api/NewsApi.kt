@@ -17,4 +17,8 @@ interface NewsApi {
 	fun getSources(@Query("category") category: String,
 				   @Query("apiKey") apiKey: String = BuildConfig.NEWS_READER_API_KEY,
 				   @Query("language") lang: String = "en"): Call<SourceResponse>
+
+	@GET("everything")
+	fun search(@Query("q") query: String,
+			   @Query("apiKey") apiKey: String = BuildConfig.NEWS_READER_API_KEY) : Call<ArticleResponse>
 }

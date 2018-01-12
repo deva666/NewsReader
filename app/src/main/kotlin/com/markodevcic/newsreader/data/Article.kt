@@ -14,7 +14,7 @@ open class Article : RealmObject() {
 	var author: String? = null
 	var description: String? = null
 	var urlToImage: String? = null
-	lateinit var category: String
+	var category: String? = null
 	@JsonDeserialize(using = DateToLongDeserializer::class)
 	var publishedAt: Long? = null
 

@@ -40,7 +40,11 @@ class ArticlesViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 			date.setTextColor(ContextCompat.getColor(view.context, android.R.color.tertiary_text_light))
 		}
 
-		category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category]!!)
+		if (article.category == null) {
+			category.visibility = View.GONE
+		} else {
+			category.text = view.context.getText(CATEGORIES_TO_RES_MAP[article.category!!]!!)
+		}
 		date.text = formatDate(article.publishedAt)
 		val imageUrl = article.urlToImage
 		if (imageUrl != null && imageUrl.isNotBlank()) {
