@@ -19,13 +19,6 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textNoSuggestions"
-                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
-                />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

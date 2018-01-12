@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -70,7 +71,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		setSupportActionBar(toolbar)
 
 		setupArticlesView()
-		setupSearchView()
 
 		btnMarkAllRead.setOnClickListener {
 			val articles = adapter?.articles ?: return@setOnClickListener
@@ -116,12 +116,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 				}
 			}
 		})
-	}
-
-	private fun setupSearchView() {
-		val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-		searchView.setIconifiedByDefault(true)
-		searchView.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(this, SearchActivity::class.java)))
 	}
 
 	private fun setupMenuItems(): Menu {
@@ -207,6 +201,14 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		menuInflater.inflate(R.menu.main, menu)
+		val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+		val searchItem = menu.findItem(R.id.action_search)
+
+		if (searchItem != null) {
+			val searchView = searchItem.actionView as SearchView
+			searchView.setIconifiedByDefault(true)
+			searchView.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(this, SearchActivity::class.java)))
+		}
 		return true
 	}
 

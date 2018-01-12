@@ -10,10 +10,10 @@
     <string name="category_entertainment">Entertainment</string>
     <string name="category_gaming">Gaming</string>
     <string name="category_general">General</string>
-    <string name="category_music">Music</string>
+    <string name="category_health">Health</string>
     <string name="category_politics">Politics</string>
-    <string name="category_science_and_nature">Science and nature</string>
-    <string name="category_sport">Sport</string>
+    <string name="category_science">Science</string>
+    <string name="category_sport">Sports</string>
     <string name="category_technology">Technology</string>
 
     <string name="title_activity_startup">Settings</string>

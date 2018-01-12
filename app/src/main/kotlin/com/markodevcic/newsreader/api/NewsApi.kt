@@ -11,7 +11,8 @@ interface NewsApi {
 
 	@GET("top-headlines")
 	fun getArticles(@Query("sources") source: String,
-					@Query("apiKey") apiKey: String = BuildConfig.NEWS_READER_API_KEY): Call<ArticleResponse>
+					@Query("apiKey") apiKey: String = BuildConfig.NEWS_READER_API_KEY,
+					@Query("language") lang: String = "en"): Call<ArticleResponse>
 
 	@GET("sources")
 	fun getSources(@Query("category") category: String,
