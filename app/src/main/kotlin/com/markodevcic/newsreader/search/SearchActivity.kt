@@ -3,6 +3,7 @@ package com.markodevcic.newsreader.search
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import com.markodevcic.newsreader.R
 import com.markodevcic.newsreader.articles.ArticlesViewHolder
+import com.markodevcic.newsreader.data.Article
 import com.markodevcic.newsreader.injection.Injector
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_search.*
@@ -20,12 +22,12 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
-class SearchActivity : AppCompatActivity() {
-
+class SearchActivity : AppCompatActivity(), SearchView {
 	private val job = Job()
 
 	@Inject
 	lateinit var presenter: SearchPresenter
+
 	private var adapter: SearchAdapter? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +36,7 @@ class SearchActivity : AppCompatActivity() {
 
 		Injector.appComponent.inject(this)
 
+		presenter.bind(this)
 		setSupportActionBar(toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -44,16 +47,12 @@ class SearchActivity : AppCompatActivity() {
 			supportActionBar?.title = query.capitalize()
 			launch(UI + job) {
 				progressBar.visibility = View.VISIBLE
-				val articles = presenter.search(query)
-				adapter = SearchAdapter(articles)
-				articlesView.adapter = adapter
-				progressBar.visibility = View.GONE
+				presenter.search(query)
 			}
 		} else {
 			throw IllegalStateException("this activity should be called from search view")
 		}
 	}
-
 	private fun setupArticlesView() {
 		articlesView.setHasFixedSize(true)
 		articlesView.isDrawingCacheEnabled = true
@@ -72,11 +71,32 @@ class SearchActivity : AppCompatActivity() {
 		})
 	}
 
+	override fun onSearchResults(articles: List<Article>) {
+		adapter = SearchAdapter(articles)
+		articlesView.adapter = adapter
+		progressBar.visibility = View.GONE
+	}
+
+	override fun onNoSearchResults() {
+		progressBar.visibility = View.GONE
+		noSearchResultsText.visibility = View.VISIBLE
+	}
+
+	override fun onSearchFailed() {
+		progressBar.visibility = View.GONE
+		Snackbar.make(articlesParent, getString(R.string.network_error_msg), Snackbar.LENGTH_LONG).show()
+	}
+
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		if (item.itemId == android.R.id.home) {
 			onBackPressed()
 			return true
 		}
 		return super.onOptionsItemSelected(item)
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		job.cancel()
 	}
 }
