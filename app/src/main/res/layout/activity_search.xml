@@ -25,6 +25,17 @@
 
     <include layout="@layout/content_main"/>
 
+    <TextView
+        android:id="@+id/noSearchResultsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_search_results"
+        android:fontFamily="serif"
+        android:textSize="20sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="72dp"
+        android:visibility="gone"/>
+
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

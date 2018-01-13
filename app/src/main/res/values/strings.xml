@@ -43,6 +43,8 @@
         <item>3</item>
     </string-array>
 
+
+    <string name="no_search_results">No headlines found for given search term</string>
     <string name="available_categories">Available Categories</string>
     <string name="downloading_sources">Downloading sources</string>
     <string name="error_download_sources">An error occurred while downloading sources</string>
@@ -56,4 +58,6 @@
     <string name="_7_days">7 days</string>
     <string name="settings">Settings</string>
     <string name="search_label">Search</string>
+    <string name="search_hint">Search headlines</string>
+    <string name="network_error_msg">An error occurred while connecting to server, please try again</string>
 </resources>

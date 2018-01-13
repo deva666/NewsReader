@@ -320,6 +320,6 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun onNetworkError() {
-		Snackbar.make(articlesParent, "An error occurred while connecting to server, please try again", Snackbar.LENGTH_LONG).show()
+		Snackbar.make(articlesParent, getString(R.string.network_error_msg), Snackbar.LENGTH_LONG).show()
 	}
 }
