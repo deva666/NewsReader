@@ -45,7 +45,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
 		if (Intent.ACTION_SEARCH == intent.action) {
 			val query = intent.getStringExtra(SearchManager.QUERY)
 			supportActionBar?.title = query.capitalize()
-			launch(UI + job) {
+			launch(job + UI) {
 				progressBar.visibility = View.VISIBLE
 				presenter.search(query)
 			}

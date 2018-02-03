@@ -78,11 +78,11 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					.filter { a -> a.isUnread }
 					.map { a -> a.url }
 					.toTypedArray()
-			launch(UI + job) {
+			launch(job + UI) {
 				presenter.markArticlesRead(*articleUrls)
 				Snackbar.make(articlesParent, getString(R.string.all_articles_read), Snackbar.LENGTH_LONG)
 						.setAction(getString(R.string.undo), {
-							launch(UI + job) {
+							launch(job + UI) {
 								presenter.markArticlesUnread(*articleUrls)
 							}
 						})
@@ -101,7 +101,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
 
-		launch(UI + job) {
+		launch(job + UI) {
 			presenter.onStart()
 		}
 	}
@@ -173,7 +173,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun loadArticles() {
-		launch(UI + job) {
+		launch(job + UI) {
 			val articles = presenter.getArticlesInCategoryAsync(selectedCategory)
 			if (adapter == null) {
 				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
@@ -222,7 +222,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val id = item.itemId
 		return when (id) {
 			R.id.action_refresh -> {
-				launch(UI + job) {
+				launch(job + UI) {
 					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 					val animator = startRotatingAnimation(refreshMenu)
 					try {
@@ -266,12 +266,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
-			launch(UI + job) {
+			launch(job + UI) {
 				presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 			}
 		} else if (requestCode == REQUEST_CHANGE_CATEGORIES && resultCode == RESULT_OK) {
 			setupMenuItems()
-			launch(UI + job) {
+			launch(job + UI) {
 				presenter.onSelectedCategoriesChangedAsync()
 			}
 			syncAllArticles()
@@ -279,7 +279,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun syncAllArticles() {
-		launch(UI + job) {
+		launch(job + UI) {
 			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
 			val animator = startRotatingAnimation(refreshMenu)
 			try {
