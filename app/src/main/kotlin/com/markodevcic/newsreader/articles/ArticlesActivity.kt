@@ -37,17 +37,22 @@ import io.realm.OrderedRealmCollection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 private const val KEY_CATEGORY = "KEY_CATEGORY"
 const val REQUEST_ARTICLE_READ = 1231
 const val REQUEST_CHANGE_CATEGORIES = 2213
 
 
-class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView {
+class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ArticlesView, CoroutineScope {
+
+	override val coroutineContext: CoroutineContext
+		get() = Dispatchers.Main + job
 
 	@Inject
 	lateinit var presenter: ArticlesPresenter
@@ -78,14 +83,14 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 					.filter { a -> a.isUnread }
 					.map { a -> a.url }
 					.toTypedArray()
-			launch(job + UI) {
+			launch {
 				presenter.markArticlesRead(*articleUrls)
 				Snackbar.make(articlesParent, getString(R.string.all_articles_read), Snackbar.LENGTH_LONG)
-						.setAction(getString(R.string.undo), {
-							launch(job + UI) {
+						.setAction(getString(R.string.undo)) {
+							launch {
 								presenter.markArticlesUnread(*articleUrls)
 							}
-						})
+						}
 						.show()
 			}
 		}
@@ -101,7 +106,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val menuItem = menu.findItem(selectedId)
 		onNavigationItemSelected(menuItem)
 
-		launch(job + UI) {
+		launch {
 			presenter.onStart()
 		}
 	}
@@ -173,7 +178,7 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun loadArticles() {
-		launch(job + UI) {
+		launch {
 			val articles = presenter.getArticlesInCategoryAsync(selectedCategory)
 			if (adapter == null) {
 				adapter = ArticlesAdapter(articles as OrderedRealmCollection<Article>)
@@ -222,8 +227,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 		val id = item.itemId
 		return when (id) {
 			R.id.action_refresh -> {
-				launch(job + UI) {
-					val refreshMenu = toolbar.findViewById(R.id.action_refresh)
+				launch {
+					val refreshMenu = toolbar.findViewById<View>(R.id.action_refresh)
 					val animator = startRotatingAnimation(refreshMenu)
 					try {
 						presenter.syncCategoryAsync(selectedCategory)
@@ -266,12 +271,12 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_ARTICLE_READ && resultCode == RESULT_OK) {
-			launch(job + UI) {
+			launch {
 				presenter.markArticlesRead(data?.getStringExtra(ArticleDetailsActivity.KEY_ARTICLE_URL) ?: "")
 			}
 		} else if (requestCode == REQUEST_CHANGE_CATEGORIES && resultCode == RESULT_OK) {
 			setupMenuItems()
-			launch(job + UI) {
+			launch {
 				presenter.onSelectedCategoriesChangedAsync()
 			}
 			syncAllArticles()
@@ -279,8 +284,8 @@ class ArticlesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 	}
 
 	private fun syncAllArticles() {
-		launch(job + UI) {
-			val refreshMenu = toolbar.findViewById(R.id.action_refresh)
+		launch {
+			val refreshMenu = toolbar.findViewById<View>(R.id.action_refresh)
 			val animator = startRotatingAnimation(refreshMenu)
 			try {
 				presenter.syncCategoryAsync(null)

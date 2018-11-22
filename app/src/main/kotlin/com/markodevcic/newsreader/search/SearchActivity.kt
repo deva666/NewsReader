@@ -17,12 +17,17 @@ import com.markodevcic.newsreader.injection.Injector
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class SearchActivity : AppCompatActivity(), SearchView {
+class SearchActivity : AppCompatActivity(), SearchView, CoroutineScope {
+	override val coroutineContext: CoroutineContext
+		get() = Dispatchers.Main + job
+
 	private val job = Job()
 
 	@Inject
@@ -45,7 +50,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
 		if (Intent.ACTION_SEARCH == intent.action) {
 			val query = intent.getStringExtra(SearchManager.QUERY)
 			supportActionBar?.title = query.capitalize()
-			launch(job + UI) {
+			launch {
 				progressBar.visibility = View.VISIBLE
 				presenter.search(query)
 			}

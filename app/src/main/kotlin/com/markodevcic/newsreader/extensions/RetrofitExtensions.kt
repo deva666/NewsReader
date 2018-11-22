@@ -1,11 +1,15 @@
 package com.markodevcic.newsreader.extensions
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.suspendCancellableCoroutine
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 suspend fun <T> Call<T>.executeAsync(): T {
 	return suspendCancellableCoroutine { continuation ->
@@ -18,11 +22,11 @@ suspend fun <T> Call<T>.executeAsync(): T {
 				if (response.isSuccessful) {
 					continuation.resume(response.body()!!)
 				} else {
-					continuation.resumeWithException(retrofit2.HttpException(response))
+					continuation.resumeWithException(HttpException(response))
 				}
 			}
 		})
-		continuation.invokeOnCompletion {
+		continuation.invokeOnCancellation {
 			if (continuation.isCancelled) {
 				try {
 					cancel()
@@ -34,6 +38,10 @@ suspend fun <T> Call<T>.executeAsync(): T {
 	}
 }
 
-fun <T> Call<T>.launchAsync(): Deferred<T> = async { this@launchAsync.execute().body()!! }
+fun <T> Call<T>.launchAsync(): Deferred<T> {
+	return GlobalScope.async {
+		this@launchAsync.execute().body()!!
+	}
+}
 
 suspend fun <T> List<Deferred<T>>.waitAllAsync(): List<T> = this.map { job -> job.await() }

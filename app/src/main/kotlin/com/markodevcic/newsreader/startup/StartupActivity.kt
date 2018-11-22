@@ -12,12 +12,17 @@ import com.markodevcic.newsreader.extensions.showToast
 import com.markodevcic.newsreader.extensions.startActivity
 import com.markodevcic.newsreader.injection.Injector
 import kotlinx.android.synthetic.main.layout_categories.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class StartupActivity : BaseCategoriesActivity(), StartupView {
+class StartupActivity : BaseCategoriesActivity(), StartupView, CoroutineScope {
+
+	override val coroutineContext: CoroutineContext
+		get() = Dispatchers.Main + job
 
 	@Inject
 	override lateinit var presenter: StartupPresenter
@@ -25,7 +30,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 	override val categoriesViewGroup: ViewGroup
 		get() = categoriesHost
 
-	private var job: Job? = null
+	private val job = Job()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -47,7 +52,7 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 			}
 
 			downloadBtn.setOnClickListener {
-				job = launch(UI) {
+				launch {
 					val dialog = showProgressDialog()
 					try {
 						presenter.downloadSourcesAsync()
@@ -74,6 +79,6 @@ class StartupActivity : BaseCategoriesActivity(), StartupView {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		job?.cancel()
+		job.cancel()
 	}
 }

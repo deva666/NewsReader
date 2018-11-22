@@ -11,7 +11,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 
 	protected val realm: Realm = Realm.getDefaultInstance()
 
-	abstract protected val primaryKey: String
+	protected abstract val primaryKey: String
 
 	override fun getById(id: String): T? {
 		return realm.where(clazz)
@@ -33,7 +33,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 		realm.executeTransaction { r ->
 			val dbItem = r.where(clazz)
 					.equalTo(primaryKey, id)
-					.findFirst()
+					.findFirst() ?: return@executeTransaction
 			modifier(dbItem)
 		}
 	}
@@ -43,7 +43,7 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 			ids.map { id ->
 				where(clazz)
 						.equalTo(primaryKey, id)
-						.findFirst()
+						.findFirst() ?: return@inTransactionAsync
 			}.forEach { item -> modifier(item) }
 		}
 	}
@@ -72,7 +72,8 @@ abstract class RepositoryBase<T> : Repository<T> where T : RealmModel {
 			results.findAllAsync()
 					.loadAsync()
 		} else {
-			results.findAllSortedAsync(sortFields, orders)
+			results.sort(sortFields, orders)
+					.findAllAsync()
 					.loadAsync()
 		}
 	}

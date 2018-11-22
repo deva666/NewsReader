@@ -7,7 +7,8 @@ import com.markodevcic.newsreader.extensions.executeAsync
 import com.markodevcic.newsreader.extensions.launchAsync
 import com.markodevcic.newsreader.extensions.waitAllAsync
 import com.markodevcic.newsreader.storage.Repository
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Provider
 
@@ -27,7 +28,7 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 		val response = newsApi.getArticles(source.id).executeAsync()
 		response.articles.forEach { it.category = source.category }
 		var downloadCount = 0
-		async {
+		withContext(Dispatchers.IO) {
 			val repository = articlesRepository.get()
 			repository.use { repo ->
 				for (article in response.articles) {
@@ -40,11 +41,11 @@ class SyncUseCaseImpl(private val newsApi: NewsApi,
 					}
 				}
 			}
-		}.await()
+		}
 		return downloadCount
 	}
 
-	suspend override fun search(query: String): List<Article> {
+	override suspend fun search(query: String): List<Article> {
 		return newsApi.search(query)
 				.executeAsync()
 				.articles

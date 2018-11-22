@@ -14,14 +14,14 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 
 	override fun hasArticles(): Boolean = articlesRepository.count() > 0L
 
-	suspend override fun deleteOldArticlesAsync(daysToDelete: Int) {
+	override suspend fun deleteOldArticlesAsync(daysToDelete: Int) {
 		val deleteThreshold = Date().time - daysToDelete * MILLIS_IN_DAY
 		articlesRepository.delete {
 			lessThan("publishedAt", deleteThreshold)
 		}
 	}
 
-	suspend override fun onCategoriesChangedAsync(deletedCategories: Collection<String>) {
+	override suspend fun onCategoriesChangedAsync(deletedCategories: Collection<String>) {
 		if (deletedCategories.isNotEmpty()) {
 			articlesRepository.delete {
 				`in`("category", deletedCategories.toTypedArray())
@@ -35,13 +35,13 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 		}
 	}
 
-	suspend override fun markArticlesUnreadAsync(vararg url: String) {
+	override suspend fun markArticlesUnreadAsync(vararg url: String) {
 		articlesRepository.updateAsync(*url) {
 			isUnread = true
 		}
 	}
 
-	suspend override fun getArticlesAsync(category: String?): List<Article> {
+	override suspend fun getArticlesAsync(category: String?): List<Article> {
 		return articlesRepository.query({
 			if (category != null) {
 				equalTo("category", category)
@@ -51,7 +51,7 @@ class ArticlesUseCaseImpl(private val articlesRepository: Repository<Article>,
 		}, arrayOf("isUnread", "publishedAt"), arrayOf(Sort.DESCENDING, Sort.DESCENDING))
 	}
 
-	suspend override fun getSourcesAsync(category: String?, selectedCategories: Collection<String>): List<Source> {
+	override suspend fun getSourcesAsync(category: String?, selectedCategories: Collection<String>): List<Source> {
 		return sourcesRepository.query({
 			if (category != null) {
 				equalTo("category", category)

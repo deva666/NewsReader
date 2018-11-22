@@ -3,7 +3,10 @@ package com.markodevcic.newsreader.extensions
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmResults
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+
 
 suspend fun <T> RealmResults<T>.loadAsync(): List<T> where T : RealmModel {
 	return suspendCoroutine { continuation ->
@@ -14,12 +17,11 @@ suspend fun <T> RealmResults<T>.loadAsync(): List<T> where T : RealmModel {
 	}
 }
 
-inline suspend fun Realm.inTransactionAsync(crossinline receiver: Realm.() -> Unit) {
+suspend inline fun Realm.inTransactionAsync(crossinline receiver: Realm.() -> Unit) {
 	return suspendCoroutine { continuation ->
 		this.executeTransactionAsync({ realm ->
 			receiver(realm)
 		}, {
-			this.refresh()
 			continuation.resume(Unit)
 		}, { fail ->
 			continuation.resumeWithException(fail)

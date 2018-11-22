@@ -19,7 +19,7 @@ object ApiFactory {
 		httpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
 				.connectTimeout(60, TimeUnit.SECONDS)
 
-		val loggingInterceptor = HttpLoggingInterceptor({ l -> Log.d("HTTP", l) })
+		val loggingInterceptor = HttpLoggingInterceptor { l -> Log.d("HTTP", l) }
 		loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
 
 		httpClientBuilder.addInterceptor(loggingInterceptor)
