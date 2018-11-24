@@ -6,6 +6,10 @@ Code that follows Packt Publishing [Kotlin in Practice](https://www.packtpub.com
 
 Example of Kotlin Coroutine usage, with Realm and Retrofit.
 
+Most of the code is by now out of date. For example, Kotlin Coroutines are now stable and how a slightly different API.
+The master branch is not updated, because it follows the code from the course.
+[Kotlin_1.3 Branch](https://github.com/deva666/NewsReader/tree/kotlin_1.3) is updated to Kotlin 1.3 and Coroutines 1.0.
+
 There is also a RxJava branch that uses RxJava for Async and Reactive programming.
 
 To make the project compile, you need to get the API key from [NewsApi.org](https://newsapi.org/) and put it into your local `gradle.properties` file under the key `NEWS_READER_API_KEY`
