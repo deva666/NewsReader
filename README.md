@@ -12,7 +12,7 @@ The master branch is not updated, because it follows the code from the course.
 
 There is also a RxJava branch that uses RxJava for Async and Reactive programming.
 
-To make the project compile, you need to get the API key from [NewsApi.org](https://newsapi.org/) and put it into your local `gradle.properties` file under the key `NEWS_READER_API_KEY`
+To make the project compile, you need to get an API key from [NewsApi.org](https://newsapi.org/) and put it into your local `gradle.properties` file under the key `NEWS_READER_API_KEY`
 
 Written by [Marko Devcic](http://www.markodevcic.com)
 
