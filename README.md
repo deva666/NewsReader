@@ -6,7 +6,7 @@ Code that follows Packt Publishing [Kotlin in Practice](https://www.packtpub.com
 
 Example of Kotlin Coroutine usage, with Realm and Retrofit.
 
-Most of the code is by now out of date. For example, Kotlin Coroutines are now stable and how a slightly different API.
+Most of the code is by now out of date. For example, Kotlin Coroutines are now stable and have a slightly different API.
 The master branch is not updated, because it follows the code from the course.
 [Kotlin_1.3 Branch](https://github.com/deva666/NewsReader/tree/kotlin_1.3) is updated to Kotlin 1.3 and Coroutines 1.0.
 
