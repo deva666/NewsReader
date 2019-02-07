@@ -2,9 +2,7 @@
 
 Android News Reader app
 
-(https://photos.app.goo.gl/S3JCWBRV7o8Axw8NA)
-
-(https://photos.app.goo.gl/U4dzfUL9duqcEhQ57)
+![alt text][logo](https://photos.app.goo.gl/S3JCWBRV7o8Axw8NA) ![alt text][logo](https://photos.app.goo.gl/U4dzfUL9duqcEhQ57)
 
 Code that follows Packt Publishing [Kotlin in Practice](https://www.packtpub.com/application-development/kotlin-practice-video) Video Course 
 
